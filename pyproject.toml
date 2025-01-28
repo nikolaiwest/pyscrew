@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyscrew"
+version = "0.1.0"
+description = "A Python package for accessing industrial research data from a screw driving system".
+authors = [
+    { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28.0",  # For downloading the respective files via Zenodo
+    "tqdm>=4.65.0",      # For progress bars during downloads
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
