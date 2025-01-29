@@ -22,7 +22,6 @@ The module maintains a two-tier cache structure:
 """
 
 import hashlib
-import logging
 import os
 import shutil
 import tarfile
@@ -37,8 +36,9 @@ import requests
 import yaml
 from tqdm import tqdm
 
-# Module-level logger
-logger = logging.getLogger(__name__)
+from pyscrew.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class SecurityError(Exception):
     """
