@@ -1,36 +1,27 @@
 from pathlib import Path
-from .loading import DataLoader
+from typing import Dict, Optional, Union
 
-class PyScrew:
+from pyscrew.loading import DataLoader, DatasetRegistry
+
+
+def get_data(scenario_name: str, cache_dir: Optional[Union[str, Path]] = None, force: bool = False) -> Path:
+    """ Simple interface to get a dataset for a specific scenario."""
+    loader = DataLoader(scenario_name, cache_dir)
+    return loader.extract_data(force=force)
+
+def list_scenarios() -> Dict[str, str]:
     """
-    Main class for handling research data through PyScrew.
-    Provides a simplified interface for downloading and accessing data from Zenodo.
-    """
+    List all available scenarios and their descriptions.
     
-    def __init__(self, cache_dir: Path = None):
-        """
-        Initialize PyScrew with optional custom cache directory.
-        
-        Args:
-            cache_dir: Optional custom directory for caching data.
-                      If not provided, defaults to ~/.cache/pyscrew
-        """
-        self.loader = DataLoader(cache_dir=cache_dir)
+    Returns:
+        Dictionary mapping scenario names to their descriptions
+    """
+    return {name: config.description 
+            for name, config in DatasetRegistry.DATASETS.items()}
 
-    def get_data_directory(self) -> Path:
-        """
-        Download and extract the data if needed, then return the path to the data directory.
-        
-        Returns:
-            Path to the directory containing the extracted data files
-        """
-        return self.loader.get_data()
+def main(): 
+    data = get_data("thread-degradation")
+    print("Download finished")
 
-    def list_files(self) -> list[str]:
-        """
-        List all available files in the dataset.
-        
-        Returns:
-            List of filenames available in the extracted data
-        """
-        return self.loader.list_available_files()
+if __name__ == "__main__":
+    main()
