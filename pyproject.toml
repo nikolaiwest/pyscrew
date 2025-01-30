@@ -1,10 +1,9 @@
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
 [project]
 name = "pyscrew"
-version = "0.1.0"
+version = "0.1.2"
 description = "A Python package for accessing industrial research data from a screw driving system"
 authors = [
     { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }
@@ -14,12 +13,25 @@ dependencies = [
     "requests>=2.28.0",  # For downloading the respective files via Zenodo
     "tqdm>=4.65.0",      # For progress bars during downloads
     "rarfile>=4.2",      # For extracting the downloaded files
-    "pytest>=7.0",       # For testing the package
-    "pyyaml>6.0.2",      # For loading scenario info
+    "pyyaml>=6.0.0",     # For loading scenario info
 ]
-
+readme = "README.md"
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+]
+keywords = ["manufacturing", "screw driving", "industrial data", "open data", "research data"]
 [project.optional-dependencies]
 test = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
 ]
+[project.urls]
+"Homepage" = "https://github.com/nikolaiwest/pyscrew"
+"Bug Tracker" = "https://github.com/nikolaiwest/pyscrew/issues"
+"Documentation" = "https://github.com/nikolaiwest/pyscrew#readme"
