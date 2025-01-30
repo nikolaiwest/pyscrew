@@ -1,12 +1,12 @@
 datasets:
   thread-degradation:
-    record_id: "14729548"
+    record_id: "14769379"
     file_name: "S01_thread-degradation.tar"
-    md5_checksum: "55a7585109e20fb7792b669aaaf9d841"
+    md5_checksum: "7099fefee502275f13dbf3bc88d571ed"
     description: "Thread degradation analysis dataset"
   
   surface-friction:
-    record_id: "14729548"
+    record_id: "14769379"
     file_name: "S02_surface-friction.tar"
-    md5_checksum: "<checksum>"  # TODO: Update with actual checksum after upload
+    md5_checksum: "e56193d8a5fc73438f3a3d74df62fdfb"
     description: "Surface friction analysis dataset"
