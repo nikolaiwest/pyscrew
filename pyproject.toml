@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 [project]
 name = "pyscrew"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Python package for accessing industrial research data from a screw driving system"
 authors = [
     { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }
@@ -14,6 +14,7 @@ dependencies = [
     "tqdm>=4.65.0",      # For progress bars during downloads
     "rarfile>=4.2",      # For extracting the downloaded files
     "pyyaml>=6.0.0",     # For loading scenario info
+    "pydantic>=2.10.6"   # For data validation
 ]
 readme = "README.md"
 license = { text = "MIT" }
