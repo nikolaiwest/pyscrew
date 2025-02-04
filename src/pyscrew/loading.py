@@ -36,6 +36,7 @@ import requests
 import yaml
 from tqdm import tqdm
 
+from pyscrew.utils.config_schema import ConfigSchema
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -803,18 +804,15 @@ class DataLoader:
             raise ExtractionError(f"Failed to extract {archive_path}: {str(e)}")
 
 
-def load_data(
-    scenario_name: str,
-    cache_dir: Optional[Union[str, Path]] = None,
-    force: bool = False,
-) -> Path:
+def load_data(config: ConfigSchema) -> Path:
     """
     Load data for a specific scenario.
 
     Args:
-        scenario_name: Name of the scenario to load
-        cache_dir: Optional directory for caching data. Defaults to ~/.cache/pyscrew
-        force: If True, force new download even if files exist
+        config: Configuration object containing:
+            - scenario_name: Name of the scenario to load
+            - cache_dir: Optional directory for caching data. Defaults to ~/.cache/pyscrew
+            - force_download: If True, force new download even if files exist
 
     Returns:
         Path to the extracted data directory
@@ -825,17 +823,16 @@ def load_data(
         SecurityError: If security violation is detected
         ChecksumError: If checksum verification fails
     """
-    logger.info(f"Loading data for scenario: {scenario_name}")
+    logger.info(f"Loading data for scenario: {config.scenario_name}")
 
     # Create loader instance
-    loader = DataLoader(scenario_name, cache_dir=cache_dir)
+    loader = DataLoader(config.scenario_name, cache_dir=config.cache_dir)
 
     # Extract data (this handles downloading if necessary)
     try:
-        extracted_path = loader.extract_data(force=force)
+        extracted_path = loader.extract_data(force=config.force_download)
         logger.info(f"Successfully loaded data to {extracted_path}")
         return extracted_path
-
     except (DownloadError, ExtractionError, SecurityError, ChecksumError) as e:
         logger.error(f"Failed to load data: {str(e)}")
         raise

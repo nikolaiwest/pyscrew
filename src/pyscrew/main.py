@@ -1,11 +1,10 @@
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, Literal
-from pydantic import BaseModel, Field
+from typing import Any, Dict, Literal, Optional, Union
 
-from pyscrew.utils.logger import get_logger
 from pyscrew.conversion import convert_data
 from pyscrew.loading import DatasetRegistry, load_data
 from pyscrew.processing import process_data
+from pyscrew.utils import ConfigSchema, get_logger
 from pyscrew.validation import (
     validate_converted_data,
     validate_loaded_data,
@@ -71,35 +70,6 @@ class ConversionError(PyScewError):
     pass
 
 
-class ScenarioConfig(BaseModel):
-    """
-    Configuration model for data processing scenarios.
-
-    Attributes:
-        output_type: Format for the output data (numpy, dataframe, or tensor)
-        aggregation: Method to aggregate the data (e.g., mean, median)
-        validation_level: Strictness of validation checks
-        extra_params: Additional parameters for custom processing
-    """
-
-    output_type: Literal["numpy", "dataframe", "tensor"] = Field(
-        default="numpy", description="Output format for the processed data"
-    )
-    aggregation: Optional[str] = Field(
-        default=None, description="Aggregation method to apply to the data"
-    )
-    validation_level: Literal["strict", "lenient"] = Field(
-        default="strict", description="Level of validation to apply"
-    )
-    extra_params: Dict[str, Any] = Field(
-        default_factory=dict, description="Additional processing parameters"
-    )
-
-    class Config:
-        extra = "allow"
-        validate_assignment = True
-
-
 def list_scenarios() -> Dict[str, str]:
     """
     List all available scenarios and their descriptions.
@@ -128,39 +98,70 @@ def list_scenarios() -> Dict[str, str]:
 
 def get_data(
     scenario_name: str,
-    config: Optional[Union[Dict[str, Any], ScenarioConfig]] = None,
-    cache_dir: Optional[Union[str, Path]] = None,
-    force: bool = False,
+    *,
+    # Filtering options
+    scenario_classes: list[str] | None = None,
+    return_measurements: list[str] | None = None,
+    screw_phase: list[int] | None = None,
+    screw_cycles: list[int] | None = None,
+    screw_position: str = "both",
+    # Processing options
+    remove_negative_torque: bool = False,
+    interpolate_missings: bool = False,
+    output_format: str = "numpy",
+    # System options
+    cache_dir: str | Path | None = None,
+    force_download: bool = False,
 ) -> Any:
-    """
-    Get and process data for a specific scenario.
+    """Load and process screw driving data from a specific scenario.
 
-    Parameters:
+    Args:
         scenario_name: Name of the scenario to load
-        config: Configuration controlling processing and output format
-               Can be either a dictionary or ScenarioConfig instance
-               e.g. {'output_type': 'dataframe', 'aggregation': 'mean'}
-        cache_dir: Optional directory for downloaded data
-        force: Force new download even if cached
+        scenario_classes: List of scenario classes to include. None means "all"
+        return_measurements: List of measurements to return. Options are ["torque", "angle", "gradient", "time"].
+            None means "all measurements"
+        screw_phase: List of screw phases to include. Options are [1,2,3,4]. None means "all phases"
+        screw_cycles: List of cycle numbers to include. None means "all cycles"
+        screw_position: Position to analyze. Options are "left", "right", or "both"
+        remove_negative_torque: Whether to remove negative torque values
+        interpolate_missings: Whether to interpolate missing values using mean. Time is recorded at 0.0012s intervals
+        output_format: Format of the output data. Options are "numpy", "dataframe", "tensor", or "list"
+        cache_dir: Directory for caching downloaded data
+        force_download: Force re-download even if cached
 
     Returns:
-        Processed data in specified format (numpy array by default,
-        optionally pandas DataFrame or tensorflow Tensor)
+        Processed data in the requested format
 
-    Raises:
-        DataNotFoundError: If scenario data cannot be found
-        ValidationError: If data fails validation at any stage
-        ProcessingError: If data processing fails
-        ConversionError: If format conversion fails
-        ImportError: If requested output format requires uninstalled dependencies
+    Examples:
+        >>> # Get all data for a scenario
+        >>> data = get_data("thread-degradation")
+
+        >>> # Get specific measurements for certain phases
+        >>> data = get_data(
+        ...     "thread-degradation",
+        ...     return_measurements=["torque", "angle"],
+        ...     screw_phase=[1, 2],
+        ...     output_format="dataframe"
+        ... )
     """
     logger.info(f"Starting data retrieval for scenario: {scenario_name}")
 
-    # Convert input config to ScenarioConfig instance
-    if isinstance(config, dict):
-        config = ScenarioConfig(**config)
-    elif config is None:
-        config = ScenarioConfig()
+    # Convert inputs to config schema
+    config = ConfigSchema(
+        scenario_name=scenario_name,
+        scenario_classes=scenario_classes,
+        measurements=return_measurements,
+        phases=screw_phase,
+        cycles=screw_cycles,
+        position=screw_position,
+        remove_negative_torque=remove_negative_torque,
+        interpolate_missings=interpolate_missings,
+        output_format=output_format,
+        cache_dir=Path(cache_dir) if cache_dir else None,
+        force_download=force_download,
+    )
+
+    config.force_download
 
     try:
         # Step 1: Get raw data path and download if needed
@@ -170,7 +171,7 @@ def get_data(
         # - Extract to cache_dir
         # - Return path to extracted data
         logger.debug("Loading raw data")
-        raw_data_path = load_data(scenario_name, cache_dir=cache_dir, force=force)
+        raw_data_path = load_data(config)
 
         # Step 2: Validate raw data structure
         # validate_loaded_data() from validation.py should:
@@ -179,7 +180,7 @@ def get_data(
         # - Raise ValidationError if checks fail
         logger.debug("Validating raw data")
         try:
-            validate_loaded_data(raw_data_path)
+            validate_loaded_data(raw_data_path, config)
         except Exception as e:
             raise ValidationError(f"Raw data validation failed: {e}")
 
@@ -190,7 +191,7 @@ def get_data(
         # - Return data in memory (not on disk)
         logger.debug(f"Processing data with config: {config.model_dump()}")
         try:
-            data = process_data(raw_data_path, config.model_dump())
+            data = process_data(raw_data_path, config)
         except Exception as e:
             raise ProcessingError(f"Data processing failed: {e}")
 
@@ -201,7 +202,7 @@ def get_data(
         # - Ensure data meets expected constraints
         logger.debug("Validating processed data")
         try:
-            validate_processed_data(data)
+            validate_processed_data(data, config)
         except Exception as e:
             raise ValidationError(f"Processed data validation failed: {e}")
 
@@ -212,12 +213,12 @@ def get_data(
         # - Convert to requested format if needed
         # - Handle all import logic for optional dependencies
         # - Provide clear error messages for missing dependencies
-        logger.debug(f"Converting data to {config.output_type} format")
+        logger.debug(f"Converting data to {config.output_format} format")
         try:
-            data = convert_data(data, config.output_type)
+            data = convert_data(data, config)
         except ImportError as e:
             raise ConversionError(
-                f"Missing dependencies for {config.output_type} format: {e}"
+                f"Missing dependencies for {config.output_format} format: {e}"
             )
         except Exception as e:
             raise ConversionError(f"Data conversion failed: {e}")
@@ -230,27 +231,13 @@ def get_data(
         # - Verify precision/accuracy maintained if critical
         logger.debug("Validating converted data")
         try:
-            validate_converted_data(data, config.output_type)
+            validate_converted_data(data, config)
         except Exception as e:
             raise ValidationError(f"Converted data validation failed: {e}")
 
-        logger.info(f"Successfully retrieved data for scenario: {scenario_name}")
+        logger.info(f"Successfully retrieved data for scenario: {config.scenario_name}")
         return data
 
     except Exception as e:
-        logger.error(f"Error processing scenario {scenario_name}: {e}")
+        logger.error(f"Error processing scenario {config.scenario_name}: {e}")
         raise
-
-
-# Example usage
-if __name__ == "__main__":
-    # Get data as numpy array (default)
-    data = get_data("thread-degradation")
-
-    # Get data as pandas DataFrame with specific processing
-    config = ScenarioConfig(
-        output_type="dataframe",
-        aggregation="mean",
-        extra_params={"custom_param": "value"},
-    )
-    data_df = get_data("thread-degradation", config=config)
