@@ -106,10 +106,24 @@ def list_scenarios() -> Dict[str, str]:
 
     Returns:
         Dictionary mapping scenario names to their descriptions
+
+    Example:
+        >>> scenarios = list_scenarios()
+        >>> print(scenarios)
+        {
+            'thread-degradation': 'Dataset for thread degradation analysis',
+            'other-scenario': 'Description of other scenario'
+        }
     """
-    return {
-        name: config.description for name, config in DatasetRegistry.DATASETS.items()
-    }
+    try:
+        # Get all datasets through the proper getter method
+        datasets = DatasetRegistry.get_datasets()
+
+        # Create description dictionary using the DatasetConfig objects
+        return {name: config.description for name, config in datasets.items()}
+    except Exception as e:
+        logger.error(f"Error listing scenarios: {str(e)}")
+        raise
 
 
 def get_data(

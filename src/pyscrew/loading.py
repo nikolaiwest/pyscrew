@@ -5,7 +5,7 @@ This module provides functionality for downloading and extracting datasets from 
 It handles secure file operations, archive extraction, and dataset management.
 
 Key features:
-    - Secure downloading and extraction of archives (ZIP, TAR, RAR)
+    - Secure downloading and extraction of archives (TAR [prefered], ZIP, RAR)
     - Checksum verification for data integrity
     - Caching mechanism to prevent redundant downloads
     - Protection against path traversal attacks
@@ -333,38 +333,77 @@ class DataLoader:
 
     def extract_data(self, force: bool = False) -> Path:
         """
-        Extract the downloaded archive.
+        Extract the downloaded archive to the cache directory.
+
+        This method ensures a consistent extraction structure:
+        ~/.cache/pyscrew/
+        ├── archives/     # Stores downloaded compressed files
+        └── extracted/    # Root extraction directory
+            └── scenario_name/  # e.g., S01_thread-degradation/
+                └── json/  # Contains all JSON data files
+
+        The method:
+        1. Downloads the archive if necessary (via get_data)
+        2. Creates the extraction directory structure if needed
+        3. Extracts the archive contents to the cache directory
+        4. Verifies the expected json/ directory exists
+        5. Returns the path to the json/ directory
 
         Args:
-            force: If True, force re-extraction even if files exist
+            force: If True, force re-extraction even if files exist,
+                ignoring and overwriting any existing data
 
         Returns:
-            Path to the extracted data directory
+            Path to the extracted json directory containing the data files
+            (e.g., ~/.cache/pyscrew/extracted/S01_thread-degradation/json/)
+
+        Raises:
+            DownloadError: If archive download fails
+            ExtractionError: If extraction fails or json/ directory is missing
+            SecurityError: If security checks fail during extraction
+            ChecksumError: If archive verification fails
         """
         logger.info(f"Extracting data with force={force}")
         archive_path = self.get_data(force=force)
         archive_format = self._get_archive_format()
-        extract_to = self.data_cache / self.file_name.rsplit(".", 1)[0]
 
-        if not force and extract_to.exists() and any(extract_to.iterdir()):
-            logger.info(f"Using existing extracted data at {extract_to}")
-            return extract_to
+        # Get scenario name without extension
+        scenario_name = self.file_name.rsplit(".", 1)[0]
+
+        # Create extraction path at the correct level
+        extract_base = self.data_cache
+        json_path = self.data_cache / scenario_name / "json"
+
+        # Check if json directory already exists and has content
+        if not force and json_path.exists() and any(json_path.iterdir()):
+            logger.info(f"Using existing extracted data at {json_path}")
+            return json_path
 
         try:
             # Clean up existing directory if it exists
-            if extract_to.exists():
-                self._clean_directory(extract_to)
+            if self.data_cache.exists():
+                self._clean_directory(self.data_cache)
 
-            logger.info(f"Extracting {archive_path} to {extract_to}")
-            self._extract_archive(archive_path, archive_format, extract_to)
+            # Create base directory
+            self.data_cache.mkdir(parents=True, exist_ok=True)
+
+            logger.info(f"Extracting {archive_path} to {self.data_cache}")
+            self._extract_archive(archive_path, archive_format, self.data_cache)
+
+            # Verify json directory exists after extraction
+            if not json_path.exists():
+                raise ExtractionError(
+                    f"Expected json directory not found in extracted data"
+                )
+
             logger.info(f"Extraction completed successfully")
-            return extract_to
+            return json_path
 
         except Exception as e:
             logger.error(f"Extraction failed: {str(e)}")
-            if extract_to.exists():
+            if self.data_cache.exists():
                 # Clean up on failure
-                self._clean_directory(extract_to)
+                self._clean_directory(self.data_cache)
             raise
 
     def _create_secure_directory(self, path: Path, mode: int = 0o750) -> None:
@@ -764,5 +803,39 @@ class DataLoader:
             raise ExtractionError(f"Failed to extract {archive_path}: {str(e)}")
 
 
-def load_data():
-    pass
+def load_data(
+    scenario_name: str,
+    cache_dir: Optional[Union[str, Path]] = None,
+    force: bool = False,
+) -> Path:
+    """
+    Load data for a specific scenario.
+
+    Args:
+        scenario_name: Name of the scenario to load
+        cache_dir: Optional directory for caching data. Defaults to ~/.cache/pyscrew
+        force: If True, force new download even if files exist
+
+    Returns:
+        Path to the extracted data directory
+
+    Raises:
+        DownloadError: If download fails
+        ExtractionError: If extraction fails
+        SecurityError: If security violation is detected
+        ChecksumError: If checksum verification fails
+    """
+    logger.info(f"Loading data for scenario: {scenario_name}")
+
+    # Create loader instance
+    loader = DataLoader(scenario_name, cache_dir=cache_dir)
+
+    # Extract data (this handles downloading if necessary)
+    try:
+        extracted_path = loader.extract_data(force=force)
+        logger.info(f"Successfully loaded data to {extracted_path}")
+        return extracted_path
+
+    except (DownloadError, ExtractionError, SecurityError, ChecksumError) as e:
+        logger.error(f"Failed to load data: {str(e)}")
+        raise
