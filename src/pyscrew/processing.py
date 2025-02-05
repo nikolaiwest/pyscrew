@@ -59,6 +59,33 @@ class LoggingTransformer(BaseEstimator, TransformerMixin):
         return dataset
 
 
+class InitialTransformer(BaseEstimator, TransformerMixin):
+    """Organizes raw ScrewDataset values into processed_data structure."""
+
+    def fit(self, dataset: ScrewDataset, y=None):
+        return self
+
+    def transform(self, dataset: ScrewDataset) -> ScrewDataset:
+        # Initialize processed_data dict
+        dataset.processed_data = {
+            MEASUREMENTS.TORQUE: [],  # Will contain list per run
+            MEASUREMENTS.ANGLE: [],
+            MEASUREMENTS.GRADIENT: [],
+            MEASUREMENTS.TIME: [],
+        }
+
+        # For each run
+        for run in dataset.screw_runs:
+            # For each measurement type, collect values from all steps
+            for measurement in dataset.processed_data:
+                run_values = []
+                for step in run.steps:
+                    run_values.append(step.get_values(measurement))
+                dataset.processed_data[measurement].append(run_values)
+
+        return dataset
+
+
 def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
     """Creates the processing pipeline based on configuration.
 
@@ -69,7 +96,14 @@ def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
         Configured sklearn Pipeline
     """
     steps = []
+
+    # Add input and output logging transformers
     steps.append(("input_logger", LoggingTransformer("Input Logger")))
+
+    # Add initial transformer to organize data
+    steps.append(("initial_transformer", InitialTransformer()))
+
+    # Add final logging transformer
     steps.append(("output_logger", LoggingTransformer("Output Logger")))
     return Pipeline(steps)
 

@@ -5,6 +5,7 @@ from pyscrew.conversion import convert_data
 from pyscrew.loading import DatasetRegistry, load_data
 from pyscrew.processing import process_data
 from pyscrew.utils import ConfigSchema, get_logger
+from pyscrew.utils.data_model import ScrewDataset
 from pyscrew.validation import (
     validate_converted_data,
     validate_loaded_data,
@@ -112,7 +113,7 @@ def get_data(
     # System options
     cache_dir: str | Path | None = None,
     force_download: bool = False,
-) -> Any:
+) -> ScrewDataset:
     """Load and process screw driving data from a specific scenario.
 
     Args:

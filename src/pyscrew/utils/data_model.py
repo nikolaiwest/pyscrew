@@ -150,6 +150,7 @@ class ScrewDataset:
         self.data_path = Path(data_path)
         self.file_names = file_names
         self.screw_runs: List[ScrewRun] = []
+        self.processed_data = []  # Pipeline transformer will populate this
         self._load_runs()
 
     def get_values(self, measurement_name: str) -> List[List[float]]:

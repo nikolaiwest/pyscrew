@@ -8,4 +8,4 @@ def convert_data(data: List[list], config):
     # Convert to np array
 
     # Convert to tf tensor
-    pass
+    return data
