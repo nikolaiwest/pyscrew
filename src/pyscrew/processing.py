@@ -122,15 +122,15 @@ def process_data(data_path: Union[str, Path], config: Dict[str, Any]) -> ScrewDa
         ProcessingError: If processing fails
     """
     try:
-        # Create dataset from files
-        file_names = [f.name for f in Path(data_path).glob("*.json")]
-        dataset = ScrewDataset(data_path, file_names)
+        # Create dataset using the from_config method
+        dataset = ScrewDataset.from_config(data_path, config)
 
         # Create and fit pipeline
         pipeline = create_processing_pipeline(config)
         processed_dataset = pipeline.fit_transform(dataset)
 
-        return processed_dataset
+        # Return processed data
+        return processed_dataset.processed_data
 
     except Exception as e:
         logger.error(f"Processing failed: {str(e)}")

@@ -105,7 +105,7 @@ def get_data(
     return_measurements: list[str] | None = None,
     screw_phase: list[int] | None = None,
     screw_cycles: list[int] | None = None,
-    screw_position: str = "both",
+    screw_positions: str = "both",
     # Processing options
     remove_negative_torque: bool = False,
     interpolate_missings: bool = False,
@@ -152,9 +152,9 @@ def get_data(
         scenario_name=scenario_name,
         scenario_classes=scenario_classes,
         measurements=return_measurements,
-        phases=screw_phase,
-        cycles=screw_cycles,
-        position=screw_position,
+        screw_phase=screw_phase,
+        screw_cycles=screw_cycles,
+        screw_positions=screw_positions,
         remove_negative_torque=remove_negative_torque,
         interpolate_missings=interpolate_missings,
         output_format=output_format,
@@ -172,7 +172,7 @@ def get_data(
         # - Extract to cache_dir
         # - Return path to extracted data
         logger.debug("Loading raw data")
-        raw_data_path = load_data(config)
+        data_path = load_data(config)
 
         # Step 2: Validate raw data structure
         # validate_loaded_data() from validation.py should:
@@ -181,7 +181,7 @@ def get_data(
         # - Raise ValidationError if checks fail
         logger.debug("Validating raw data")
         try:
-            validate_loaded_data(raw_data_path, config)
+            validate_loaded_data(data_path, config)
         except Exception as e:
             raise ValidationError(f"Raw data validation failed: {e}")
 
@@ -192,7 +192,7 @@ def get_data(
         # - Return data in memory (not on disk)
         logger.debug(f"Processing data with config: {config.model_dump()}")
         try:
-            data = process_data(raw_data_path, config)
+            data = process_data(data_path, config)
         except Exception as e:
             raise ProcessingError(f"Data processing failed: {e}")
 

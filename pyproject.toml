@@ -10,12 +10,13 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "requests>=2.28.0",   # For downloading the respective files via Zenodo
-    "tqdm>=4.65.0",       # For progress bars during downloads
-    "rarfile>=4.2",       # For extracting the downloaded files
-    "pyyaml>=6.0.0",      # For loading scenario info
-    "pydantic>=2.10.6",   # For data validation
-    "scikit_learn>=1.6.1" # For data preprocessing
+    "requests>=2.28.0",    # For downloading the respective files via Zenodo
+    "tqdm>=4.65.0",        # For progress bars during downloads
+    "rarfile>=4.2",        # For extracting the downloaded files
+    "pyyaml>=6.0.0",       # For loading scenario info
+    "pydantic>=2.10.6",    # For data validation
+    "scikit_learn>=1.6.1", # For data preprocessing
+    "pandas>=2.2.3",       # For data handling
 ]
 readme = "README.md"
 license = { text = "MIT" }

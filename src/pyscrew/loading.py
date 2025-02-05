@@ -372,13 +372,13 @@ class DataLoader:
         scenario_name = self.file_name.rsplit(".", 1)[0]
 
         # Create extraction path at the correct level
-        extract_base = self.data_cache
-        json_path = self.data_cache / scenario_name / "json"
+        data_path = self.data_cache / scenario_name
+        json_path = data_path / "json"
 
         # Check if json directory already exists and has content
         if not force and json_path.exists() and any(json_path.iterdir()):
             logger.info(f"Using existing extracted data at {json_path}")
-            return json_path
+            return data_path
 
         try:
             # Clean up existing directory if it exists
@@ -398,7 +398,7 @@ class DataLoader:
                 )
 
             logger.info(f"Extraction completed successfully")
-            return json_path
+            return data_path
 
         except Exception as e:
             logger.error(f"Extraction failed: {str(e)}")
@@ -830,9 +830,9 @@ def load_data(config: ConfigSchema) -> Path:
 
     # Extract data (this handles downloading if necessary)
     try:
-        extracted_path = loader.extract_data(force=config.force_download)
-        logger.info(f"Successfully loaded data to {extracted_path}")
-        return extracted_path
+        data_path = loader.extract_data(force=config.force_download)
+        logger.info(f"Successfully loaded data to {data_path}")
+        return data_path
     except (DownloadError, ExtractionError, SecurityError, ChecksumError) as e:
         logger.error(f"Failed to load data: {str(e)}")
         raise

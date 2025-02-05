@@ -33,17 +33,19 @@ class ConfigSchema(BaseModel):
     scenario_id: Optional[int] = Field(None, exclude=True)
 
     # Filtering settings
-    scenario_classes: Optional[List[str]] = Field(
+    scenario_classes: Optional[List[int]] = Field(
         None, description="List of scenario classes to include"
     )
     measurements: Optional[List[str]] = Field(
         None, description=f"Measurements to return. Options: {MEASUREMENTS}"
     )
-    phases: Optional[List[int]] = Field(
+    screw_phases: Optional[List[int]] = Field(
         None, ge=1, le=4, description="Screw phases to include (1-4)"
     )
-    cycles: Optional[List[int]] = Field(None, description="Specific cycles to include")
-    position: str = Field(
+    screw_cycles: Optional[List[int]] = Field(
+        None, description="Specific cycles to include"
+    )
+    screw_positions: str = Field(
         "both", description=f"Position to analyze. Options: {POSITIONS}"
     )
 
@@ -101,7 +103,7 @@ class ConfigSchema(BaseModel):
             )
         return v
 
-    @field_validator("position")
+    @field_validator("screw_positions")
     def validate_position(cls, v: str) -> str:
         """Validate position value."""
         if v not in POSITIONS:
