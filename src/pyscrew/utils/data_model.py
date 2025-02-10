@@ -76,10 +76,13 @@ class Measurements:
         They are not used in the processing pipline and not returned as measurements.
     """
 
+    # Names as defined by the screw driving control
     TIME: str = "time values"
     TORQUE: str = "torque values"
     ANGLE: str = "angle values"
     GRADIENT: str = "gradient values"
+    # Custom name for the step indicators
+    STEP: str = "step values"
 
 
 @dataclass
@@ -411,7 +414,7 @@ class ScrewDataset:
         self.screw_positions = screw_positions
 
         # Will be populated by pipeline transformer
-        self.processed_data: List[Any] = []
+        self.processed_data: Dict[str, List[List[float]]] = {}
 
         # Load data
         self.labels_df = self._load_labels()

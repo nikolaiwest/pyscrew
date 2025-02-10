@@ -60,28 +60,61 @@ class LoggingTransformer(BaseEstimator, TransformerMixin):
 
 
 class InitialTransformer(BaseEstimator, TransformerMixin):
-    """Organizes raw ScrewDataset values into processed_data structure."""
+    """Organizes raw ScrewDataset values into processed_data structure.
+
+    Args:
+        include_steps: If True, adds step indicators that map each measurement
+                       to its originating step number (0,1,2,3)
+    """
+
+    def __init__(self, include_steps: bool = True):
+        self.include_steps = include_steps
 
     def fit(self, dataset: ScrewDataset, y=None):
+        """Nothing to fit, just implements interface."""
         return self
 
     def transform(self, dataset: ScrewDataset) -> ScrewDataset:
-        # Initialize processed_data dict
-        dataset.processed_data = {
-            MEASUREMENTS.TORQUE: [],  # Will contain list per run
-            MEASUREMENTS.ANGLE: [],
-            MEASUREMENTS.GRADIENT: [],
-            MEASUREMENTS.TIME: [],
-        }
+        """
+        Transform raw data into organized measurement collections.
 
-        # For each run
-        for run in dataset.screw_runs:
-            # For each measurement type, collect values from all steps
-            for measurement in dataset.processed_data:
-                run_values = []
-                for step in run.steps:
-                    run_values.append(step.get_values(measurement))
-                dataset.processed_data[measurement].append(run_values)
+        Creates a dictionary with measurement arrays and optionally step indicators.
+        """
+        # Initialize all measurement lists
+        measurements = [
+            MEASUREMENTS.TORQUE,
+            MEASUREMENTS.ANGLE,
+            MEASUREMENTS.GRADIENT,
+            MEASUREMENTS.TIME,
+        ]
+        dataset.processed_data = {m: [] for m in measurements}
+
+        if self.include_steps:
+            dataset.processed_data[MEASUREMENTS.STEP] = []
+
+        # Pre-allocate lists for each run
+        for _ in dataset.screw_runs:
+            for measurement in measurements:
+                dataset.processed_data[measurement].append([])
+            if self.include_steps:
+                dataset.processed_data[MEASUREMENTS.STEP].append([])
+
+        # Single pass through runs and steps
+        for run_idx, run in enumerate(dataset.screw_runs):
+            for step_idx, step in enumerate(run.steps):
+                # Get length once since we'll use it multiple times
+                step_length = len(step.get_values(MEASUREMENTS.TIME))
+
+                # Process all measurements for this step
+                for measurement in measurements:
+                    values = step.get_values(measurement)
+                    dataset.processed_data[measurement][run_idx].extend(values)
+
+                # Add step indicators if requested
+                if self.include_steps:
+                    dataset.processed_data[MEASUREMENTS.STEP][run_idx].extend(
+                        [step_idx] * step_length
+                    )
 
         return dataset
 
