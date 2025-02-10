@@ -1,9 +1,14 @@
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 
+from pyscrew.transformers import (
+    InterpolateMissingsTransformer,
+    PipelineLoggingTransformer,
+    RemoveDuplicatesTransformer,
+    UnpackStepsTransformer,
+)
 from pyscrew.utils.data_model import Measurements, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
@@ -18,126 +23,59 @@ class ProcessingError(Exception):
     pass
 
 
-class LoggingTransformer(BaseEstimator, TransformerMixin):
-    """Simple transformer that logs data structure and passes through data unchanged."""
-
-    def __init__(self, name: str = "Logger"):
-        self.name = name
-
-    def fit(self, dataset: ScrewDataset, y=None) -> "LoggingTransformer":
-        """Log dataset structure during fit.
-
-        Args:
-            dataset: Input dataset to analyze
-            y: Ignored (included for sklearn compatibility)
-
-        Returns:
-            self
-        """
-        logger.info(f"{self.name} - Fit: Dataset contains {len(dataset)} runs")
-
-        for measurement in [
-            MEASUREMENTS.TIME,
-            MEASUREMENTS.TORQUE,
-            MEASUREMENTS.ANGLE,
-            MEASUREMENTS.GRADIENT,
-        ]:
-            values = dataset.get_values(measurement)
-            logger.info(f"{measurement}: {len(values)} runs")
-        return self
-
-    def transform(self, dataset: ScrewDataset) -> ScrewDataset:
-        """Log dataset structure during transform and return unchanged.
-
-        Args:
-            dataset: Input dataset to process
-
-        Returns:
-            Unchanged dataset
-        """
-        logger.info(f"{self.name} - Transform: Processing {len(dataset)} runs")
-        return dataset
-
-
-class InitialTransformer(BaseEstimator, TransformerMixin):
-    """Organizes raw ScrewDataset values into processed_data structure.
-
-    Args:
-        include_steps: If True, adds step indicators that map each measurement
-                       to its originating step number (0,1,2,3)
-    """
-
-    def __init__(self, include_steps: bool = True):
-        self.include_steps = include_steps
-
-    def fit(self, dataset: ScrewDataset, y=None):
-        """Nothing to fit, just implements interface."""
-        return self
-
-    def transform(self, dataset: ScrewDataset) -> ScrewDataset:
-        """
-        Transform raw data into organized measurement collections.
-
-        Creates a dictionary with measurement arrays and optionally step indicators.
-        """
-        # Initialize all measurement lists
-        measurements = [
-            MEASUREMENTS.TORQUE,
-            MEASUREMENTS.ANGLE,
-            MEASUREMENTS.GRADIENT,
-            MEASUREMENTS.TIME,
-        ]
-        dataset.processed_data = {m: [] for m in measurements}
-
-        if self.include_steps:
-            dataset.processed_data[MEASUREMENTS.STEP] = []
-
-        # Pre-allocate lists for each run
-        for _ in dataset.screw_runs:
-            for measurement in measurements:
-                dataset.processed_data[measurement].append([])
-            if self.include_steps:
-                dataset.processed_data[MEASUREMENTS.STEP].append([])
-
-        # Single pass through runs and steps
-        for run_idx, run in enumerate(dataset.screw_runs):
-            for step_idx, step in enumerate(run.steps):
-                # Get length once since we'll use it multiple times
-                step_length = len(step.get_values(MEASUREMENTS.TIME))
-
-                # Process all measurements for this step
-                for measurement in measurements:
-                    values = step.get_values(measurement)
-                    dataset.processed_data[measurement][run_idx].extend(values)
-
-                # Add step indicators if requested
-                if self.include_steps:
-                    dataset.processed_data[MEASUREMENTS.STEP][run_idx].extend(
-                        [step_idx] * step_length
-                    )
-
-        return dataset
-
-
 def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
-    """Creates the processing pipeline based on configuration.
+    """Creates the data processing pipeline based on configuration.
+
+    The pipeline processes screw driving data through these steps:
+    1. Input state logging
+    2. Unpacking raw step data into measurements
+    3. Removing duplicate time points (if enabled)
+    4. Interpolating to equidistant points (if enabled)
+    5. Output state logging
 
     Args:
-        config: Dictionary containing pipeline configuration
+        config: Pipeline configuration including:
+            - handle_duplicates: Whether to handle duplicate time points
+            - duplicate_strategy: Strategy for handling duplicates
+            - interpolate_missings: Whether to apply interpolation
+            - target_interval: Time interval for interpolation
 
     Returns:
-        Configured sklearn Pipeline
+        Configured scikit-learn Pipeline
     """
     steps = []
 
-    # Add input and output logging transformers
-    steps.append(("input_logger", LoggingTransformer("Input Logger")))
+    # 1. Add input logging
+    steps.append(("input_logger", PipelineLoggingTransformer("Input")))
 
-    # Add initial transformer to organize data
-    steps.append(("initial_transformer", InitialTransformer()))
+    # 2. Add step unpacking
+    steps.append(("unpack_steps", UnpackStepsTransformer()))
 
-    # Add final logging transformer
-    steps.append(("output_logger", LoggingTransformer("Output Logger")))
+    # 3. Add duplicate handler if enabled
+    if True:  # TODO: Implement with config parameter
+        duplicate_strategy = "mean"
+        logger.info(f"Adding duplicate handler with {duplicate_strategy} strategy")
+        steps.append(
+            (
+                "remove_duplicates",
+                RemoveDuplicatesTransformer(strategy=duplicate_strategy),
+            )
+        )
+
+    # 4. Add interpolation for equidistant time points
+    if True:  # TODO: Only default to True for backward compatibility
+        target_interval = 0.0012
+        logger.info(f"Adding interpolation with interval {target_interval}")
+        steps.append(
+            (
+                "interpolate_missings",
+                InterpolateMissingsTransformer(target_interval=target_interval),
+            )
+        )
+
+    # 5. Add output logging
+    steps.append(("output_logger", PipelineLoggingTransformer("Output")))
+
     return Pipeline(steps)
 
 
@@ -146,7 +84,7 @@ def process_data(data_path: Union[str, Path], config: Dict[str, Any]) -> ScrewDa
 
     Args:
         data_path: Path to directory containing JSON files
-        config: Dictionary containing processing configuration
+        config: Processing configuration dictionary
 
     Returns:
         Processed dataset
