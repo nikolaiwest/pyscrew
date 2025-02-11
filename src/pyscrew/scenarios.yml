@@ -4,9 +4,20 @@ datasets:
     file_name: "S01_thread-degradation.tar"
     md5_checksum: "7099fefee502275f13dbf3bc88d571ed"
     description: "Thread degradation analysis dataset"
-  
+    class_counts:
+      0: 5000 # Baseline
+
   surface-friction:
     record_id: "14769379"
     file_name: "S02_surface-friction.tar"
     md5_checksum: "e56193d8a5fc73438f3a3d74df62fdfb"
     description: "Surface friction analysis dataset"
+    class_counts:
+      0: 2500 # Baseline 
+      1: 2500 # Up to fifty
+      2: 1250 # With water
+      3: 1250 # With lubricant
+      4: 1250 # Sanded 40
+      5: 1250 # Sanded 400
+      6: 1250 # With adhesive
+      7: 1250 # Scratched
