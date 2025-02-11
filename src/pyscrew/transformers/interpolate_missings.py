@@ -4,7 +4,7 @@ Transformer for creating equidistant time series through interpolation.
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from pyscrew.utils.data_model import MEASUREMENTS, ScrewDataset
+from pyscrew.utils.data_model import ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
