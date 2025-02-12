@@ -1,4 +1,4 @@
-# Screw Driving Dataset - S02_surface-friction
+# Screw Driving Dataset - s02_surface-friction
 
 <!-- Dataset Information -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

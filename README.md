@@ -23,13 +23,16 @@ pip install pyscrew
 ```python 
 import pyscrew
 
-# List available datasets
+# List available scenarios with their descriptions
 scenarios = pyscrew.list_scenarios()
-print("Available datasets:", scenarios)
+print("Available scenarios:", scenarios)
 
-# Download and extract a specific dataset
-data_path = pyscrew.get_data("thread-degradation")
-print(f"Data extracted to: {data_path}")
+# Load and process data from a specific scenario
+data = pyscrew.get_data("surface-friction")
+
+# Access the data
+print("Available measurements:", data.keys())
+print("Number of torque measurements:", len(data["torque values"]))
 ```
 
 ## Available Scenarios
@@ -38,9 +41,9 @@ Our datasets examine various aspects of screw driving operations in industrial s
 
 | ID | Name | Description | Samples | Classes | Documentation |
 |----|------|-------------|---------|---------|---------------|
-| S01 | Thread Degradation | Examines thread degradation in plastic materials through repeated fastening operations | 5,000 | 1 | [Details](docs/scenarios/s01_thread-degradation.md) |
-| S02 | Surface Friction | Investigates the impact of different surface conditions (water, lubricant, adhesive, etc.) on screw driving operations | 12,500 | 8 | [Details](docs/scenarios/s02_surface-friction.md) |
-| S03 | Error Collection 1 | Current place holder doc for the upcoming scenario 3 with multiple error classes | TBD | TBD | [Details](docs/scenarios/s03_error-collection-1.md) |
+| s01 | Thread Degradation | Examines thread degradation in plastic materials through repeated fastening operations | 5,000 | 1 | [Details](docs/scenarios/s01_thread-degradation.md) |
+| s02 | Surface Friction | Investigates the impact of different surface conditions (water, lubricant, adhesive, etc.) on screw driving operations | 12,500 | 8 | [Details](docs/scenarios/s02_surface-friction.md) |
+| s03 | Error Collection 1 | Current place holder doc for the upcoming scenario 3 with multiple error classes | TBD | TBD | [Details](docs/scenarios/s03_error-collection-1.md) |
 
 ## Package structure
 
@@ -93,9 +96,9 @@ Downloaded data is stored in:
 ~/.cache/pyscrew/
 ├── archives/     # Compressed dataset archives
 └── extracted/    # Extracted dataset files
-    ├── S01_thread-degradation/
-    ├── S02_surface-friction/
-    ├── S03_error-collection-1/
+    ├── s01_thread-degradation/
+    ├── s02_surface-friction/
+    ├── s03_error-collection-1/
     └── ...
 ```
 

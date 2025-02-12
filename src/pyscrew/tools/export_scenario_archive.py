@@ -138,8 +138,9 @@ def create_scenario_archive(
         if archive_format == ArchiveFormat.TAR:
             with tarfile.open(target_path, "w") as archive:
                 archive.add(json_path, arcname="json")
-                archive.add(csv_path, arcname=f"{scenario_name}.csv")
-                archive.add(readme_path, arcname=f"{scenario_name}.md")
+                # Add CSV and README with standardized names
+                archive.add(csv_path, arcname="labels.csv")
+                archive.add(readme_path, arcname="README.md")
 
         elif archive_format == ArchiveFormat.ZIP:
             with zipfile.ZipFile(target_path, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -148,9 +149,9 @@ def create_scenario_archive(
                     if file_path.is_file():
                         arcname = "json" / file_path.relative_to(json_path)
                         archive.write(file_path, arcname)
-                # Add CSV and README
-                archive.write(csv_path, f"{scenario_name}.csv")
-                archive.write(readme_path, f"{scenario_name}.md")
+                # Add CSV and README with standardized names
+                archive.write(csv_path, "labels.csv")
+                archive.write(readme_path, "README.md")
 
         logger.info(f"Archive created successfully at {target_path}")
 

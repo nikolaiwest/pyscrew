@@ -1,7 +1,7 @@
 import pytest
 
 import pyscrew as ps
-from pyscrew.utils.data_model import Measurements
+from pyscrew.utils.data_model import JsonFields
 
 
 @pytest.mark.integration
@@ -11,7 +11,6 @@ class TestMainAPI:
     def test_list_scenarios(self):
         """Test that available scenarios can be listed correctly."""
         scenarios = ps.list_scenarios()
-
         # Verify we get a dictionary
         assert isinstance(
             scenarios, dict
@@ -34,12 +33,13 @@ class TestMainAPI:
         )
 
         # Verify we get data for all expected measurements
-        measurements = Measurements()
+        measurements = JsonFields.Measurements()
         expected_measurements = {
             measurements.TIME,
             measurements.TORQUE,
             measurements.ANGLE,
             measurements.GRADIENT,
+            measurements.STEP,
         }
 
         assert isinstance(data, dict), "Data should be returned as a dictionary"
@@ -67,8 +67,21 @@ class TestMainAPI:
         """Test basic data retrieval for each scenario without filters."""
         data = ps.get_data(scenario_name, cache_dir=temp_cache_dir)
 
+        # Get expected measurement fields
+        measurements = JsonFields.Measurements()
+        expected_measurements = {
+            measurements.TIME,
+            measurements.TORQUE,
+            measurements.ANGLE,
+            measurements.GRADIENT,
+            measurements.STEP,
+        }
+
         # Verify basic data structure
         assert isinstance(data, dict), "Data should be returned as a dictionary"
+        assert (
+            set(data.keys()) == expected_measurements
+        ), "Missing expected measurements"
         assert all(
             isinstance(data[k], list) for k in data
         ), "All values should be lists"

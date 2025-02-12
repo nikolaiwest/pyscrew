@@ -54,7 +54,7 @@ y_values = data["class values"]
 The dataset consists of three primary components:
 
 1. `/json` directory: Contains [NUMBER_OF_SAMPLES] individual JSON files of unprocessed screw driving operations, each recording the complete measurement data of a single screwing process.
-2. `labels.csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
+2. `[labels].csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
 3. `README.md`: This readme-file providing stand-alone context for the dataset.
 
 ### Labels File Structure

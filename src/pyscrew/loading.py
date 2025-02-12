@@ -5,7 +5,7 @@ This module provides functionality for downloading and extracting datasets from 
 It handles secure file operations, archive extraction, and dataset management.
 
 Key features:
-    - Secure downloading and extraction of archives (TAR [prefered], ZIP, RAR)
+    - Secure downloading and extraction of archives (TAR or ZIP)
     - Checksum verification for data integrity
     - Caching mechanism to prevent redundant downloads
     - Protection against path traversal attacks
@@ -31,7 +31,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-import rarfile
 import requests
 import yaml
 from tqdm import tqdm
@@ -113,6 +112,7 @@ class DatasetConfig:
     file_name: str
     md5_checksum: str
     description: str
+    class_counts: dict
 
 
 class ArchiveFormat(Enum):
@@ -125,7 +125,6 @@ class ArchiveFormat(Enum):
 
     TAR = ".tar"
     ZIP = ".zip"
-    RAR = ".rar"
 
 
 class DatasetRegistry:
@@ -143,6 +142,7 @@ class DatasetRegistry:
         file_name: "data.tar"
         md5_checksum: "abc123..."
         description: "Dataset description"
+        class_counts: {0: 2500, 1: 2500, ...}
     ```
     """
 
@@ -340,23 +340,16 @@ class DataLoader:
         ~/.cache/pyscrew/
         ├── archives/     # Stores downloaded compressed files
         └── extracted/    # Root extraction directory
-            └── scenario_name/  # e.g., S01_thread-degradation/
+            └── scenario_name/  # e.g., s01_thread-degradation/
                 └── json/  # Contains all JSON data files
-
-        The method:
-        1. Downloads the archive if necessary (via get_data)
-        2. Creates the extraction directory structure if needed
-        3. Extracts the archive contents to the cache directory
-        4. Verifies the expected json/ directory exists
-        5. Returns the path to the json/ directory
 
         Args:
             force: If True, force re-extraction even if files exist,
                 ignoring and overwriting any existing data
 
         Returns:
-            Path to the extracted json directory containing the data files
-            (e.g., ~/.cache/pyscrew/extracted/S01_thread-degradation/json/)
+            Path to the extracted data directory
+            (e.g., ~/.cache/pyscrew/extracted/s01_thread-degradation/)
 
         Raises:
             DownloadError: If archive download fails
@@ -381,15 +374,15 @@ class DataLoader:
             return data_path
 
         try:
-            # Clean up existing directory if it exists
-            if self.data_cache.exists():
-                self._clean_directory(self.data_cache)
+            # Clean up existing scenario directory if it exists
+            if data_path.exists():
+                self._clean_directory(data_path)
 
-            # Create base directory
-            self.data_cache.mkdir(parents=True, exist_ok=True)
+            # Create scenario directory
+            data_path.mkdir(parents=True, exist_ok=True)
 
-            logger.info(f"Extracting {archive_path} to {self.data_cache}")
-            self._extract_archive(archive_path, archive_format, self.data_cache)
+            logger.info(f"Extracting {archive_path} to {data_path}")
+            self._extract_archive(archive_path, archive_format, data_path)
 
             # Verify json directory exists after extraction
             if not json_path.exists():
@@ -402,9 +395,9 @@ class DataLoader:
 
         except Exception as e:
             logger.error(f"Extraction failed: {str(e)}")
-            if self.data_cache.exists():
+            if data_path.exists():
                 # Clean up on failure
-                self._clean_directory(self.data_cache)
+                self._clean_directory(data_path)
             raise
 
     def _create_secure_directory(self, path: Path, mode: int = 0o750) -> None:
@@ -581,7 +574,6 @@ class DataLoader:
         This method performs format-specific integrity checks:
         - TAR: Streams through all members to verify structure (prefered format)
         - ZIP: Uses built-in testzip() to check CRC32 checksums
-        - RAR: Uses rarfile's testrar() to verify integrity
 
         Memory-efficient approach:
         - Streams through archive contents instead of loading entirely
@@ -590,7 +582,7 @@ class DataLoader:
 
         Args:
             archive_path: Path to the archive file
-            archive_format: Format of the archive (TAR/ZIP/RAR)
+            archive_format: Format of the archive (TAR/ZIP)
 
         Returns:
             True if verification succeeds
@@ -610,10 +602,6 @@ class DataLoader:
                     # testzip() returns None if all CRC32 checksums match
                     if zip.testzip() is not None:
                         raise ExtractionError("ZIP archive is corrupted")
-            elif archive_format == ArchiveFormat.RAR:
-                with rarfile.RarFile(archive_path, "r") as rar:
-                    # testrar() verifies CRC32 checksums and archive structure
-                    rar.testrar()
             return True
         except Exception as e:
             logger.error(f"Archive verification failed: {str(e)}")
@@ -735,50 +723,6 @@ class DataLoader:
             # All paths validated, proceed with extraction
             zip.extractall(path=extract_to)
 
-    def _extract_rar(self, archive_path: Path, extract_to: Path) -> None:
-        """
-        Extract a RAR archive securely with comprehensive safety checks.
-
-        RAR-specific considerations:
-        1. Format characteristics
-            - Uses own compression algorithm
-            - Limited metadata compared to TAR
-            - No built-in permission handling
-            - Cross-platform path encodings
-        2. Dependencies
-            - Requires external 'unrar' tool on system
-            - May fail if unrar is not installed
-
-        Security measures:
-        1. Path validation
-            - Prevents directory traversal
-            - Handles RAR-specific path encodings
-            - Blocks absolute paths
-            - Cross-platform path normalization
-        2. Extraction safety
-            - Pre-validates all paths before extraction
-            - Atomic operation (all or nothing)
-            - Maintains secure permissions
-
-        Args:
-            archive_path: Path to the RAR archive
-            extract_to: Destination directory for extracted files
-
-        Raises:
-            SecurityError:
-            ExtractionError:
-        """
-        with rarfile.RarFile(archive_path, "r") as rar:
-            # First pass: validate all paths before extraction
-            # This ensures atomic operation - either all files are safe or none extract
-            for member in rar.namelist():
-                if not self._check_path_traversal(member):
-                    raise SecurityError(f"Path traversal attempt detected: {member}")
-
-            # All paths validated, proceed with extraction
-            # Note: RAR doesn't support permission modifications like TAR
-            rar.extractall(path=extract_to)
-
     def _extract_archive(
         self, archive_path: Path, archive_format: ArchiveFormat, extract_to: Path
     ) -> None:
@@ -794,8 +738,6 @@ class DataLoader:
                 self._extract_tar(archive_path, extract_to)
             elif archive_format == ArchiveFormat.ZIP:
                 self._extract_zip(archive_path, extract_to)
-            elif archive_format == ArchiveFormat.RAR:
-                self._extract_rar(archive_path, extract_to)
             else:
                 raise ValueError(f"Unsupported archive format: {archive_format}")
         except (SecurityError, ExtractionError) as e:

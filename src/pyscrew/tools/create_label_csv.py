@@ -29,8 +29,8 @@ from pyscrew.utils.logger import get_logger
 
 # The specific scenario name as published on Zenodo and in pyscrew
 # Check out the scenario.yml for more info on available datasets
-# SCENARIO_NAME = "S01_thread-degradation"
-SCENARIO_NAME = "S02_surface-friction"
+SCENARIO_NAME = "s01_thread-degradation"
+# SCENARIO_NAME = "s02_surface-friction"
 
 # File handling configuration
 # --------------------------
@@ -48,7 +48,8 @@ COMPRESS_FILES = False
 # -----------------
 # Default paths relative to package structure
 DEFAULT_CONFIG_PATH = "../scenarios.yml"
-DEFAULT_CACHE_DIR = ".cache/pyscrew/extracted"
+# Use your cached data if you want to reproduce the label creation
+DEFAULT_CACHE_DIR = None  # ".cache/pyscrew/extracted"
 
 # Logging setup
 # ------------
@@ -193,8 +194,8 @@ def get_scenario_base_name(scenario_name: str) -> str:
     """
     import re
 
-    # Match pattern like 'S01_', 'S1_', etc. at the start of the string
-    prefix_pattern = re.compile(r"^S\d+_")
+    # Match pattern like 's01_', 's1_', etc. at the start of the string
+    prefix_pattern = re.compile(r"^s\d+_")
 
     # If the pattern is found, return the rest of the string, otherwise return the original
     match = prefix_pattern.match(scenario_name)
@@ -433,7 +434,11 @@ def main():
         # Configure paths relative to repo structure
         script_dir = Path(__file__).parent
         config_path = (script_dir / DEFAULT_CONFIG_PATH).resolve()
-        data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME / "json"
+        # Use cached data if specified by user
+        if DEFAULT_CACHE_DIR:
+            data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME / "json"
+        else:
+            data_dir = (script_dir / "../../../data/json" / SCENARIO_NAME).resolve()
 
         if not all(p.exists() for p in [data_dir, config_path]):
             raise LabelGenerationError("Required paths not found")

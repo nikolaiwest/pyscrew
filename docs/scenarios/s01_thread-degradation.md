@@ -1,4 +1,4 @@
-# Screw Driving Dataset - S01_thread-degradation
+# Screw Driving Dataset - s01_thread-degradation
 
 <!-- Dataset Information -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -38,7 +38,7 @@ Collection Date: Sept. 2022
 from pyscrew import get_data
 
 # Load and prepare the data (returns a dictionary)
-data = get_data(scenario_name="S01_thread-degradation")
+data = get_data(scenario_name="s01_thread-degradation")
 
 # Access measurements and labels
 x_values = data["torque values"] # Available: torque, angle, time, gradient, step, class

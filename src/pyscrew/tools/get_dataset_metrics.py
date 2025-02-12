@@ -28,10 +28,12 @@ from pyscrew.utils.logger import get_logger
 
 # Configuration
 # ------------
-# SCENARIO_NAME = "S01_thread-degradation"
-SCENARIO_NAME = "S02_surface-friction"
-# SCENARIO_NAME = "S03_error-collection-1"
-DEFAULT_CACHE_DIR = ".cache/pyscrew/extracted"
+# SCENARIO_NAME = "s01_thread-degradation"
+SCENARIO_NAME = "s02_surface-friction"
+# SCENARIO_NAME = "s03_error-collection-1"
+
+# Use your cached data if you want to reproduce the label creation
+DEFAULT_CACHE_DIR = None  # ".cache/pyscrew/extracted"
 
 # Logging setup
 logger = get_logger(__name__, level="INFO")
@@ -300,7 +302,13 @@ def calculate_scenario_metrics(base_path: str) -> Dict:
 def main():
     """Calculate metrics for README documentation."""
     try:
-        data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME
+        if DEFAULT_CACHE_DIR:
+            data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME
+        else:
+            data_dir = (
+                Path(__file__).parent / "../../../data/json" / SCENARIO_NAME
+            ).resolve()
+
         logger.info(f"Processing documentation metrics for {SCENARIO_NAME}")
 
         metrics = calculate_scenario_metrics(data_dir)

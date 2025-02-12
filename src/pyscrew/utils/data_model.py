@@ -321,7 +321,7 @@ class ScrewRun:
     def __init__(self, json_data: Dict[str, Any], label_data: Dict[str, Any]):
         try:
             # Set ID from label data
-            self.id = str(label_data[JsonFields.Run.ID])
+            self.id = str(label_data[CsvFields.RUN_ID])
 
             # Set attributes from JSON data
             self.date = str(json_data[JsonFields.Run.DATE])
@@ -591,9 +591,16 @@ class ScrewDataset:
 
         This method:
         1. Iterates through filtered file names
-        2. Loads JSON measurement data
-        3. Creates corresponding label data dictionary
-        4. Instantiates ScrewRun objects
+        2. Determines the correct class subdirectory for each file
+        3. Loads JSON measurement data from the appropriate subdirectory
+        4. Creates corresponding label data dictionary
+        5. Instantiates ScrewRun objects
+
+        The JSON directory structure is:
+        json/
+        ├── 0/         # Class 0 measurements
+        ├── 1/         # Class 1 measurements
+        └── n/         # Class n measurements
 
         Returns:
             List of ScrewRun objects representing the loaded runs
@@ -605,9 +612,17 @@ class ScrewDataset:
         runs = []
 
         for file_name in self.file_names:
-            json_file = self.json_path / file_name
+            # Get the class value for this file from the labels DataFrame
+            class_value = str(self.labels_df.loc[file_name, CsvFields.CLASS_VALUE])
+
+            # Construct path including class subdirectory
+            json_file = self.json_path / class_value / file_name
+
             if not json_file.exists():
-                raise FileNotFoundError(f"File not found: {json_file}")
+                raise FileNotFoundError(
+                    f"File not found: {json_file}\n"
+                    f"Expected file in class directory: {class_value}"
+                )
 
             try:
                 # Load JSON data
@@ -621,7 +636,7 @@ class ScrewDataset:
                 row = self.labels_df.loc[file_name]
                 label_data = {
                     CsvFields.RUN_ID: row[CsvFields.RUN_ID],
-                    CsvFields.FILE_NAME: row[CsvFields.FILE_NAME],
+                    CsvFields.FILE_NAME: file_name,
                     CsvFields.CLASS_VALUE: row[CsvFields.CLASS_VALUE],
                     CsvFields.RESULT_VALUE: row[CsvFields.RESULT_VALUE],
                     CsvFields.WORKPIECE_ID: row[CsvFields.WORKPIECE_ID],
@@ -635,6 +650,7 @@ class ScrewDataset:
             except Exception as e:
                 raise ValueError(f"Error loading {file_name}: {str(e)}")
 
+        logger.info(f"Successfully loaded {len(runs)} screw runs")
         return runs
 
     def get_values(self, measurement_name: str) -> List[List[float]]:

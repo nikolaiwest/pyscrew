@@ -1,7 +1,5 @@
 import pytest
-from pathlib import Path
 
-from pyscrew.main import get_data
 from pyscrew.loading import DataLoader
 from pyscrew.utils.config_schema import ConfigSchema
 
@@ -30,7 +28,7 @@ class TestZenodoDownloads:
         assert archive_path.stat().st_size > 0, "Downloaded file is empty"
 
         # Verify correct file was downloaded
-        assert archive_path.name == "S01_thread-degradation.tar", "Wrong file name"
+        assert archive_path.name == "s01_thread-degradation.tar", "Wrong file name"
 
     def test_surface_friction_download(self, temp_cache_dir):
         """Test downloading surface friction dataset."""
@@ -52,7 +50,7 @@ class TestZenodoDownloads:
         assert archive_path.stat().st_size > 0, "Downloaded file is empty"
 
         # Verify correct file was downloaded
-        assert archive_path.name == "S02_surface-friction.tar", "Wrong file name"
+        assert archive_path.name == "s02_surface-friction.tar", "Wrong file name"
 
     @pytest.mark.parametrize(
         "scenario_name", ["thread-degradation", "surface-friction"]
