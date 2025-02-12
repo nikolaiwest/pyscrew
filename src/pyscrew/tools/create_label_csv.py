@@ -1,7 +1,9 @@
 """
-This script documents the label generation process for the pyscrew package's published datasets.
+Tool to create scenario archives as compressed files
+
+This script documents the archive creation process for the pyscrew package's published datasets.
 It is primarily provided for transparency and documentation purposes, showing exactly how
-the labels.csv files were generated for the scenarios published on Zenodo.
+the dataset archives were created for publication on Zenodo.
 
 While the script can be run, its main purpose is to document the process rather than
 serve as a general-purpose tool. The configuration values are intentionally hardcoded

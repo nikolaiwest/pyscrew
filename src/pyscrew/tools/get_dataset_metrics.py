@@ -1,5 +1,5 @@
 """
-Metrics calculation module for pyscrew dataset documentation.
+Tool for metric calculation for the pyscrew dataset documentation
 
 This module processes dataset files and calculates standardized metrics for
 documentation. It handles both label files (CSV) and measurement data (JSON)
