@@ -26,8 +26,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Labels created by tool
-labels.csv
+# Local data to create the scenario tar. files for zenodo upload
+data/
+
+# Temporary labels created by the create_label_csv.py script
+src/pyscrew/tools/labels.csv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

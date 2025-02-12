@@ -9,9 +9,6 @@ More information on the data is available here: https://zenodo.org/records/14769
 - **Easy Data Access**: Simple interface to download and extract screw driving datasets
 - **Data Integrity**: Automatic checksum verification and secure extraction
 - **Caching System**: Smart caching to prevent redundant downloads
-- **Cross-Platform**: Works on Windows, macOS, and Linux
-- **Memory Efficient**: Handles large datasets through streaming operations
-- **Secure**: Implements protection against common security vulnerabilities
 
 ## Installation
 
@@ -35,24 +32,44 @@ data_path = pyscrew.get_data("thread-degradation")
 print(f"Data extracted to: {data_path}")
 ```
 
+## Available Scenarios
+
+Our datasets examine various aspects of screw driving operations in industrial settings. Each scenario focuses on specific experimental conditions and research questions:
+
+| ID | Name | Description | Samples | Classes | Documentation |
+|----|------|-------------|---------|---------|---------------|
+| S01 | Thread Degradation | Examines thread degradation in plastic materials through repeated fastening operations | 5,000 | 1 | [Details](docs/scenarios/s01_thread-degradation.md) |
+| S02 | Surface Friction | Investigates the impact of different surface conditions (water, lubricant, adhesive, etc.) on screw driving operations | 12,500 | 8 | [Details](docs/scenarios/s02_surface-friction.md) |
+| S03 | Error Collection 1 | Current place holder doc for the upcoming scenario 3 with multiple error classes | TBD | TBD | [Details](docs/scenarios/s03_error-collection-1.md) |
+
 ## Package structure
 
 ```bash
 PyScrew/
+├── docs/
+│   └── scenarios/           # Detailed scenario documentation
+│       ├── s01_thread-degradation.md
+│       ├── s02_surface-friction.md
+│       └── s03_error-collection-1.md
 ├── src/
 │   └── pyscrew/
 │       ├── __init__.py      # Package initialization and version
 │       ├── main.py          # Main interface and high-level functions
 │       ├── loading.py       # Data loading from Zenodo
-│       ├── processing.py    # Data processing functionality (planned)
-│       └── validation.py    # Data validation checks (planned)
+│       ├── processing.py    # Data processing functionality
+│       ├── tools/           # Utility scripts and tools
+│       │   ├── create_label_csv.py    # Label file generation
+│       │   └── get_dataset_metrics.py  # Documentation metrics calculation
+│       └── utils/           # Utility functions and helpers
+│           ├── data_model.py
+│           └── logger.py
 └── tests/                   # Test suite
 ```
 
 ## API Reference
 
-
 ### Main Functions
+
 `get_data(scenario_name: str, cache_dir: Optional[Path] = None, force: bool = False) -> Path`
 
 Downloads and extracts a specific dataset.
@@ -76,6 +93,10 @@ Downloaded data is stored in:
 ~/.cache/pyscrew/
 ├── archives/     # Compressed dataset archives
 └── extracted/    # Extracted dataset files
+    ├── S01_thread-degradation/
+    ├── S02_surface-friction/
+    ├── S03_error-collection-1/
+    └── ...
 ```
 
 ## Development
@@ -92,4 +113,4 @@ If you use this package in your research, please cite either one of the followin
 * West, N., & Deuse, J. (2024). A Comparative Study of Machine Learning Approaches for Anomaly Detection in Industrial Screw Driving Data. Proceedings of the 57th Hawaii International Conference on System Sciences (HICSS), 1050-1059. https://hdl.handle.net/10125/106504
 * West, N., Trianni, A. & Deuse, J. (2024). Data-driven analysis of bolted joints in plastic housings with surface-based anomalies using supervised and unsupervised machine learning. CIE51 Proceedings. _(DOI will follow after publication of the proceedings)_
 
-**A dedicated paper for this library is currently in progress.**
+*A dedicated paper for this library is currently in progress.*
