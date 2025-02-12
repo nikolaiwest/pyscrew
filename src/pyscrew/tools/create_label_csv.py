@@ -27,19 +27,20 @@ from pyscrew.utils.logger import get_logger
 
 # The specific scenario name as published on Zenodo and in pyscrew
 # Check out the scenario.yml for more info on available datasets
+# SCENARIO_NAME = "S01_thread-degradation"
 SCENARIO_NAME = "S02_surface-friction"
 
 # File handling configuration
 # --------------------------
 # Converts .txt to .json for clarity in the file names since the
 # screw program would always export screw runs as text files.
-RENAME_FILES = True
+RENAME_FILES = False
 
 # While we want to maintain the original configuration of the raw data,
 # minimizing the JSON files by removing white space saves a lot of file size.
 # This step takes more time and does nothing after the first run, hence
 # it is currently set to False by default.
-COMPRESS_FILES = True
+COMPRESS_FILES = False
 
 # Path configuration
 # -----------------
@@ -446,7 +447,8 @@ def main():
         )
 
         # Save to CSV
-        output_path = script_dir / "labels.csv"
+        csv_dir = script_dir.parent.parent.parent / "data" / "csv"
+        output_path = csv_dir / f"{SCENARIO_NAME}.csv"
         labels_df.to_csv(output_path, index=False)
         logger.info(f"Labels saved to {output_path}")
 
