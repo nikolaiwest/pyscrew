@@ -1,3 +1,16 @@
+"""
+This script documents the label generation process for the pyscrew package's published datasets.
+It is primarily provided for transparency and documentation purposes, showing exactly how
+the labels.csv files were generated for the scenarios published on Zenodo.
+
+While the script can be run, its main purpose is to document the process rather than
+serve as a general-purpose tool. The configuration values are intentionally hardcoded
+to match the published dataset versions.
+
+Dataset: A link to the newest version can be found in the pyscrew library.
+Repository: https://github.com/nikolaiwest/pyscrew
+"""
+
 import json
 from itertools import cycle
 from pathlib import Path
@@ -5,12 +18,38 @@ from typing import Dict, Generator
 
 import pandas as pd
 import yaml
-from tqdm import tqdm
 
 from pyscrew.utils.data_model import CsvFields, JsonFields
 from pyscrew.utils.logger import get_logger
 
-logger = get_logger(__name__)
+# Configuration for the published dataset version
+# ----------------------------------------------
+
+# The specific scenario name as published on Zenodo and in pyscrew
+# Check out the scenario.yml for more info on available datasets
+SCENARIO_NAME = "S02_surface-friction"
+
+# File handling configuration
+# --------------------------
+# Converts .txt to .json for clarity in the file names since the
+# screw program would always export screw runs as text files.
+RENAME_FILES = True
+
+# While we want to maintain the original configuration of the raw data,
+# minimizing the JSON files by removing white space saves a lot of file size.
+# This step takes more time and does nothing after the first run, hence
+# it is currently set to False by default.
+COMPRESS_FILES = True
+
+# Path configuration
+# -----------------
+# Default paths relative to package structure
+DEFAULT_CONFIG_PATH = "../scenarios.yml"
+DEFAULT_CACHE_DIR = ".cache/pyscrew/extracted"
+
+# Logging setup
+# ------------
+logger = get_logger(__name__, level="INFO")
 
 
 class LabelGenerationError(Exception):
@@ -37,67 +76,128 @@ def minimize_json_files(json_dir: Path) -> None:
         return f"{bytes_size:.2f} {units[unit_index]}"
 
     try:
+        # Clean up any leftover .tmp files from interrupted runs
+        tmp_files = list(json_dir.rglob("*.tmp"))
+        if tmp_files:
+            logger.info(
+                f"Found {len(tmp_files)} leftover .tmp files from previous runs"
+            )
+            for tmp_file in tmp_files:
+                try:
+                    tmp_file.unlink()
+                    logger.debug(f"Cleaned up leftover temp file: {tmp_file}")
+                except Exception as e:
+                    logger.warning(f"Failed to clean up temp file {tmp_file}: {e}")
+
         class_dirs = [d for d in json_dir.iterdir() if d.is_dir() and d.name.isdigit()]
         total_minimized = 0
         total_saved = 0
+        problematic_files = []
 
-        # First count total files for progress bar
         total_files = sum(len(list(d.glob("*.json"))) for d in class_dirs)
-
         if total_files == 0:
             logger.info("No JSON files found to minimize")
             return
 
         logger.info(f"Starting JSON minimization of {total_files} files...")
 
-        with tqdm(total=total_files, desc="Minimizing JSON files", leave=False) as pbar:
-            for class_dir in class_dirs:
-                class_value = int(class_dir.name)
-                json_files = list(class_dir.glob("*.json"))
-                class_saved = 0
+        for class_dir in class_dirs:
+            class_value = int(class_dir.name)
+            json_files = list(class_dir.glob("*.json"))
+            class_saved = 0
 
-                for json_file in json_files:
+            for json_file in json_files:
+                try:
+                    original_size = json_file.stat().st_size
+
+                    # First try to read the file content
                     try:
-                        original_size = json_file.stat().st_size
+                        with open(json_file, "r", encoding="utf-8") as f:
+                            file_content = f.read()
+                    except UnicodeDecodeError:
+                        # Try with a different encoding if UTF-8 fails
+                        with open(json_file, "r", encoding="latin-1") as f:
+                            file_content = f.read()
 
-                        with open(json_file, "r") as f:
-                            data = json.load(f)
-
-                        with open(json_file, "w") as f:
-                            json.dump(data, f, separators=(",", ":"))
-
-                        new_size = json_file.stat().st_size
-                        space_saved = original_size - new_size
-                        class_saved += space_saved
-                        total_minimized += 1
-
-                        if space_saved > 0:
-                            logger.debug(
-                                f"Minimized {json_file.name} in class {class_value}: saved {_bytes_to_human_readable(space_saved)}"
-                            )
-
-                        pbar.update(1)
-
-                    except Exception as e:
+                    # Try to parse the JSON and identify problematic sections
+                    try:
+                        data = json.loads(file_content)
+                    except json.JSONDecodeError as je:
+                        # Get context around the error
+                        error_context = file_content[
+                            max(0, je.pos - 50) : min(len(file_content), je.pos + 50)
+                        ]
                         logger.error(
-                            f"Failed to minimize {json_file} in class {class_value}: {e}"
+                            f"JSON parse error in {json_file.name} (class {class_value}):\n"
+                            f"Error: {str(je)}\n"
+                            f"Context: ...{error_context}..."
                         )
-                        pbar.update(1)
+                        problematic_files.append((json_file, je))
+                        continue
 
-                total_saved += class_saved
-                if class_saved > 0:
-                    logger.info(
-                        f"Class {class_value}: saved {class_saved} bytes across {len(json_files)} files"
+                    # Write to temporary file in same directory
+                    temp_file = json_file.with_suffix(".tmp")
+                    with open(temp_file, "w", encoding="utf-8") as f:
+                        json.dump(data, f, separators=(",", ":"))
+
+                    # Atomic replace
+                    temp_file.replace(json_file)
+                    new_size = json_file.stat().st_size
+                    space_saved = original_size - new_size
+                    class_saved += space_saved
+                    total_minimized += 1
+
+                    logger.debug(
+                        f"Minimized {json_file.name} in class {class_value}: saved {_bytes_to_human_readable(space_saved)}"
                     )
+
+                except Exception as e:
+                    logger.error(
+                        f"Failed to process {json_file} in class {class_value}: {e}"
+                    )
+                    problematic_files.append((json_file, e))
+
+            total_saved += class_saved
+            if class_saved > 0:
+                logger.info(
+                    f"Class {class_value}: saved {_bytes_to_human_readable(class_saved)} across {len(json_files)} files"
+                )
 
         if total_minimized > 0:
             logger.info(
-                f"Successfully minimized {total_minimized} JSON files, total space saved: {total_saved} bytes"
+                f"Successfully minimized {total_minimized} JSON files, total space saved: {_bytes_to_human_readable(total_saved)}"
             )
+
+        if problematic_files:
+            logger.warning(f"Found {len(problematic_files)} problematic files:")
+            for file_path, error in problematic_files:
+                logger.warning(f"- {file_path.name}: {str(error)}")
 
     except Exception as e:
         logger.error(f"Error during JSON minimization: {e}")
         raise LabelGenerationError(f"Failed to minimize JSON files: {e}")
+
+
+def get_scenario_base_name(scenario_name: str) -> str:
+    """
+    Extract base scenario name by removing any prefix pattern like 'SXX_'.
+
+    Args:
+        scenario_name: Full scenario name that may include a prefix
+
+    Returns:
+        Base scenario name without prefix
+    """
+    import re
+
+    # Match pattern like 'S01_', 'S1_', etc. at the start of the string
+    prefix_pattern = re.compile(r"^S\d+_")
+
+    # If the pattern is found, return the rest of the string, otherwise return the original
+    match = prefix_pattern.match(scenario_name)
+    if match:
+        return scenario_name[match.end() :]
+    return scenario_name
 
 
 def rename_txt_to_json(json_dir: Path) -> None:
@@ -208,7 +308,7 @@ def generate_labels(
     Args:
         data_dir: Directory containing class-specific JSON subdirectories
         config_path: Path to scenarios.yml configuration file
-        scenario_name: Name of the scenario to process
+        scenario_name: Name of the scenario to process (can include SXX_ prefix)
         rename_files: Whether to rename .txt files to .json
         compress_files: Whether to minimize JSON files by removing whitespace
 
@@ -220,14 +320,21 @@ def generate_labels(
         with open(config_path) as f:
             config = yaml.safe_load(f)
 
-        if scenario_name not in config["datasets"]:
-            raise LabelGenerationError(f"Scenario {scenario_name} not found in config")
+        # Get base scenario name without prefix
+        base_scenario_name = get_scenario_base_name(scenario_name)
 
-        scenario_config = config["datasets"][scenario_name]
+        if base_scenario_name not in config["datasets"]:
+            raise LabelGenerationError(
+                f"Scenario {base_scenario_name} not found in config"
+            )
+
+        scenario_config = config["datasets"][base_scenario_name]
         if "class_counts" not in scenario_config:
-            raise LabelGenerationError(f"No class_counts defined for {scenario_name}")
+            raise LabelGenerationError(
+                f"No class_counts defined for {base_scenario_name}"
+            )
 
-        # Validate directory structure with optional operations
+        # Rest of the function remains unchanged
         validate_scenario_structure(
             data_dir, scenario_config, rename_files, compress_files
         )
@@ -314,32 +421,28 @@ def position_usage_generator() -> Generator[tuple[int, int], None, None]:
 
 
 def main():
-    """Generate labels.csv file from JSON measurement data."""
-    try:
-        # User Selection
-        rename_files = False  # Change .txt suffix to .json for clarity
-        compress_files = False  # Remove whitespace in screw runs to save disc space
-        scenario_name = "S02_surface-friction"
+    """Generate labels.csv file from JSON measurement data.
 
+    This function uses the configuration defined at module level to reproduce
+    the exact labels.csv file published with the dataset.
+    """
+    try:
         # Configure paths relative to repo structure
         script_dir = Path(__file__).parent
-        config_path = script_dir / "../scenarios.yml"
-        config_path = config_path.resolve()  # Clean up the path
-
-        # Default location for the imports
-        data_dir = Path.home() / f".cache/pyscrew/extracted/{scenario_name}/json"
+        config_path = (script_dir / DEFAULT_CONFIG_PATH).resolve()
+        data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME / "json"
 
         if not all(p.exists() for p in [data_dir, config_path]):
             raise LabelGenerationError("Required paths not found")
 
-        # Generate labels
+        # Generate labels using the fixed configuration
         logger.info(f"Processing JSON files from {data_dir}")
         labels_df = generate_labels(
             data_dir,
             config_path,
-            scenario_name[4:],  # Remove any "S01_" prefix
-            rename_files=rename_files,
-            compress_files=compress_files,
+            SCENARIO_NAME,
+            rename_files=RENAME_FILES,
+            compress_files=COMPRESS_FILES,
         )
 
         # Save to CSV
