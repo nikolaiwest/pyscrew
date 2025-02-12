@@ -39,7 +39,7 @@ SCENARIO_NAME = "S02_surface-friction"
 RENAME_FILES = False
 
 # While we want to maintain the original configuration of the raw data,
-# minimizing the JSON files by removing white space saves a lot of file size.
+# minimizing the JSON files by removing white space saves a lot of file size (~33%).
 # This step takes more time and does nothing after the first run, hence
 # it is currently set to False by default.
 COMPRESS_FILES = False

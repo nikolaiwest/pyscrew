@@ -18,12 +18,15 @@ Two-Step Process (run label creation first!):
     * Combines JSON data, labels, and documentation
     * Creates archives in multiple formats
 
-Suggested workflow: Individual scenario processing
-- Each scenario can be processed separately
+Suggested workflow:
+- Each scenario can be processed separately (or all at once)
 - Allows careful verification of each dataset
 - Supports iterative addition of new scenarios
-- Prevents batch processing errors
 - Just adjust the globals in this script to the scenario
+
+Format considerations:
+- TAR: larger archive = slower download, but faster extraction
+- ZIP: smaller archive = faster download, but slower extraction
 
 While combining both steps into a single script might seem more convenient, keeping them 
 separate allows for thorough validation between steps and better matches the actual 
@@ -42,8 +45,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Union
 
-import rarfile
-
 from pyscrew.utils.logger import get_logger
 
 # Configuration
@@ -58,12 +59,10 @@ SCENARIOS = [
     # "s04_error-collection-2",
 ]
 
-# TAR is the preferred format, but ZIP and RAR are supported for compatibility
-# Note: RAR requires WinRAR (Windows) or unrar (Linux/Mac) to be installed
+# ZIP is the preferred format (better compression), but TAR is supported for compatibility
 ARCHIVE_FORMATS = [
-    "tar",  # Preferred format
+    "tar",
     "zip",
-    "rar",
 ]
 
 # Expected directory structure:
@@ -82,7 +81,6 @@ class ArchiveFormat(Enum):
 
     TAR = ".tar"
     ZIP = ".zip"
-    RAR = ".rar"
 
 
 class ArchiveCreationError(Exception):
@@ -105,7 +103,7 @@ def create_scenario_archive(
 
     Args:
         scenario_name: Name of the scenario (e.g., "thread-degradation")
-        archive_format: Format to use (TAR, ZIP, or RAR)
+        archive_format: Format to use (TAR or ZIP)
         base_dir: Optional base directory, defaults to current directory
 
     Raises:
@@ -154,18 +152,6 @@ def create_scenario_archive(
                 archive.write(csv_path, f"{scenario_name}.csv")
                 archive.write(readme_path, f"{scenario_name}.md")
 
-        elif archive_format == ArchiveFormat.RAR:
-            # Note: This requires the 'rarfile' package and WinRAR/unrar installed
-            with rarfile.RarFile(target_path, "w") as archive:
-                # Add JSON files
-                for file_path in json_path.rglob("*"):
-                    if file_path.is_file():
-                        arcname = "json" / file_path.relative_to(json_path)
-                        archive.write(file_path, arcname)
-                # Add CSV and README
-                archive.write(csv_path, f"{scenario_name}.csv")
-                archive.write(readme_path, f"{scenario_name}.md")
-
         logger.info(f"Archive created successfully at {target_path}")
 
     except Exception as e:
@@ -184,9 +170,8 @@ def main():
         ]
 
         formats = [
-            ArchiveFormat.TAR,  # Preferred format
+            ArchiveFormat.TAR,
             ArchiveFormat.ZIP,
-            ArchiveFormat.RAR,
         ]
 
         for scenario in scenarios:
