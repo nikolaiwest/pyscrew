@@ -108,6 +108,10 @@ def get_data(
     # Processing options
     handle_duplicates: str = "first",
     handle_missings: str = "mean",
+    target_length: int = 1000,
+    padding_value: float = 0.0,
+    padding_position: str = "post",
+    cutoff_position: str = "post",
     output_format: str = "list",
     # System options
     cache_dir: str | Path | None = None,
@@ -124,9 +128,13 @@ def get_data(
         screw_cycles: List of cycle numbers to include. None means "all cycles"
         screw_position: Position to analyze. Options are ["left", "right" or "both"]
         handle_duplicates: How to remove negative values and what to keep. Options are ["first", "last", "mean", None].
-            None means no duplactes are removed.
+            None means no duplicates are removed.
         handle_missings: Whether to interpolate missing values. Options are ["mean", "zero" or a float value]
             Time is recorded at 0.0012s intervals. None means no values are interpolated.
+        target_length: Desired length for all sequences (int)
+        padding_value: Value to use for padding shorter sequences (default: 0.0)
+        padding_position: Position to add padding ('pre' or 'post', default: 'post')
+        cutoff_position: Position to truncate longer sequences ('pre' or 'post', default: 'post')
         output_format: Format of the output data. Current option is only "list".
             "numpy" and "dataframe" will be added in a future release, but require equal time series lengths.
         cache_dir: Directory for caching downloaded data
@@ -159,6 +167,10 @@ def get_data(
         screw_positions=screw_positions,
         handle_duplicates=handle_duplicates,
         handle_missings=handle_missings,
+        target_length=target_length,
+        padding_value=padding_value,
+        padding_position=padding_position,
+        cutoff_position=cutoff_position,
         output_format=output_format,
         cache_dir=Path(cache_dir) if cache_dir else None,
         force_download=force_download,

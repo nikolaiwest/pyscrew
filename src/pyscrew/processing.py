@@ -9,7 +9,8 @@ a series of configurable transformations:
 2. Step data unpacking into measurement collections
 3. Time point deduplication (optional)
 4. Measurement interpolation (optional)
-5. Output validation and logging
+5. Length normalization (optional)
+6. Output validation and logging
 
 Each transformation is implemented as a scikit-learn transformer, allowing for:
 - Consistent interface across transformations
@@ -23,9 +24,10 @@ from typing import Dict, List, Union, cast
 from sklearn.pipeline import Pipeline
 
 from pyscrew.transformers import (
-    InterpolateMissingsTransformer,
+    HandleDuplicatesTransformer,
+    HandleMissingsTransformer,
+    HandleLengthsTransformer,
     PipelineLoggingTransformer,
-    RemoveDuplicatesTransformer,
     UnpackStepsTransformer,
 )
 from pyscrew.utils.config_schema import ConfigSchema
@@ -73,7 +75,11 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
        - Handles missing values based on config method
        - Maintains measurement alignment
 
-    5. Output State Logging:
+    5. Length Normalization:
+       - Ensures all measurement sequences have equal length
+       - Pads shorter sequences or truncates longer ones
+
+    6. Output State Logging:
        - Validates processed data
        - Logs transformation results
 
@@ -81,6 +87,7 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
         config: Pipeline configuration including:
             - handle_duplicates: Which duplicates to keep? ("first", "last" or "mean")
             - handle_missings: How to handle missing values? ("mean", "zero", or float value)
+            - handle_lengths: Desired length for all sequences (int)
             - output_format: Desired output format ("numpy", "dataframe", "list")
 
     Returns:
@@ -103,15 +110,31 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
         # 3. Add duplicate value handler (if configured)
         if config.handle_duplicates:
             logger.info(f"Adding duplicate handler with {config.handle_duplicates}")
-            steps.append(("dup", RemoveDuplicatesTransformer(config.handle_duplicates)))
+            steps.append(("dup", HandleDuplicatesTransformer(config.handle_duplicates)))
 
         # 4. Add missing value handler (if configured)
         if config.handle_missings:
-            target_interval = 0.0012  # Standard measurement interval
             logger.info(f"Adding missing value handler with {config.handle_missings}")
-            steps.append(("mis", InterpolateMissingsTransformer(target_interval)))
+            steps.append(("mis", HandleMissingsTransformer(config.handle_missings)))
 
-        # 5. Add output logging transformer
+        # 5. Add length normalization handler (if configured)
+        if config.target_length:
+            logger.info(
+                f"Adding length normalization handler with target length {config.target_length}"
+            )
+            steps.append(
+                (
+                    "lengths",
+                    HandleLengthsTransformer(
+                        target_length=config.target_length,
+                        padding_value=config.padding_value,
+                        padding_position=config.padding_position,
+                        cutoff_position=config.cutoff_position,
+                    ),
+                )
+            )
+
+        # 6. Add output logging transformer
         steps.append(("log_out", PipelineLoggingTransformer("Output")))
 
         return Pipeline(steps)

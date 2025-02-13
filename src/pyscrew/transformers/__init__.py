@@ -10,14 +10,16 @@ that handle various aspects of screw driving data processing:
 4. Interpolating to achieve equidistant time series
 """
 
-from .handle_missings import InterpolateMissingsTransformer
+from .handle_duplicates import HandleDuplicatesTransformer
+from .handle_lengths import HandleLengthsTransformer
+from .handle_missings import HandleMissingsTransformer
 from .pipeline_logging import PipelineLoggingTransformer
-from .handle_duplicates import RemoveDuplicatesTransformer
 from .unpack_steps import UnpackStepsTransformer
 
 __all__ = [
-    "UnpackStepsTransformer",
     "PipelineLoggingTransformer",
-    "RemoveDuplicatesTransformer",
-    "InterpolateMissingsTransformer",
+    "UnpackStepsTransformer",
+    "HandleDuplicatesTransformer",
+    "HandleMissingsTransformer",
+    "HandleLengthsTransformer",
 ]

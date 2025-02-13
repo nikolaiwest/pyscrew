@@ -28,11 +28,20 @@ scenarios = pyscrew.list_scenarios()
 print("Available scenarios:", scenarios)
 
 # Load and process data from a specific scenario
-data = pyscrew.get_data("surface-friction")
+data = pyscrew.get_data(
+    "surface-friction", # or "thread-degradation"
+    handle_duplicates="first",
+    handle_missings="mean",
+    target_length=800,
+) 
 
-# Access the data
+# Describe the data
 print("Available measurements:", data.keys())
 print("Number of torque measurements:", len(data["torque values"]))
+
+# Access the data 
+x_values = data["torque values"]
+y_values = data["class values"]
 ```
 
 ## Available Scenarios

@@ -9,6 +9,8 @@ POSITIONS = ["left", "right", "both"]
 OUTPUT_FORMATS = ["numpy", "dataframe", "tensor", "list"]
 DUPLICATE_METHODS = ["first", "last", "mean"]
 MISSING_METHODS = ["mean", "zero"]  # Will also accept float values
+PADDING_POSITIONS = ["pre", "post"]
+CUTOFF_POSITIONS = ["pre", "post"]
 
 # Constants for scenario mapping
 SCENARIO_MAP = {
@@ -63,6 +65,17 @@ class ConfigSchema(BaseModel):
     handle_missings: Optional[str] = Field(
         "mean",
         description=f"How to handle missing values. Options: {MISSING_METHODS}, float value, or None to skip",
+    )
+    target_length: int = Field(1000, description="Desired length for all sequences")
+    padding_value: float = Field(
+        0.0, description="Value to use for padding shorter sequences"
+    )
+    padding_position: str = Field(
+        "post", description=f"Position to add padding. Options: {PADDING_POSITIONS}"
+    )
+    cutoff_position: str = Field(
+        "post",
+        description=f"Position to truncate longer sequences. Options: {CUTOFF_POSITIONS}",
     )
     output_format: str = Field(
         "numpy", description=f"Output format. Options: {OUTPUT_FORMATS}"
@@ -146,13 +159,30 @@ class ConfigSchema(BaseModel):
         if v in MISSING_METHODS:
             return v
         try:
-            # Allow float values for custom fill
             float(v)
             return v
         except ValueError:
             raise ValueError(
                 f"Invalid missing value method: {v}. Valid options are {MISSING_METHODS}, None, or a float value"
             )
+
+    @field_validator("padding_position")
+    def validate_padding_position(cls, v: str) -> str:
+        """Validate padding position."""
+        if v not in PADDING_POSITIONS:
+            raise ValueError(
+                f"Invalid padding position: {v}. Valid options are {PADDING_POSITIONS}"
+            )
+        return v
+
+    @field_validator("cutoff_position")
+    def validate_cutoff_position(cls, v: str) -> str:
+        """Validate cutoff position."""
+        if v not in CUTOFF_POSITIONS:
+            raise ValueError(
+                f"Invalid cutoff position: {v}. Valid options are {CUTOFF_POSITIONS}"
+            )
+        return v
 
     @model_validator(mode="after")
     def validate_missing_requires_duplicates(cls, values):

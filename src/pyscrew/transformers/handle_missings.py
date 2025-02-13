@@ -152,42 +152,49 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         time_target: NDArray[np.float64],
         values: NDArray[np.float64],
     ) -> NDArray[np.float64]:
-        """Interpolate values according to specified method.
+        # Convert inputs to numpy arrays if they aren't already
+        time_original_arr = np.array(time_original)
+        time_target_arr = np.array(time_target)
+        values_arr = np.array(values)
 
-        Args:
-            time_original: Original time points
-            time_target: Target time points for interpolation
-            values: Values to interpolate
-
-        Returns:
-            Interpolated values array
-        """
         if self.handle_missings == "mean":
-            return np.interp(time_target, time_original, values)
-        elif self.handle_missings == "zero":
-            # Initialize array with zeros
-            result = np.zeros_like(time_target)
+            if not np.isclose(time_original_arr[0], 0.0):
+                return np.zeros_like(time_target_arr)
+            return np.interp(time_target_arr, time_original_arr, values_arr)
 
-            # For each original measurement
-            for i, (orig_t, orig_val) in enumerate(zip(time_original, values)):
-                # Find exact matching time point in target grid
-                match_idx = np.where(np.abs(time_target - orig_t) < 1e-10)[0]
-                if len(match_idx) > 0:
-                    result[match_idx[0]] = orig_val
+        elif self.handle_missings == "zero":
+            result = np.zeros_like(time_target_arr)
+
+            # Use isclose() with appropriate tolerances
+            matches = np.isclose(
+                time_target_arr.reshape(-1, 1),
+                time_original_arr,
+                rtol=1e-09,  # Relative tolerance
+                atol=1e-12,  # Absolute tolerance
+            )
+            match_indices = np.where(matches.any(axis=1))[0]
+            orig_indices = np.where(matches[match_indices])[1]
+
+            result[match_indices] = values_arr[orig_indices]
             return result
+
         else:
-            # Handle custom fill value
             try:
                 fill_value = float(self.handle_missings)
-                result = np.full_like(time_target, fill_value)
+                result = np.full_like(time_target_arr, fill_value)
 
-                # For each original measurement
-                for i, (orig_t, orig_val) in enumerate(zip(time_original, values)):
-                    # Find exact matching time point in target grid
-                    match_idx = np.where(np.abs(time_target - orig_t) < 1e-10)[0]
-                    if len(match_idx) > 0:
-                        result[match_idx[0]] = orig_val
+                matches = np.isclose(
+                    time_target_arr.reshape(-1, 1),
+                    time_original_arr,
+                    rtol=1e-09,
+                    atol=1e-12,
+                )
+                match_indices = np.where(matches.any(axis=1))[0]
+                orig_indices = np.where(matches[match_indices])[1]
+
+                result[match_indices] = values_arr[orig_indices]
                 return result
+
             except (TypeError, ValueError):
                 raise ProcessingError(
                     f"Invalid handle_missings value: {self.handle_missings}"
@@ -271,12 +278,17 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             self._stats.total_series = len(time_series)
 
             for idx in range(self._stats.total_series):
-                # Get original time values and create ideal time points
                 time_values = np.array(time_series[idx])
+                # Round end point to match our decimal places
+                end_time = time_values[-1]
                 time_values_ideal = np.arange(
-                    0, time_values[-1] + self.target_interval, self.target_interval
+                    0,
+                    end_time + self.target_interval,
+                    self.target_interval,
                 )
-
+                time_values_ideal = [
+                    round(x, self.decimal_places) for x in time_values_ideal
+                ]
                 # Prepare measurement arrays
                 measurements = {
                     JsonFields.Measurements.TORQUE: np.array(
