@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 [project]
 name = "pyscrew"
-version = "0.1.4"
+version = "0.1.5"
 description = "A Python package for accessing industrial research data from a screw driving system"
 authors = [
     { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }

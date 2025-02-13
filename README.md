@@ -6,13 +6,14 @@ More information on the data is available here: https://zenodo.org/records/14769
 
 ## Features
 
-- **Easy Data Access**: Simple interface to download and extract screw driving datasets
-- **Data Integrity**: Automatic checksum verification and secure extraction
-- **Caching System**: Smart caching to prevent redundant downloads
+- Data loading from various scenarios
+- Handling duplicates and missing values
+- Length normalization through padding and truncation
+- Configurable data processing pipeline
 
 ## Installation
 
-Install PyScrew directly from PyPI:
+To install PyScrew, use pip:
 
 ```bash
 pip install pyscrew
