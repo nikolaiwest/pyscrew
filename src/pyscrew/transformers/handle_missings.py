@@ -54,7 +54,7 @@ class ProcessingError(Exception):
     pass
 
 
-class InterpolateMissingsTransformer(BaseEstimator, TransformerMixin):
+class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
     """Creates equidistant time series through interpolation.
 
     This transformer ensures that measurements are available at regular time
@@ -78,7 +78,7 @@ class InterpolateMissingsTransformer(BaseEstimator, TransformerMixin):
 
     Example:
         >>> # Initialize transformer with custom method
-        >>> transformer = InterpolateMissingsTransformer(handle_missings='zero')
+        >>> transformer = HandleMissingsTransformer(handle_missings='zero')
         >>>
         >>> # Process dataset
         >>> processed = transformer.fit_transform(dataset)
@@ -204,7 +204,7 @@ class InterpolateMissingsTransformer(BaseEstimator, TransformerMixin):
         """
         return [float(round(x, self.decimal_places)) for x in values]
 
-    def fit(self, dataset: ScrewDataset, y=None) -> "InterpolateMissingsTransformer":
+    def fit(self, dataset: ScrewDataset, y=None) -> "HandleMissingsTransformer":
         """Validate interpolation parameters and data structure.
 
         Args:

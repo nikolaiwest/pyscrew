@@ -57,7 +57,7 @@ class DuplicateProcessingError(Exception):
     pass
 
 
-class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
+class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
     """Handles duplicate time points in measurement data.
 
     This transformer detects and resolves cases where multiple measurements
@@ -77,7 +77,7 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
     Example:
         >>> # Initialize transformer with first occurrence method
-        >>> transformer = RemoveDuplicatesTransformer(handle_duplicates='first')
+        >>> transformer = HandleDuplicatesTransformer(handle_duplicates='first')
         >>>
         >>> # Process dataset
         >>> processed = transformer.fit_transform(dataset)
@@ -259,7 +259,7 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
         except Exception as e:
             raise DuplicateProcessingError(f"Failed to process series: {str(e)}")
 
-    def fit(self, dataset: ScrewDataset, y=None) -> "RemoveDuplicatesTransformer":
+    def fit(self, dataset: ScrewDataset, y=None) -> "HandleDuplicatesTransformer":
         """Validate handling method and data structure.
 
         Args:
