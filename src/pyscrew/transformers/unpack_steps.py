@@ -12,11 +12,12 @@ transformation from:
 to:
 
     processed_data
-        ├── time: List[List[float]]     # Outer list: runs, Inner list: values
-        ├── torque: List[List[float]]
-        ├── angle: List[List[float]]
-        ├── gradient: List[List[float]]
-        └── step: List[List[int]]       # Optional, tracks measurement origins
+        ├── time values: List[List[float]]     # Outer list: runs, Inner list: values
+        ├── torque values: List[List[float]]
+        ├── angle values: List[List[float]]
+        ├── gradient values: List[List[float]]
+        ├── step values: List[List[int]]       # Optional, tracks measurement origins
+        └── class labels: List[int]     # Class labels for each run
 """
 
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -39,24 +40,29 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
     Args:
         include_steps: If True, adds step indicators that map each measurement
                       back to its originating step number (0,1,2,3)
+        include_classes: If True, adds class labels for each run
 
     Attributes:
         include_steps: Boolean controlling step indicator inclusion
+        include_classes: Boolean controlling class label inclusion
         measurements: JsonFields.Measurements instance for accessing field names
 
     Example:
-        >>> transformer = UnpackStepsTransformer(include_steps=True)
+        >>> transformer = UnpackStepsTransformer(include_steps=True, include_classes=True)
         >>> processed = transformer.fit_transform(dataset)
         >>> # Access measurements for first run
         >>> first_run_torque = processed.processed_data[measurements.TORQUE][0]
         >>> first_run_steps = processed.processed_data[measurements.STEP][0]
+        >>> first_run_class = processed.processed_data["class_labels"][0]
         >>> print(f"Run has {len(first_run_torque)} measurements")
         >>> print(f"From steps: {set(first_run_steps)}")  # e.g., {0,1,2,3}
+        >>> print(f"Class label: {first_run_class}")
     """
 
-    def __init__(self, include_steps: bool = True):
+    def __init__(self, include_steps: bool = True, include_classes: bool = True):
         """Initialize transformer with step tracking configuration."""
         self.include_steps = include_steps
+        self.include_classes = include_classes
         self.measurements = JsonFields.Measurements()
 
     def fit(self, dataset: ScrewDataset, y=None) -> "UnpackStepsTransformer":
@@ -83,6 +89,7 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
         2. Pre-allocates lists for each run
         3. Processes each run's steps, concatenating measurements
         4. Optionally adds step indicators
+        5. Adds class labels for each run
 
         Args:
             dataset: Input dataset containing step-based measurements
@@ -90,17 +97,22 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
         Returns:
             Dataset with populated processed_data containing measurement collections
         """
-        # Initialize all measurement lists
+        # Initialize all measurement lists (as provided by JsonFields)
         measurements = [
             self.measurements.TIME,
             self.measurements.TORQUE,
             self.measurements.ANGLE,
             self.measurements.GRADIENT,
         ]
+
+        # Initialize processed data dictionary
         dataset.processed_data = {m: [] for m in measurements}
 
         if self.include_steps:
             dataset.processed_data[self.measurements.STEP] = []
+
+        if self.include_classes:
+            dataset.processed_data[self.measurements.CLASS] = []
 
         # Pre-allocate lists for each run
         for _ in dataset.screw_runs:
@@ -125,5 +137,8 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
                     dataset.processed_data[self.measurements.STEP][run_idx].extend(
                         [step_idx] * step_length
                     )
+            # Add class indicators if requested (one per run)
+            if self.include_classes:
+                dataset.processed_data[self.measurements.CLASS].append(run.class_label)
 
         return dataset

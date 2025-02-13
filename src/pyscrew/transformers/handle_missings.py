@@ -259,6 +259,12 @@ class InterpolateMissingsTransformer(BaseEstimator, TransformerMixin):
         if JsonFields.Measurements.STEP in dataset.processed_data:
             processed_data[JsonFields.Measurements.STEP] = []
 
+        # Include class_labels if it exists in input
+        if JsonFields.Measurements.CLASS in dataset.processed_data:
+            processed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
+                JsonFields.Measurements.CLASS
+            ]
+
         try:
             # Process each run
             time_series = dataset.processed_data[JsonFields.Measurements.TIME]
@@ -350,6 +356,6 @@ class InterpolateMissingsTransformer(BaseEstimator, TransformerMixin):
             f"Found gaps - min: {stats.min_time_gap:.4f}s, max: {stats.max_time_gap:.4f}s, avg: {stats.avg_time_gap:.4f}s"
         )
         logger.info(
-            f"Added {stats.total_interpolated_points-stats.total_original_points:,} points (+{points_ratio:.2f}% of toal)"
+            f"Added {stats.total_interpolated_points-stats.total_original_points:,} points (+{points_ratio:.2f}% of total)"
         )
         logger.info(f"Average {points_per_series:.1f} points added per series")

@@ -96,7 +96,9 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
         steps.append(("log_in", PipelineLoggingTransformer("Input")))
 
         # 2. Add step unpacking transformer
-        steps.append(("pack", UnpackStepsTransformer()))
+        steps.append(
+            ("unpack", UnpackStepsTransformer(include_steps=True, include_classes=True))
+        )
 
         # 3. Add duplicate value handler (if configured)
         if config.handle_duplicates:
@@ -141,6 +143,7 @@ def process_data(
             - "angle values": List of angle measurements
             - "gradient values": List of gradient measurements
             - "step values": List of step indicators
+            - "class labels": List of class labels
 
     Raises:
         ProcessingError: If any stage of processing fails

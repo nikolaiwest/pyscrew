@@ -299,6 +299,12 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
         if JsonFields.Measurements.STEP in dataset.processed_data:
             processed_data[JsonFields.Measurements.STEP] = []
 
+        # Include class_labels if it exists in input
+        if JsonFields.Measurements.CLASS in dataset.processed_data:
+            processed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
+                JsonFields.Measurements.CLASS
+            ]
+
         try:
             # Process each run
             self._stats.total_series = len(
@@ -335,7 +341,8 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
                 # Store processed results
                 for field in processed_data:
-                    processed_data[field].append(result[field])
+                    if field != JsonFields.Measurements.CLASS:  # Skip class labels
+                        processed_data[field].append(result[field])
 
             # Log summary statistics
             self._log_summary()

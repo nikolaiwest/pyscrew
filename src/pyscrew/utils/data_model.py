@@ -81,7 +81,7 @@ class JsonFields:
         """
 
         NAME: str = "name"
-        STEP_TYPE: str = "step type"  # dont just use type
+        STEP_TYPE: str = "step type"  # dont just use type as it is a reserved keyword
         RESULT_VALUE: str = "result"
         QUALITY_CODE: str = "quality code"
         GRAPH: str = "graph"
@@ -107,7 +107,9 @@ class JsonFields:
         TORQUE: str = "torque values"
         ANGLE: str = "angle values"
         GRADIENT: str = "gradient values"
+        # Added with the unpacking steps
         STEP: str = "step values"
+        CLASS: str = "class values"
 
 
 @dataclass
@@ -139,6 +141,23 @@ class CsvFields:
     WORKPIECE_ID: str = "workpiece_id"
     WORKPIECE_USAGE: str = "workpiece_usage"
     WORKPIECE_LOCATION: str = "workpiece_location"
+
+    @dataclass
+    class DatasetFields:
+        """
+        Constants for field names in the dataset.
+        These fields are used to access the processed data from the ScrewDataset.
+
+        TODO: While currently not in use, this class finally moves away from the
+        space-based naming convention of the json files to a more consistent
+        underscore-based style. Will be added to the pipeline in the future.
+        """
+
+        TIME_VALUES: str = "time_values"
+        TORQUE_VALUES: str = "torque_values"
+        ANGLE_VALUES: str = "angle_values"
+        GRADIENT_VALUES: str = "gradient_values"
+        CLASS_VALUES: str = "class_labels"
 
 
 logger = get_logger(__name__)

@@ -5,7 +5,6 @@ from pyscrew.conversion import convert_data
 from pyscrew.loading import DatasetRegistry, load_data
 from pyscrew.processing import process_data
 from pyscrew.utils import ConfigSchema, get_logger
-from pyscrew.utils.data_model import ScrewDataset
 from pyscrew.validation import (
     validate_converted_data,
     validate_loaded_data,
@@ -109,7 +108,7 @@ def get_data(
     # Processing options
     handle_duplicates: str = "first",
     handle_missings: str = "mean",
-    output_format: str = "numpy",
+    output_format: str = "list",
     # System options
     cache_dir: str | Path | None = None,
     force_download: bool = False,
@@ -128,7 +127,8 @@ def get_data(
             None means no duplactes are removed.
         handle_missings: Whether to interpolate missing values. Options are ["mean", "zero" or a float value]
             Time is recorded at 0.0012s intervals. None means no values are interpolated.
-        output_format: Format of the output data. Options are "numpy", "dataframe" or "list"
+        output_format: Format of the output data. Current option is only "list".
+            "numpy" and "dataframe" will be added in a future release, but require equal time series lengths.
         cache_dir: Directory for caching downloaded data
         force_download: Force re-download even if cached
 
