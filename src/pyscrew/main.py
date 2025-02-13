@@ -126,7 +126,7 @@ def get_data(
         screw_position: Position to analyze. Options are ["left", "right" or "both"]
         handle_duplicates: How to remove negative values and what to keep. Options are ["first", "last", "mean", None].
             None means no duplactes are removed.
-        handle_missings: Whether to interpolate missing values. Options are ["mean", "zeor" or a float value]
+        handle_missings: Whether to interpolate missing values. Options are ["mean", "zero" or a float value]
             Time is recorded at 0.0012s intervals. None means no values are interpolated.
         output_format: Format of the output data. Options are "numpy", "dataframe" or "list"
         cache_dir: Directory for caching downloaded data

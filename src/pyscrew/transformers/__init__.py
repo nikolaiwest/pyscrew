@@ -10,9 +10,9 @@ that handle various aspects of screw driving data processing:
 4. Interpolating to achieve equidistant time series
 """
 
-from .interpolate_missings import InterpolateMissingsTransformer
+from .handle_missings import InterpolateMissingsTransformer
 from .pipeline_logging import PipelineLoggingTransformer
-from .remove_duplicates import RemoveDuplicatesTransformer
+from .handle_duplicates import RemoveDuplicatesTransformer
 from .unpack_steps import UnpackStepsTransformer
 
 __all__ = [

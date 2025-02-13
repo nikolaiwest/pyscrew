@@ -281,20 +281,8 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, dataset: ScrewDataset) -> ScrewDataset:
         """Transform the dataset by removing duplicates.
-
         Note: The returned dataset maintains the same type structure
         with processed_data: Dict[str, List[List[float]]]
-        """
-        """Remove duplicate time points using selected method.
-
-        Args:
-            dataset: Input dataset to process
-
-        Returns:
-            Processed dataset with duplicates removed
-
-        Raises:
-            DuplicateProcessingError: If processing fails
         """
         # Reset statistics
         self._stats = DuplicateStats()
@@ -305,20 +293,40 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
             JsonFields.Measurements.TORQUE: [],
             JsonFields.Measurements.ANGLE: [],
             JsonFields.Measurements.GRADIENT: [],
-            JsonFields.Measurements.STEP: [],
         }
+
+        # Only include step field if it exists in input
+        if JsonFields.Measurements.STEP in dataset.processed_data:
+            processed_data[JsonFields.Measurements.STEP] = []
 
         try:
             # Process each run
-            self._stats.total_series = len(dataset.screw_runs)
+            self._stats.total_series = len(
+                dataset.processed_data[JsonFields.Measurements.TIME]
+            )
 
-            for run in dataset.screw_runs:
-                # Get measurements as numpy arrays
-                time = np.array(run.get_values(JsonFields.Measurements.TIME))
-                torque = np.array(run.get_values(JsonFields.Measurements.TORQUE))
-                angle = np.array(run.get_values(JsonFields.Measurements.ANGLE))
-                gradient = np.array(run.get_values(JsonFields.Measurements.GRADIENT))
-                steps = np.array(range(len(time)))
+            for idx in range(self._stats.total_series):
+                # Get measurements from processed_data as numpy arrays
+                time = np.array(
+                    dataset.processed_data[JsonFields.Measurements.TIME][idx]
+                )
+                torque = np.array(
+                    dataset.processed_data[JsonFields.Measurements.TORQUE][idx]
+                )
+                angle = np.array(
+                    dataset.processed_data[JsonFields.Measurements.ANGLE][idx]
+                )
+                gradient = np.array(
+                    dataset.processed_data[JsonFields.Measurements.GRADIENT][idx]
+                )
+
+                # Handle steps if they exist in processed_data
+                if JsonFields.Measurements.STEP in dataset.processed_data:
+                    steps = np.array(
+                        dataset.processed_data[JsonFields.Measurements.STEP][idx]
+                    )
+                else:
+                    steps = np.array([])  # Empty array if no steps
 
                 self._stats.total_points += len(time)
 
@@ -367,10 +375,11 @@ class RemoveDuplicatesTransformer(BaseEstimator, TransformerMixin):
         logger.info(
             f"Processed {stats.total_series:,} series with {stats.total_points:,} total points"
         )
-        logger.info(
-            f"Removed {stats.total_removed:,} points ({removal_percent:.1f}% of total)"
-        )
+
         logger.info(
             f"Found {stats.total_true_duplicates:,} true duplicates ({true_dup_percent:.1f}%) and {stats.total_value_differences:,} value differences ({diff_percent:.1f}%)"
+        )
+        logger.info(
+            f"Removed {stats.total_removed:,} points (-{removal_percent:.1f}% of total)"
         )
         logger.info(f"Average {avg_removed:.2f} points removed per series")
