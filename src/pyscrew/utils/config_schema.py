@@ -1,12 +1,14 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 # Constants for valid options
 MEASUREMENTS = ["torque", "angle", "gradient", "time"]
 POSITIONS = ["left", "right", "both"]
 OUTPUT_FORMATS = ["numpy", "dataframe", "tensor", "list"]
+DUPLICATE_METHODS = ["first", "last", "mean"]
+MISSING_METHODS = ["mean", "zero"]  # Will also accept float values
 
 # Constants for scenario mapping
 SCENARIO_MAP = {
@@ -24,6 +26,10 @@ class ConfigSchema(BaseModel):
 
     This class handles all configuration settings for the data loading and processing pipeline.
     It validates inputs and provides standardized access to configuration values.
+
+    Note:
+        - If handle_missings is set, handle_duplicates must also be set
+        - handle_duplicates can be used independently
     """
 
     # Scenario identification
@@ -50,11 +56,13 @@ class ConfigSchema(BaseModel):
     )
 
     # Processing settings
-    remove_negative_torque: bool = Field(
-        False, description="Remove negative torque values from data"
+    handle_duplicates: Optional[str] = Field(
+        "first",
+        description=f"How to handle duplicate time points. Options: {DUPLICATE_METHODS} or None to skip",
     )
-    interpolate_missings: bool = Field(
-        False, description="Interpolate missing values (0.0012s intervals)"
+    handle_missings: Optional[str] = Field(
+        "mean",
+        description=f"How to handle missing values. Options: {MISSING_METHODS}, float value, or None to skip",
     )
     output_format: str = Field(
         "numpy", description=f"Output format. Options: {OUTPUT_FORMATS}"
@@ -118,3 +126,44 @@ class ConfigSchema(BaseModel):
                 f"Invalid output format: {v}. Valid options are {OUTPUT_FORMATS}"
             )
         return v
+
+    @field_validator("handle_duplicates")
+    def validate_duplicate_method(cls, v: Optional[str]) -> Optional[str]:
+        """Validate duplicate handling method."""
+        if v is None:
+            return v
+        if v not in DUPLICATE_METHODS:
+            raise ValueError(
+                f"Invalid duplicate handling method: {v}. Valid options are {DUPLICATE_METHODS} or None"
+            )
+        return v
+
+    @field_validator("handle_missings")
+    def validate_missing_method(cls, v: Optional[str]) -> Optional[str]:
+        """Validate missing value handling method."""
+        if v is None:
+            return v
+        if v in MISSING_METHODS:
+            return v
+        try:
+            # Allow float values for custom fill
+            float(v)
+            return v
+        except ValueError:
+            raise ValueError(
+                f"Invalid missing value method: {v}. Valid options are {MISSING_METHODS}, None, or a float value"
+            )
+
+    @model_validator(mode="after")
+    def validate_missing_requires_duplicates(cls, values):
+        """Ensure that if handle_missings is set, handle_duplicates is also set."""
+        handle_missings = values.handle_missings
+        handle_duplicates = values.handle_duplicates
+
+        if handle_missings is not None and handle_duplicates is None:
+            raise ValueError(
+                "Cannot handle missing values without handling duplicates first. "
+                "Please set handle_duplicates to a valid method when using handle_missings."
+            )
+
+        return values

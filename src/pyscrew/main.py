@@ -107,8 +107,8 @@ def get_data(
     screw_cycles: list[int] | None = None,
     screw_positions: str = "both",
     # Processing options
-    remove_negative_torque: bool = False,
-    interpolate_missings: bool = False,
+    handle_duplicates: str = "first",
+    handle_missings: str = "mean",
     output_format: str = "numpy",
     # System options
     cache_dir: str | Path | None = None,
@@ -123,10 +123,12 @@ def get_data(
             None means "all measurements"
         screw_phase: List of screw phases to include. Options are [1,2,3,4]. None means "all phases"
         screw_cycles: List of cycle numbers to include. None means "all cycles"
-        screw_position: Position to analyze. Options are "left", "right", or "both"
-        remove_negative_torque: Whether to remove negative torque values
-        interpolate_missings: Whether to interpolate missing values using mean. Time is recorded at 0.0012s intervals
-        output_format: Format of the output data. Options are "numpy", "dataframe", "tensor", or "list"
+        screw_position: Position to analyze. Options are ["left", "right" or "both"]
+        handle_duplicates: How to remove negative values and what to keep. Options are ["first", "last", "mean", None].
+            None means no duplactes are removed.
+        handle_missings: Whether to interpolate missing values. Options are ["mean", "zeor" or a float value]
+            Time is recorded at 0.0012s intervals. None means no values are interpolated.
+        output_format: Format of the output data. Options are "numpy", "dataframe" or "list"
         cache_dir: Directory for caching downloaded data
         force_download: Force re-download even if cached
 
@@ -155,14 +157,12 @@ def get_data(
         screw_phase=screw_phase,
         screw_cycles=screw_cycles,
         screw_positions=screw_positions,
-        remove_negative_torque=remove_negative_torque,
-        interpolate_missings=interpolate_missings,
+        handle_duplicates=handle_duplicates,
+        handle_missings=handle_missings,
         output_format=output_format,
         cache_dir=Path(cache_dir) if cache_dir else None,
         force_download=force_download,
     )
-
-    config.force_download
 
     try:
         # Step 1: Get raw data path and download if needed

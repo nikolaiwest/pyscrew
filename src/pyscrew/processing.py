@@ -18,7 +18,7 @@ Each transformation is implemented as a scikit-learn transformer, allowing for:
 """
 
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Dict, List, Union, cast
 
 from sklearn.pipeline import Pipeline
 
@@ -28,7 +28,8 @@ from pyscrew.transformers import (
     RemoveDuplicatesTransformer,
     UnpackStepsTransformer,
 )
-from pyscrew.utils.data_model import JsonFields, ScrewDataset
+from pyscrew.utils.config_schema import ConfigSchema
+from pyscrew.utils.data_model import ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -48,7 +49,7 @@ class ProcessingError(Exception):
     pass
 
 
-def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
+def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
     """
     Create a configured processing pipeline for screw operation data.
 
@@ -60,16 +61,16 @@ def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
     2. Step Data Unpacking:
        - Transforms hierarchical step data into measurement collections
        - Maintains run-level organization
-       - Optionally tracks measurement origins
+       - Tracks measurement origins
 
-    3. Duplicate Handling (optional):
+    3. Duplicate Value Handling:
        - Identifies duplicate time points
-       - Applies configured resolution strategy
+       - Applies configured handling method (first, last, mean)
        - Validates time sequence consistency
 
-    4. Measurement Interpolation (optional):
+    4. Missing Value Handling:
        - Ensures equidistant time points
-       - Handles missing values
+       - Handles missing values based on config method
        - Maintains measurement alignment
 
     5. Output State Logging:
@@ -78,61 +79,48 @@ def create_processing_pipeline(config: Dict[str, Any]) -> Pipeline:
 
     Args:
         config: Pipeline configuration including:
-            - handle_duplicates: Enable duplicate handling
-            - duplicate_strategy: How to resolve duplicates ("mean", "first", etc.)
-            - interpolate_missings: Enable interpolation
-            - target_interval: Time interval for interpolation (default: 0.0012s)
+            - handle_duplicates: Which duplicates to keep? ("first", "last" or "mean")
+            - handle_missings: How to handle missing values? ("mean", "zero", or float value)
+            - output_format: Desired output format ("numpy", "dataframe", "list")
 
     Returns:
         Configured scikit-learn Pipeline ready for execution
 
-    Example:
-        >>> config = {
-        ...     "handle_duplicates": True,
-        ...     "duplicate_strategy": "mean",
-        ...     "interpolate_missings": True,
-        ...     "target_interval": 0.0012
-        ... }
-        >>> pipeline = create_processing_pipeline(config)
-        >>> processed_data = pipeline.fit_transform(dataset)
+    Raises:
+        ProcessingError: On pipeline configuration failure
     """
-    steps = []
+    try:
+        steps = []
 
-    # 1. Add input logging transformer
-    steps.append(("input_logger", PipelineLoggingTransformer("Input")))
+        # 1. Add input logging transformer
+        steps.append(("log_in", PipelineLoggingTransformer("Input")))
 
-    # 2. Add step unpacking transformer
-    steps.append(("unpack_steps", UnpackStepsTransformer()))
+        # 2. Add step unpacking transformer
+        steps.append(("pack", UnpackStepsTransformer()))
 
-    # 3. Add duplicate handler if enabled
-    if True:  # TODO: Implement with config parameter
-        duplicate_strategy = "mean"
-        logger.info(f"Adding duplicate handler with {duplicate_strategy} strategy")
-        steps.append(
-            (
-                "remove_duplicates",
-                RemoveDuplicatesTransformer(strategy=duplicate_strategy),
-            )
-        )
+        # 3. Add duplicate value handler (if configured)
+        if config.handle_duplicates:
+            logger.info(f"Adding duplicate handler with {config.handle_duplicates}")
+            steps.append(("dup", RemoveDuplicatesTransformer(config.handle_duplicates)))
 
-    # 4. Add interpolation transformer
-    if True:  # TODO: Only default to True for backward compatibility
-        target_interval = 0.0012  # Standard measurement interval
-        logger.info(f"Adding interpolation with interval {target_interval}")
-        steps.append(
-            (
-                "interpolate_missings",
-                InterpolateMissingsTransformer(target_interval=target_interval),
-            )
-        )
+        # 4. Add missing value handler (if configured)
+        if config.handle_missings:
+            target_interval = 0.0012  # Standard measurement interval
+            logger.info(f"Adding missing value handler with {config.handle_missings}")
+            steps.append(("mis", InterpolateMissingsTransformer(target_interval)))
 
-    # 5. Add output logging transformer
-    steps.append(("output_logger", PipelineLoggingTransformer("Output")))
+        # 5. Add output logging transformer
+        steps.append(("log_out", PipelineLoggingTransformer("Output")))
 
-    return Pipeline(steps)
+        return Pipeline(steps)
+
+    except Exception as e:
+        raise ProcessingError(f"Failed to create processing pipeline: {str(e)}")
 
 
-def process_data(data_path: Union[str, Path], config: Dict[str, Any]) -> ScrewDataset:
+def process_data(
+    data_path: Union[str, Path], config: ConfigSchema
+) -> Dict[str, List[float]]:
     """
     Process screw operation data according to configuration.
 
@@ -144,10 +132,15 @@ def process_data(data_path: Union[str, Path], config: Dict[str, Any]) -> ScrewDa
 
     Args:
         data_path: Path to directory containing JSON measurement files
-        config: Processing configuration dictionary containing pipeline settings
+        config: Pipeline configuration from ConfigSchema
 
     Returns:
-        Processed dataset with transformed measurements
+        Dictionary containing processed measurements with keys:
+            - "time values": List of time measurements
+            - "torque values": List of torque measurements
+            - "angle values": List of angle measurements
+            - "gradient values": List of gradient measurements
+            - "step values": List of step indicators
 
     Raises:
         ProcessingError: If any stage of processing fails
@@ -161,7 +154,11 @@ def process_data(data_path: Union[str, Path], config: Dict[str, Any]) -> ScrewDa
 
         # Create and execute pipeline
         pipeline = create_processing_pipeline(config)
-        processed_dataset = pipeline.fit_transform(dataset)
+        processed_dataset = cast(ScrewDataset, pipeline.fit_transform(dataset))
+
+        # Return the processed data dictionary
+        if not processed_dataset.processed_data:
+            raise ProcessingError("Pipeline did not produce any processed data")
 
         return processed_dataset.processed_data
 
