@@ -1,3 +1,8 @@
+[![PyPI version](https://badge.fury.io/py/pyscrew.svg)](https://badge.fury.io/py/pyscrew)
+[![Python](https://img.shields.io/pypi/pyversions/pyscrew.svg)](https://pypi.org/project/pyscrew/)
+[![License](https://img.shields.io/github/license/nikolaiwest/pyscrew.svg)](https://github.com/nikolaiwest/pyscrew/blob/main/LICENSE)
+[![Downloads](https://pepy.tech/badge/pyscrew)](https://pepy.tech/project/pyscrew)
+
 # PyScrew
 
 PyScrew is a Python package designed to simplify access to industrial research data from screw driving experiments. It provides a streamlined interface for downloading, validating, and preparing experimental datasets hosted on Zenodo.
@@ -19,7 +24,10 @@ To install PyScrew, use pip:
 pip install pyscrew
 ```
 
-## Quck start
+## Usage
+
+You can load and process data from a specific scenario using the `get_data` function. The function allows you to configure various processing options, including handling duplicates, missing values, and length normalization.
+
 
 ```python 
 import pyscrew
@@ -44,6 +52,8 @@ print("Number of torque measurements:", len(data["torque values"]))
 x_values = data["torque values"]
 y_values = data["class values"]
 ```
+
+In a future release, we will add the option to get the ScrewDataset through a dedicated `get_dataset` method with a few QOL functions. 
 
 ## Available Scenarios
 
@@ -111,6 +121,16 @@ Downloaded data is stored in:
     ├── s03_error-collection-1/
     └── ...
 ```
+
+## Code Style
+
+This project uses:
+- [Black](https://black.readthedocs.io/en/stable/) for code formatting
+- [Ruff](https://docs.astral.sh/ruff/) for fast linting and import sorting
+- [MyPy](https://mypy.readthedocs.io/en/stable/) for static type checking
+- [Pytest](https://docs.pytest.org/en/stable/) for testing
+
+Configuration for these tools can be found in `pyproject.toml`.
 
 ## Development
 The package is under active development. Further implementation will add data processing utilities and data validation tools. 

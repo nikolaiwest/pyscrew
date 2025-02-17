@@ -1,6 +1,9 @@
+# Build system configuration
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "wheel"]    # Basic build requirements
+build-backend = "setuptools.build_meta"
+
+# Core project metadata
 [project]
 name = "pyscrew"
 version = "0.1.5"
@@ -9,16 +12,21 @@ authors = [
     { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }
 ]
 requires-python = ">=3.11"
-dependencies = [
-    "requests>=2.28.0",    # For downloading the respective files via Zenodo
-    "tqdm>=4.65.0",        # For progress bars during downloads
-    "pyyaml>=6.0.0",       # For loading scenario info
-    "pydantic>=2.10.6",    # For data validation
-    "scikit_learn>=1.6.1", # For data preprocessing
-    "pandas>=2.2.3",       # For data handling
-]
 readme = "README.md"
 license = { text = "MIT" }
+
+# Core dependencies
+dependencies = [
+    "requests>=2.28.0,<3.0.0",     # For downloading files via Zenodo
+    "tqdm>=4.65.0,<5.0.0",         # For progress bars during downloads
+    "pyyaml>=6.0.0,<7.0.0",        # For loading scenario info
+    "pydantic>=2.10.6,<3.0.0",     # For data validation
+    "scikit-learn>=1.6.1,<2.0.0",  # For data preprocessing (fixed hyphen)
+    "pandas>=2.2.3,<3.0.0",        # For data handling
+    "typing-extensions>=4.0.0,<5.0.0",  # For enhanced type hints
+]
+
+# Project classifiers for PyPI
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -26,14 +34,81 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Typing :: Typed",
 ]
-keywords = ["manufacturing", "screw driving", "industrial data", "open data", "research data"]
+
+# Keywords for PyPI search
+keywords = [
+    "manufacturing",
+    "screw driving",
+    "industrial data",
+    "open data",
+    "research data"
+]
+
+# Optional development dependencies
 [project.optional-dependencies]
 test = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
+    "pytest>=7.0.0,<8.0.0",          # Core testing framework
+    "pytest-cov>=4.0.0,<5.0.0",      # Coverage reporting
+    "black>=23.0.0,<24.0.0",         # Code formatting
+    "mypy>=1.0.0,<2.0.0",            # Type checking
+    "ruff>=0.0.280,<1.0.0",          # Fast linting
 ]
+
+# Project URLs
 [project.urls]
-"Homepage" = "https://github.com/nikolaiwest/pyscrew"
+Homepage = "https://github.com/nikolaiwest/pyscrew"
 "Bug Tracker" = "https://github.com/nikolaiwest/pyscrew/issues"
-"Documentation" = "https://github.com/nikolaiwest/pyscrew#readme"
+Documentation = "https://github.com/nikolaiwest/pyscrew#readme"
+Changelog = "https://github.com/nikolaiwest/pyscrew/blob/main/CHANGELOG.md"
+
+# MyPy configuration for type checking
+[tool.mypy]
+python_version = "3.11"               # Target Python version
+warn_return_any = true                # Warn about returning Any
+warn_unused_configs = true            # Warn about unused configs
+disallow_untyped_defs = true          # Require type annotations
+check_untyped_defs = true             # Type check functions without annotations
+ignore_missing_imports = true         # Skip type checking for external packages
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]                 # Where to find tests
+python_files = ["test_*.py"]          # Test file pattern
+addopts = "--cov=pyscrew --cov-report=term-missing"  # Always run with coverage
+
+# Coverage.py configuration
+[tool.coverage.run]
+source = ["pyscrew"]                  # Package to measure coverage for
+branch = true                         # Enable branch coverage
+
+[tool.coverage.report]
+exclude_lines = [                     # Lines to exclude from coverage
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "raise ImportError",
+    "pass",
+]
+
+# Black configuration for code formatting
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "B",    # flake8-bugbear
+    "I",    # isort
+]
+ignore = [
+    "E501",  # Line length (handled by Black)
+]
+
+# isort settings (now handled by Ruff)
+[tool.ruff.isort]
+known-first-party = ["pyscrew"]

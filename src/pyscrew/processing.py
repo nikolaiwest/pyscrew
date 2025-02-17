@@ -25,8 +25,8 @@ from sklearn.pipeline import Pipeline
 
 from pyscrew.transformers import (
     HandleDuplicatesTransformer,
-    HandleMissingsTransformer,
     HandleLengthsTransformer,
+    HandleMissingsTransformer,
     PipelineLoggingTransformer,
     UnpackStepsTransformer,
 )
@@ -140,7 +140,7 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
         return Pipeline(steps)
 
     except Exception as e:
-        raise ProcessingError(f"Failed to create processing pipeline: {str(e)}")
+        raise ProcessingError(f"Failed to create processing pipeline: {str(e)}") from e
 
 
 def process_data(
@@ -190,4 +190,4 @@ def process_data(
 
     except Exception as e:
         logger.error(f"Processing failed: {str(e)}")
-        raise ProcessingError(f"Failed to process data: {str(e)}")
+        raise ProcessingError(f"Failed to process data: {str(e)}") from e

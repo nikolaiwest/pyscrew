@@ -132,7 +132,9 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
         # Check for NaN/inf values
         for arr_name, arr in zip(
-            ["time", "torque", "angle", "gradient", "steps"], arrays
+            ["time", "torque", "angle", "gradient", "steps"],
+            arrays,
+            strict=False,
         ):
             if not np.isfinite(arr).all():
                 raise DuplicateProcessingError(
@@ -257,7 +259,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                 }
 
         except Exception as e:
-            raise DuplicateProcessingError(f"Failed to process series: {str(e)}")
+            raise DuplicateProcessingError(f"Failed to process series: {str(e)}") from e
 
     def fit(self, dataset: ScrewDataset, y=None) -> "HandleDuplicatesTransformer":
         """Validate handling method and data structure.
@@ -352,14 +354,20 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
             return dataset
 
         except Exception as e:
-            raise DuplicateProcessingError(f"Failed to transform dataset: {str(e)}")
+            raise DuplicateProcessingError(
+                f"Failed to transform dataset: {str(e)}"
+            ) from e
 
     def _log_summary(self) -> None:
         """Log summary statistics of duplicate removal."""
         stats = self._stats
 
         # Calculate percentages
-        removal_percent = stats.total_removed / stats.total_points * 100
+        removal_percent = (
+            (stats.total_removed / stats.total_points * 100)
+            if stats.total_points > 0
+            else 0
+        )
         true_dup_percent = (
             (stats.total_true_duplicates / stats.total_removed * 100)
             if stats.total_removed > 0
@@ -374,7 +382,9 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
             if (stats.total_true_duplicates + stats.total_value_differences) > 0
             else 0
         )
-        avg_removed = stats.total_removed / stats.total_series
+        avg_removed = (
+            stats.total_removed / stats.total_series if stats.total_series > 0 else 0
+        )
 
         logger.info(
             f"Completed duplicate removal using '{self.handle_duplicates}' method"
