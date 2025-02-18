@@ -53,10 +53,12 @@ from pyscrew.utils.logger import get_logger
 # Scenarios to process as published on Zenodo and in pyscrew
 # Check out the scenario.yml for more info on available datasets
 SCENARIOS = [
-    "s01_thread-degradation",
-    "s02_surface-friction",
+    # "s01_thread-degradation",
+    # "s02_surface-friction",
     # "s03_error-collection-1",  # Future scenarios
     # "s04_error-collection-2",
+    "s05_injection-molding-manipulations-upper-workpiece",
+    # "s06_injection-molding-manipulations-lower-workpiece"
 ]
 
 # ZIP is the preferred format (better compression), but TAR is supported for compatibility
@@ -157,25 +159,18 @@ def create_scenario_archive(
 
     except Exception as e:
         logger.error(f"Failed to create archive: {str(e)}")
-        raise ArchiveCreationError(f"Archive creation failed: {str(e)}")
+        raise ArchiveCreationError(f"Archive creation failed: {str(e)}") from e
 
 
 def main():
     """Create archives for all scenarios in all formats."""
     try:
-        scenarios = [
-            "s01_thread-degradation",
-            "s02_surface-friction",
-            # "s03_error-collection-1",
-            # "s04_error-collection-2",
-        ]
-
         formats = [
             ArchiveFormat.TAR,
             ArchiveFormat.ZIP,
         ]
 
-        for scenario in scenarios:
+        for scenario in SCENARIOS:
             logger.info(f"Processing scenario: {scenario}")
             for archive_format in formats:
                 create_scenario_archive(scenario, archive_format)

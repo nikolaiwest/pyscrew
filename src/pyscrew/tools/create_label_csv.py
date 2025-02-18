@@ -29,20 +29,21 @@ from pyscrew.utils.logger import get_logger
 
 # The specific scenario name as published on Zenodo and in pyscrew
 # Check out the scenario.yml for more info on available datasets
-SCENARIO_NAME = "s01_thread-degradation"
+# SCENARIO_NAME = "s01_thread-degradation"
 # SCENARIO_NAME = "s02_surface-friction"
+SCENARIO_NAME = "s05_injection-molding-manipulations-upper-workpiece"
 
 # File handling configuration
 # --------------------------
 # Converts .txt to .json for clarity in the file names since the
 # screw program would always export screw runs as text files.
-RENAME_FILES = False
+RENAME_FILES = True
 
 # While we want to maintain the original configuration of the raw data,
 # minimizing the JSON files by removing white space saves a lot of file size (~33%).
 # This step takes more time and does nothing after the first run, hence
 # it is currently set to False by default.
-COMPRESS_FILES = False
+COMPRESS_FILES = True
 
 # Path configuration
 # -----------------
@@ -179,7 +180,7 @@ def minimize_json_files(json_dir: Path) -> None:
 
     except Exception as e:
         logger.error(f"Error during JSON minimization: {e}")
-        raise LabelGenerationError(f"Failed to minimize JSON files: {e}")
+        raise LabelGenerationError(f"Failed to minimize JSON files: {e}") from e
 
 
 def get_scenario_base_name(scenario_name: str) -> str:
@@ -243,7 +244,7 @@ def rename_txt_to_json(json_dir: Path) -> None:
 
     except Exception as e:
         logger.error(f"Error during file renaming: {e}")
-        raise LabelGenerationError(f"Failed to rename .txt files: {e}")
+        raise LabelGenerationError(f"Failed to rename .txt files: {e}") from e
 
 
 def validate_scenario_structure(
@@ -296,7 +297,7 @@ def validate_scenario_structure(
         logger.info("Scenario structure validation successful")
 
     except ValueError as e:
-        raise LabelGenerationError(f"Invalid class directory name: {e}")
+        raise LabelGenerationError(f"Invalid class directory name: {e}") from e
 
 
 def generate_labels(
@@ -366,7 +367,7 @@ def generate_labels(
                     workpiece_id = str(data[JsonFields.Run.WORKPIECE_ID])
                 except KeyError as e:
                     logger.error(f"Missing workpiece ID in {file_path}")
-                    raise LabelGenerationError(f"Required field missing: {e}")
+                    raise LabelGenerationError(f"Required field missing: {e}") from e
 
                 # Get position and usage from generator
                 if workpiece_id not in workpiece_generators:
@@ -405,7 +406,7 @@ def generate_labels(
 
     except Exception as e:
         logger.error(f"Label generation failed: {e}")
-        raise LabelGenerationError(f"Failed to generate labels: {e}")
+        raise LabelGenerationError(f"Failed to generate labels: {e}") from e
 
 
 def position_usage_generator() -> Generator[tuple[int, int], None, None]:

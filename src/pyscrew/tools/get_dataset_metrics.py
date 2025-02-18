@@ -29,8 +29,9 @@ from pyscrew.utils.logger import get_logger
 # Configuration
 # ------------
 # SCENARIO_NAME = "s01_thread-degradation"
-SCENARIO_NAME = "s02_surface-friction"
+# SCENARIO_NAME = "s02_surface-friction"
 # SCENARIO_NAME = "s03_error-collection-1"
+SCENARIO_NAME = "s05_injection-molding-manipulations-upper-workpiece"
 
 # Use your cached data if you want to reproduce the label creation
 DEFAULT_CACHE_DIR = None  # ".cache/pyscrew/extracted"
@@ -65,11 +66,15 @@ def load_scenario_data(base_path: str) -> Tuple[pd.DataFrame, List[Path]]:
         MetricsCalculationError: If data loading or validation fails
     """
     try:
-        labels_path = Path(base_path) / "labels.csv"
-        labels_df = pd.read_csv(labels_path)
+        scenario_name = Path(base_path).parts[-1]
+        labels_path = Path(base_path).parent / "csv" / f"{scenario_name}.csv"
+        labels_df = pd.read_csv(labels_path.resolve())
 
-        json_dir = Path(base_path) / "json"
-        json_files = list(json_dir.rglob("*.json"))
+        json_dir = Path(base_path).parent / "json" / scenario_name
+        json_files = []
+        for class_value in labels_df[CsvFields.CLASS_VALUE].unique():
+            class_dir = json_dir / str(class_value)
+            json_files.extend(class_dir.rglob("*.json"))
 
         if not json_files:
             raise MetricsCalculationError(f"No JSON files found in {json_dir}")
@@ -80,7 +85,7 @@ def load_scenario_data(base_path: str) -> Tuple[pd.DataFrame, List[Path]]:
         return labels_df, json_files
 
     except Exception as e:
-        raise MetricsCalculationError(f"Failed to load scenario data: {e}")
+        raise MetricsCalculationError(f"Failed to load scenario data: {e}") from e
 
 
 # Sample Distribution Metrics (Sample Distribution section)
@@ -296,7 +301,7 @@ def calculate_scenario_metrics(base_path: str) -> Dict:
 
     except Exception as e:
         logger.error(f"Failed to calculate metrics: {e}")
-        raise MetricsCalculationError(f"Metrics calculation failed: {e}")
+        raise MetricsCalculationError(f"Metrics calculation failed: {e}") from e
 
 
 def main():
@@ -306,7 +311,7 @@ def main():
             data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME
         else:
             data_dir = (
-                Path(__file__).parent / "../../../data/json" / SCENARIO_NAME
+                Path(__file__).parent / "../../../data" / SCENARIO_NAME
             ).resolve()
 
         logger.info(f"Processing documentation metrics for {SCENARIO_NAME}")
