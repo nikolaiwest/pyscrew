@@ -195,10 +195,10 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
                 result[match_indices] = values_arr[orig_indices]
                 return result
 
-            except (TypeError, ValueError):
+            except (TypeError, ValueError) as e:
                 raise ProcessingError(
                     f"Invalid handle_missings value: {self.handle_missings}"
-                )
+                ) from e
 
     def _to_float_list(self, values: NDArray[np.float64]) -> List[float]:
         """Convert numpy array to list of Python floats with rounding.
@@ -344,7 +344,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             return dataset
 
         except Exception as e:
-            raise ProcessingError(f"Failed to transform dataset: {str(e)}")
+            raise ProcessingError(f"Failed to transform dataset: {str(e)}") from e
 
     def _log_summary(self) -> None:
         """Log summary statistics of interpolation processing."""
@@ -368,6 +368,6 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             f"Found gaps - min: {stats.min_time_gap:.4f}s, max: {stats.max_time_gap:.4f}s, avg: {stats.avg_time_gap:.4f}s"
         )
         logger.info(
-            f"Added {stats.total_interpolated_points-stats.total_original_points:,} points (+{points_ratio:.2f}% of total)"
+            f"Added {stats.total_interpolated_points-stats.total_original_points:,} points (+{points_ratio*100:.2f}% of total)"
         )
         logger.info(f"Average {points_per_series:.1f} points added per series")

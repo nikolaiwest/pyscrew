@@ -1,6 +1,6 @@
 datasets:
   thread-degradation:
-    record_id: "14860571"
+    record_id: "14887942"
     file_name: "s01_thread-degradation.tar"
     md5_checksum: "0c98e4f1cab8cbe88de0285b1a15aa56"
     description: "Thread degradation analysis dataset"
@@ -8,7 +8,7 @@ datasets:
       0: 5000 # Baseline
 
   surface-friction:
-    record_id: "14860571"
+    record_id: "14887942"
     file_name: "s02_surface-friction.tar"
     md5_checksum: "4d5eb089ef145e16725f74dd421391d4"
     description: "Surface friction analysis dataset"
@@ -21,3 +21,59 @@ datasets:
       5: 1250 # Sanded 400
       6: 1250 # With adhesive
       7: 1250 # Scratched
+
+  injection-molding-manipulations-upper-workpiece:
+    record_id: "14887942"
+    file_name: "s05_injection-molding-manipulations-upper-workpiece.tar"
+    md5_checksum: "d2fb268a0a4a3119d64e37e3761bad46"
+    description: "Upper workpiece manipulations"
+    class_counts:
+      # mold_temperature_...
+      0: 40 # mold_temperature_30
+      1: 40
+      2: 40
+      3: 40
+      4: 0
+      5: 0
+      # glass_fiber_content_...
+      6: 80
+      7: 80
+      8: 80
+      9: 80
+      10: 80
+      11: 80
+      12: 80
+      # recyclate_content_...
+      13: 80
+      14: 80
+      15: 80
+      16: 80
+      17: 80
+      18: 80
+      19: 80
+      20: 80
+      21: 80
+      22: 80
+      23: 80 
+      # switching_point_...
+      24: 40
+      25: 40
+      26: 40
+      27: 40
+      28: 40
+      29: 40
+      30: 40
+      31: 40
+      32: 40
+      33: 40
+      # injection_velocity_...
+      34: 40
+      35: 40
+      36: 40
+      37: 40
+      38: 40
+      39: 40
+      40: 40
+      41: 40
+      42: 40
+      43: 40

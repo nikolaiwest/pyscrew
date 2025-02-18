@@ -387,10 +387,10 @@ class DataLoader:
             # Verify json directory exists after extraction
             if not json_path.exists():
                 raise ExtractionError(
-                    f"Expected json directory not found in extracted data"
+                    "Expected json directory not found in extracted data"
                 )
 
-            logger.info(f"Extraction completed successfully")
+            logger.info("Extraction completed successfully")
             return data_path
 
         except Exception as e:
@@ -457,7 +457,7 @@ class DataLoader:
         calculated_hash = self._calculate_md5(file_path)
 
         if calculated_hash != self.md5_checksum:
-            logger.error(f"Checksum verification failed!")
+            logger.error("Checksum verification failed!")
             logger.error(f"Expected: {self.md5_checksum}")
             logger.error(f"Got: {calculated_hash}")
             raise ChecksumError(f"File checksum mismatch for {file_path}")
@@ -527,7 +527,7 @@ class DataLoader:
                 archive_path.unlink()  # Required for Windows
             temp_path.rename(archive_path)
 
-            logger.info(f"Download completed. Verifying checksum...")
+            logger.info("Download completed. Verifying checksum...")
             self._verify_checksum(archive_path)
             return archive_path
 
@@ -740,7 +740,7 @@ class DataLoader:
                 self._extract_zip(archive_path, extract_to)
             else:
                 raise ValueError(f"Unsupported archive format: {archive_format}")
-        except (SecurityError, ExtractionError) as e:
+        except (SecurityError, ExtractionError):
             raise
         except Exception as e:
             raise ExtractionError(f"Failed to extract {archive_path}: {str(e)}")

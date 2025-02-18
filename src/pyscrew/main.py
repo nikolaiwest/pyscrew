@@ -195,7 +195,7 @@ def get_data(
         try:
             validate_loaded_data(data_path, config)
         except Exception as e:
-            raise ValidationError(f"Raw data validation failed: {e}")
+            raise ValidationError(f"Raw data validation failed: {e}") from e
 
         # Step 3: Process the data according to config
         # process_data() from processing.py should:
@@ -206,7 +206,7 @@ def get_data(
         try:
             data = process_data(data_path, config)
         except Exception as e:
-            raise ProcessingError(f"Data processing failed: {e}")
+            raise ProcessingError(f"Data processing failed: {e}") from e
 
         # Step 4: Validate processed data
         # validate_processed_data() from validation.py should:
@@ -217,7 +217,7 @@ def get_data(
         try:
             validate_processed_data(data, config)
         except Exception as e:
-            raise ValidationError(f"Processed data validation failed: {e}")
+            raise ValidationError(f"Processed data validation failed: {e}") from e
 
         # Step 5: Convert to requested output format
         # convert_data() from conversion.py should:
@@ -232,9 +232,9 @@ def get_data(
         except ImportError as e:
             raise ConversionError(
                 f"Missing dependencies for {config.output_format} format: {e}"
-            )
+            ) from e
         except Exception as e:
-            raise ConversionError(f"Data conversion failed: {e}")
+            raise ConversionError(f"Data conversion failed: {e}") from e
 
         # Step 6: Validate converted data
         # validate_converted_data() from validation.py should:
@@ -246,7 +246,7 @@ def get_data(
         try:
             validate_converted_data(data, config)
         except Exception as e:
-            raise ValidationError(f"Converted data validation failed: {e}")
+            raise ValidationError(f"Converted data validation failed: {e}") from e
 
         logger.info(f"Successfully retrieved data for scenario: {config.scenario_name}")
         return data

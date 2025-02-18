@@ -17,9 +17,11 @@ SCENARIO_MAP = {
     # Full names
     "thread-degradation": 1,
     "surface-friction": 2,
+    "injection-molding-manipulations-upper-workpiece": 5,
     # Short versions
     "s01": 1,
     "s02": 2,
+    "s05": 5,
 }
 
 
@@ -161,10 +163,10 @@ class ConfigSchema(BaseModel):
         try:
             float(v)
             return v
-        except ValueError:
+        except ValueError as e:
             raise ValueError(
                 f"Invalid missing value method: {v}. Valid options are {MISSING_METHODS}, None, or a float value"
-            )
+            ) from e
 
     @field_validator("padding_position")
     def validate_padding_position(cls, v: str) -> str:

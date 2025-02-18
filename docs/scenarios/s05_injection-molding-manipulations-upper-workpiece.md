@@ -1,17 +1,17 @@
-# Screw Driving Dataset - [SCENARIO_NAME]
+# Screw Driving Dataset - s05_injection-modling-manipulations-upper-workpiece
 
 <!-- Dataset Information -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14769379.svg)](https://zenodo.org/uploads/14769379)
-[![Dataset Size](https://img.shields.io/badge/Dataset_Size-[NUMBER_OF_SAMPLES]_samples-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Dataset Size](https://img.shields.io/badge/Dataset_Size-2400_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
-[![Version](https://img.shields.io/badge/Version-[VERSION]-blue)](https://github.com/nikolaiwest/pyscrew)
-[![Updated](https://img.shields.io/badge/Updated-[UPDATE_DATE]-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Version](https://img.shields.io/badge/Version-v1.1.5-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Updated](https://img.shields.io/badge/Updated-2025/02/18-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
 [![Paper](https://img.shields.io/badge/DOI-10.24251%2FHICSS.2024.126-green)](https://hdl.handle.net/10125/106504)
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-00CCBB?logo=ResearchGate&logoColor=white)]([RESEARCHGATE_LINK])
+
 
 ## Table of Contents
 - [Overview](#overview)
@@ -26,15 +26,13 @@
 - [License](#license)
 
 ## Overview
-<!-- Provide clear statements for:
-   1. What: The specific problem/phenomenon being studied
-   2. How: The method of data generation
-   3. Why: The relevance/importance of this scenario -->
-[WHAT_STUDIED]
-[HOW_GENERATED]
-[WHY_RELEVANT]
+This dataset examines the impact of injection molding process parameters on screw driving performance in plastic components. It systematically investigates five key process parameters: mold temperature, glass fiber content, recyclate content, switching point, and injection velocity.
 
-Collection Date: [MONTH_YEAR] - [MONTH_YEAR]
+The dataset was generated using a controlled experimental setup that systematically varied these parameters to understand their influence on screw connection quality.
+
+This research is crucial for understanding how manufacturing process parameters affect assembly quality, enabling more robust process control and quality assurance in plastic component assembly.
+
+Collection Date: December 2024
 
 ## Quick Start
 
@@ -42,7 +40,7 @@ Collection Date: [MONTH_YEAR] - [MONTH_YEAR]
 from pyscrew import get_data
 
 # Load and prepare the data (returns a dictionary)
-data = get_data(scenario_name=[SCENARIO_NAME])
+data = get_data(scenario_name="s05_injection-molding-manipulations-upper-workpiece")
 
 # Access measurements and labels
 x_values = data["torque values"] # Available: torque, angle, time, gradient, step, class
@@ -53,9 +51,9 @@ y_values = data["class values"]
 
 The dataset consists of three primary components:
 
-1. `/json` directory: Contains [NUMBER_OF_SAMPLES] individual JSON files of unprocessed screw driving operations, each recording the complete measurement data of a single screwing process.
-2. `[labels].csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
-3. `README.md`: This readme-file providing stand-alone context for the dataset.
+1. `/json` directory: Contains 2,400 individual JSON files of unprocessed screw driving operations
+2. `labels.csv`: A metadata file containing key information for each operation
+3. `README.md`: This documentation file
 
 ### Labels File Structure
 
@@ -65,23 +63,37 @@ The `labels.csv` contains seven columns:
 |--------------------|---------|------------------------------------------------------------------|
 | run_id             | int     | Unique cycle number as recorded by the screw station             |
 | file_name          | string  | Name of corresponding JSON file with the measurements            |
-| class_value        | integer | Specifies the [respective class](#classification-labels-classes) |
+| class_value        | integer | Specifies the respective class (0-43)                            |
 | result_value       | string  | Operation outcome (OK/NOK) as determined by the station          |
 | workpiece_id       | string  | Unique workpiece identifier (14-digit) as data matrix code       |
-| workpiece_usage    | integer | Previous operations count (0-24): number of screw runs           |
+| workpiece_usage    | integer | Previous operations count                                         |
 | workpiece_location | integer | Screw position (0: left, 1: right)                               |
 
 ### Classification Labels (Classes)
 
-<!-- List all classes with descriptions. Example formatas table :
-| Value  | Name      | Amount | Description                               |
-|--------|-----------|--------|-------------------------------------------|
-| 0      | Baseline  | 5000   | No additional manipulations, only wear down from repeated use |
--->
-[LIST_OF_CLASSES]
+The dataset includes 44 distinct classes across 5 main parameter groups:
+
+1. Mold Temperature (Classes 0-5):
+   - Temperature range: 30°C - 55°C
+   - Simulates cooling circuit fluctuations
+
+2. Glass Fiber Content (Classes 6-12):
+   - Content range: 18% - 30%
+   - Simulates material batch variations
+
+3. Recyclate Content (Classes 13-23):
+   - Content range: 0% - 100%
+   - Simulates recycled material impact
+
+4. Switching Point (Classes 24-33):
+   - Range: 11cm³ - 19cm³
+   - Simulates non-return valve behavior
+
+5. Injection Velocity (Classes 34-43):
+   - Range: 20cm³/s - 100cm³/s
+   - Simulates screw movement control
 
 ### JSON File Structure
-<!--Same for all datasets, but required for stand-alone usage -->
 Each JSON file represents a complete screw driving operation with the following structure:
 
 #### System Configuration
@@ -139,56 +151,48 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 - Delta PT 40x12 screws (thermoplastic-optimized)
 - Target torque: 1.4 Nm (range: 1.2-1.6 Nm)
 - Thermoplastic housing components
-<!-- Add any scenario-specific equipment -->
-[ADDITIONAL_EQUIPMENT]
 
 ### Test Protocol
 - Each workpiece uniquely identified via DMC
 - Two test locations per workpiece (left/right)
-<!-- Essential information for all scenarios -->
-- Base Protocol:
-  - Workpiece identification: DMC
-  - Test locations: [LOCATION_COUNT]
-  - Cycles per location: [CYCLES_PER_LOCATION]
-<!-- Scenario-specific details -->
-- Specific Conditions:
-  [SPECIFIC_CONDITIONS]
+- Parameter variations according to defined class specifications
 
 ## Dataset Statistics
 
 ### Sample Distribution
-<!-- Use consistent metrics across all scenarios -->
 - Sample Metrics:
-  - Total operations: [TOTAL_OPERATIONS]
-  - Unique workpieces: [WORKPIECE_COUNT]
-  - Operations per workpiece: [OPERATIONS_PER_PIECE]
+  - Total operations: 2,400
+  - Unique workpieces: 1,200
+  - Operations per workpiece: 2
 - Quality Distribution:
-  - Normal (OK): [OK_COUNT] ([OK_PERCENTAGE]%)
-  - Anomalous (NOK): [NOK_COUNT] ([NOK_PERCENTAGE]%)
+  - Normal (OK): 2,397 (99.88%)
+  - Anomalous (NOK): 3 (0.12%)
 
-<!-- If applicable, add class-specific distribution -->
 ### Distribution by Class
-<!-- Example format:
+
 | Value  | Name      | Samples | #OK  | #NOK | %OK   | %NOK  |
 |--------|-----------|---------|------|------|-------|-------|
 | 0      | Baseline  | 5000    | 4089 |  911 | 81.78 | 18.22 |
-[CLASS_DISTRIBUTION]
+
 
 ### Collection Timeline
-<!-- List significant collection periods and what was collected -->
-[COLLECTION_TIMELINE]
+Data collection occurred in December 2024:
+- Dec 5: Glass fiber content variations
+- Dec 6: Recyclate content variations
+- Dec 9: Mixed parameter studies
+- Dec 11: Temperature and velocity studies
 
 ### Data Quality
-- Sampling frequency: [SAMPLING_FREQUENCY] Hz
-- Missing values: [MISSING_VALUE_PERCENTAGE]%
-- Data completeness: [COMPLETENESS_PERCENTAGE]%
+- Sampling frequency: 833.33 Hz
+- Missing values: 2.58%
+- Data completeness: 97.42%
 
 ### Key Characteristics
-<!-- List 4-6 key characteristics specific to this scenario. Example:
-- Natural degradation progression
-- Balanced workpiece location distribution
-- Complete lifecycle coverage -->
-[KEY_CHARACTERISTICS]
+- Comprehensive parameter study
+- Very low anomaly rate (0.12%)
+- High data completeness (97.42%)
+- Systematic parameter variations
+- Dual test locations per workpiece
 
 ## Usage Guidelines
 
@@ -198,17 +202,13 @@ Recommended approaches:
 - Or via our custom `PyScrew` Python package (available in [this repository](https://github.com/nikolaiwest/pyscrew))
 
 ### Analysis Suggestions
-<!-- List 4-6 scenario-specific suggestions. Include:
-   1. Time-series analysis approaches
-   2. Statistical investigations
-   3. Comparative studies
-   4. Specific phenomena to examine -->
-- [SUGGESTION_1]
-- [SUGGESTION_2]
-...
+- Parameter influence analysis
+- Cross-parameter interaction studies
+- Quality prediction modeling
+- Process window optimization
+
 ## Citations
-If using this dataset, please cite:
-[CITATION_INFO]
+A publication for this dataset is currently in process. This information will be updated once a DOI is available. 
 
 ## Repository
 Issues and questions: https://github.com/nikolaiwest/pyscrew
@@ -231,12 +231,12 @@ The preparation and provision of the research was supported by:
 
 This research is part of the funding program ["Data competencies for early career researchers"](https://www.bmbf.de/DE/Forschung/Wissenschaftssystem/Forschungsdaten/DatenkompetenzenInDerWissenschaft/datenkompetenzeninderwissenschaft_node.html). 
 
-More information regarding the research project is available at [prodata-projekt.de](https://prodata-projekt.de/).
+More information regarding the research project is available our [project homepage](https://prodata-projekt.de/).
+
 
 ## License
 
 **MIT License**
-
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this dataset and associated documentation files, to deal in the dataset without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the dataset, and to permit persons to whom the dataset is furnished to do so, subject to the following conditions:
 
@@ -244,4 +244,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE DATASET IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE DATASET OR THE USE OR OTHER DEALINGS IN THE DATASET.
 
-*Copyright (c) 2025 Nikolai West @ RIF/IPS*
+*Copyright (c) 2025 Nikolai West @ RIF/IfW/IPS*
