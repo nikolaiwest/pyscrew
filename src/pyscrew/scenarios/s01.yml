@@ -1,0 +1,26 @@
+# Configuration for thread degradation scenario (s01)
+# src/scenarios/s01.yml
+names:
+  short: thread-degradation
+  full: variations-in-thread-degradation
+data: # info to load from zenodo
+  record_id: 14887942
+  file_name: s01_variations-in-thread-degradation.zip
+  md5_checksum: 0c98e4f1cab8cbe88de0285b1a15aa56
+metadata:
+  author: RIF Institute for Research and Transfer e.V.
+  description: > 
+    This dataset captures the natural degradation of plastic threads over repeated 
+    use. We conducted 25 screw driving experiments without any manipulations, using 
+    two screws per workpiece across 25 repetitions, resulting in 5,000 total observations. 
+    Rather than introducing artificial defects, we allowed the natural degradation 
+    process to occur as threads were repeatedly cut into the plastic workpiece components, 
+    providing realistic wear patterns.
+  purpose: > 
+    To analyze how thread quality naturally degrades through repeated use cycles, 
+    establishing baseline degradation patterns for quality control and predictive 
+    maintenance applications.
+classes:
+  001_control-group:
+    count: 5000
+    description: No additional manipulations, only wear down from repeated use

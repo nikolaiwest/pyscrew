@@ -1,0 +1,47 @@
+# Configuration for surface frictionscenario (s02)
+# src/scenarios/s02.yml
+s02:
+  names:
+    short: "surface-friction"
+    full: "variations-in-surface-friction"
+  data:
+    record_id: "14887942"
+    file_name: "s02_variations-in-surface-friction.zip"
+    md5_checksum: "4d5eb089ef145e16725f74dd421391d4"
+  metadata:
+    author: "RIF Institute for Research and Transfer e.V."
+    description: > 
+      "This dataset examines how different surface conditions affect screw driving 
+      performance. We tested various surface modifications including wear, lubrication, 
+      surface treatments, and contamination to create realistic scenarios encountered 
+      in manufacturing environments. The dataset includes 12,500 total observations 
+      across 8 distinct surface conditions."
+    purpose: > 
+      "To analyze how different surface conditions impact screw driving metrics, 
+      providing insights for quality control measures and optimal manufacturing parameters 
+      under varying surface friction scenarios."
+  classes:
+    001_control_group:
+      count: 2500
+      description: "No additional manipulations, baseline data for reference"
+    101_used_upper_workpiece:
+      count: 2500
+      description: "Upper workpiece was used 25 times, showing surface weardown"
+    201_lubricant_water:
+      count: 1250
+      description: "Decreased friction due to water-contaminated workpiece surface"
+    202_lubricant_oil_based:
+      count: 1250
+      description: "Decreased friction due to lubricant-contaminated workpiece surface"
+    301_sanding_coarse:
+      count: 1250
+      description: "Increased friction due to coarse surface treatment by sanding (40 grit)"
+    302_sanding_fine:
+      count: 1250
+      description: "Increased friction due to fine surface treatment by sanding (400 grit)"
+    401_plastic_adhesive:
+      count: 1250
+      description: "Alien material by producing adhesive-contaminated surfaces"
+    402_surface_chipped:
+      count: 1250
+      description: "Alien material by a chip due to with mechanically damaged surfaces"
