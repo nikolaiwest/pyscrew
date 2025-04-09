@@ -1,7 +1,8 @@
 # Configuration for thread degradation scenario (s01)
 # src/scenarios/s01.yml
 names:
-  short: thread-degradation
+  short: s01
+  long: thread-degradation
   full: variations-in-thread-degradation
 data: # info to load from zenodo
   record_id: 14887942
