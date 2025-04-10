@@ -18,9 +18,9 @@ metadata:
     environments. The dataset includes 1800 total observations across 27 distinct 
     experimental conditions.
   purpose: >
-    To analyze how different fault conditions impact screw driving metrics,
-    providing insights for quality control measures and fault detection capabilities
-    under varying screw driving failure scenarios.
+    To analyze how different fault conditions impact screw driving metrics, providing insights 
+    for quality control measures and fault detection capabilities under varying screw driving 
+    failure scenarios.
 classes:
   001_control-group-1:
     count: 100
@@ -62,19 +62,19 @@ classes:
   103_m3-half-washer-in-upper-part:
     count: 50
     description: >
-      Reduced screw insertion depth and asymmetric load distribution using half of an M3 polyamide washer; 
-      the half-washer was placed inside the upper part during fastening and secured together 
-      with the screw, creating non-uniform thread engagement
+      Reduced screw insertion depth and asymmetric load distribution using half of an M3 
+      polyamide washer; the half-washer was placed inside the upper part during fastening 
+      and secured together with the screw, creating non-uniform thread engagement
   201_adhesive-thread:
     count: 50
     description: >
-      Modified thread behavior by applying a metal adhesive to the screw tip, creating partial binding 
-      and increased resistance during fastening due to secondary material interference
+      Modified thread behavior by applying a metal adhesive to the screw tip, creating partial 
+      binding and increased resistance during fastening due to secondary material interference
   202_deformed-thread-1:
     count: 100
     description: >
-      Damaged thread by mechanically deforming multiple thread sections, causing irregular engagement 
-      and variations in torque requirements; reforded for s03 in March 2023
+      Damaged thread by mechanically deforming multiple thread sections, causing irregular 
+      engagement and variations in torque requirements; reforded for s03 in March 2023
   203_deformed-thread-2:
     count: 50
     description: >
@@ -140,8 +140,8 @@ classes:
   603_surface-lubricant:
     count: 50
     description: >
-      Decreased friction due to lubricant-contaminated workpiece surface; runs were taken from s02-202 
-      using only the first screw cycles with no thread/surface degradation
+      Decreased friction due to lubricant-contaminated workpiece surface; runs were taken from 
+      s02-202 using only the first screw cycles with no thread/surface degradation
   604_surface-adhesive:
     count: 50
     description: >
@@ -160,5 +160,5 @@ classes:
   607_surface-scratched:
     count: 50
     description: >
-      Alien material by a chip due to with mechanically damaged surfaces; runs were taken from s02-402 
-      using only the first screw cycles with no thread/surface degradation
+      Alien material by a chip due to with mechanically damaged surfaces; runs were taken from 
+      s02-402 using only the first screw cycles with no thread/surface degradation

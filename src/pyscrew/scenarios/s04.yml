@@ -1,0 +1,180 @@
+# Configuration for assembly conditions 4 scenario (s04)
+# src/scenarios/s04.yml
+names:
+  short: s04
+  long: assembly-conditions-4
+  full: variations-in-assembly-conditions-4
+data: # TODO: Update after upload
+  record_id: 12345679
+  file_name: s04_variations-in-assembly-conditions-4.zip
+  md5_checksum: abcdefghij
+metadata:
+  author: RIF Institute for Research and Transfer e.V.
+  description: >
+    This dataset examines how different screw and component faults affect screw driving
+    performance. We tested various fault conditions including thread modifications,
+    surface conditions, component modifications, material variations, and process parameter
+    changes to create realistic fault scenarios encountered in manufacturing environments.
+    The dataset includes 5000 total observations across 25 distinct experimental conditions,
+    recorded over a compressed two-week period. Unlike s03, control group data was recorded
+    in alternating sequence with error data (5 OK followed by 5 NOK observations) to
+    minimize environmental condition influences.
+  purpose: >
+    To analyze how different fault conditions impact screw driving metrics, providing insights
+    for quality control measures and fault detection capabilities under varying screw driving
+    failure scenarios. The experimental design with five distinct groups of 24 errors and
+    interleaved control samples enables more robust analysis of error patterns by reducing
+    temporal bias compared to s03. The knowledge gained from s03 directly informed these
+    methodological improvements, resulting in a dataset with higher consistency and reduced
+    confounding variables.
+classes:
+  001_control-group:
+    count: 200
+    description: >
+      No manipulations, standard reference data for comparison with other experiment groups; 
+      recorded for s04 using standard parameters (torque 1.4 Nm, process window 1.2-1.6 Nm) 
+      and original components according to specification
+  101_deformed-thread:
+    count: 200
+    description: >
+      Damaged thread by mechanically deforming the lower section (approx. 2nd-3rd thread turn); 
+      characterized by strong compression of the thread profile; creating increased resistance 
+      during fastening due to irregular thread engagement
+  102_filed-screw-tip:
+    count: 200
+    description: >
+      Removed thread at the screw tip on one side through mechanical processing; first 2-3mm of 
+      one screw side no longer have thread structure; causing difficult screw insertion and 
+      irregular thread formation
+  103_glued-screw-tip:
+    count: 200
+    description: >
+      Modified thread behavior by applying metal adhesive to the first 3-4mm of the screw tip; 
+      created an even layer approx. 0.1mm thick; partially filling the thread profile and 
+      creating increased resistance during fastening
+  104_coated-screw:
+    count: 200
+    description: >
+      Altered surface properties by using a screw with different coating; modified friction 
+      coefficient between screw and component material; affecting torque-angle relationship 
+      during the fastening process
+  105_worn-out-screw:
+    count: 200
+    description: >
+      Degraded screw quality by using screws with significant wear marks from multiple use cycles; 
+      thread flanks show abrasion patterns and partially removed coating; simulating reused 
+      fasteners in production environments
+  201_damaged-contact-surface:
+    count: 200
+    description: >
+      Compromised seating surface by creating two symmetrical damages in the upper part contact 
+      area; damages made with 8mm drill to approx. 0.5mm depth; impairing the flat contact 
+      surface needed for proper screw head seating
+  202_broken-contact-surface:
+    count: 200
+    description: >
+      Reduced structural integrity by creating continuous crack in the upper part contact surface; 
+      damage extends from screw hole across entire contact area; severely compromising mechanical 
+      stability of the connection
+  203_metal-ring-upper-part:
+    count: 200
+    description: >
+      Modified pressure distribution by integrating metallic O-ring in the screw head contact 
+      area; ring dimensions 8.5mm outer diameter, 5.5mm inner diameter, 1.5mm width; creating 
+      altered force distribution and changed torque transmission characteristics
+  204_rubber-ring-upper-part:
+    count: 200
+    description: >
+      Altered seating dynamics by inserting rubber O-ring (6mm outer diameter) in the contact 
+      surface; elastic material changes compressibility characteristics during tightening; 
+      affecting torque transmission and preload development
+  205_different-material:
+    count: 200
+    description: >
+      Changed component properties by using upper part made from non-standard plastic material; 
+      material exhibits different elastic modulus and strength characteristics; 
+      affecting thread formation and torque-angle relationship
+  301_plastic-pin-screw-hole:
+    count: 200
+    description: >
+      Obstructed thread engagement by placing plastic pin in the screw-in area of the lower part; 
+      pin made of material similar to the component; reducing effective screw-in depth and 
+      preventing proper fastener seating
+  302_enlarged-screw-hole:
+    count: 200
+    description: >
+      Reduced thread formation by mechanically enlarging lower part screw hole using 4mm drill; 
+      expanded diameter matches screw outer dimensions; preventing proper thread formation and 
+      reducing holding strength
+  303_less-glass-fiber:
+    count: 200
+    description: >
+      Weakened component structure by using lower part with reduced glass fiber content (10% vs. 
+      specified 30%); altered material composition leads to lower strength and increased 
+      deformability; particularly affecting thread formation and stability
+  304_glued-screw-hole:
+    count: 200
+    description: >
+      Modified thread interface by applying plastic adhesive to the inner surface of the screw 
+      hole; adhesive forms thin layer narrowing diameter by approx. 0.1-0.2mm; increasing 
+      insertion resistance and altering thread engagement
+  305_gap-between-parts:
+    count: 200
+    description: >
+      Prevented proper component mating by introducing 1.1mm metal wire between upper and lower 
+      parts; created consistent gap preventing complete component joining; significantly 
+      affecting preload development and connection stability
+  401_surface-lubricant:
+    count: 200
+    description: >
+      Decreased friction by contaminating head contact surface with multi-purpose oil (WD40); 
+      lubricant reduces coefficient of friction between screw head and contact surface; altering 
+      torque transmission characteristics during final tightening phase
+  402_surface-moisture:
+    count: 200
+    description: >
+      Modified surface conditions by applying water particles (approx. 0.5ml as two drops) to 
+      contact area; moisture temporarily reduces friction between screw head and component 
+      surface; creating inconsistent torque transmission
+  403_plastic-chip:
+    count: 200
+    description: >
+      Disrupted thread formation by placing elongated plastic chip (approx. 3cm length) in screw 
+      hole; chip wraps around screw during insertion; affecting both insertion behavior and thread
+      formation quality
+  404_increased-temperature:
+    count: 200
+    description: >
+      Altered material properties through thermal conditioning of components for ten minutes in 
+      oven; elevated temperature changes plastic stiffness and flow characteristics; affecting 
+      thread formation and torque-angle relationship
+  405_decreased-temperature:
+    count: 200
+    description: >
+      Modified component properties by cooling parts in insulated box with ice (10kg), protected 
+      by foil packaging; lowered temperature increases material brittleness; changing deformation 
+      behavior and thread formation characteristics
+  501_increased-ang-velocity:
+    count: 200
+    description: >
+      Accelerated installation process by increasing angular velocity 10% across all phases; 
+      modified dynamics create "hard" screwing case; changing heat generation and affecting 
+      thread formation dynamics
+  502_decreased-ang-velocity:
+    count: 200
+    description: >
+      Slowed installation process by reducing angular velocity 10% in all process phases; 
+      decreased speed creates "softer" screwing case with extended process time; altering thread 
+      formation characteristics and thermal conditions
+  503_increased-torque:
+    count: 200
+    description: >
+      Heightened connection preload by increasing target tightening torque 0.1 Nm to 1.5 Nm; 
+      adjusted process window to 1.3-1.7 Nm; creating higher mechanical load and different stress 
+      distribution in connection
+  504_decreased-torque:
+    count: 200
+    description: >
+      Reduced connection preload by decreasing target tightening torque 0.1 Nm to 1.3 Nm; 
+      adjusted process window to 1.1-1.5 Nm; producing lower clamping force and affecting overall 
+      connection stability
