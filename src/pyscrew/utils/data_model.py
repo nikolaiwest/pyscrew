@@ -30,7 +30,7 @@ from typing import Any, Dict, Iterator, List, Optional, Set, Union
 
 import pandas as pd
 
-from pyscrew.utils.config_schema import ConfigSchema
+from pyscrew.config import PipelineConfig
 from pyscrew.utils.logger import get_logger
 
 
@@ -502,7 +502,7 @@ class ScrewDataset:
 
     @classmethod
     def from_config(
-        cls, data_path: Union[str, Path], config: ConfigSchema
+        cls, data_path: Union[str, Path], config: PipelineConfig
     ) -> "ScrewDataset":
         """
         Create a dataset instance from a configuration object.
