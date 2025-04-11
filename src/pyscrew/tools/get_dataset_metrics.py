@@ -12,8 +12,15 @@ to generate statistics for the following documentation sections:
 
 The metrics are used to populate scenario-specific README files in the
 docs/scenarios/ directory. Each function is mapped to a specific section
-of the documentation template. It was the main source for the details in 
-all readme files and is provided as reference for future users. 
+of the documentation template. It was the main source for the details in
+all readme files and is provided as reference for future users.
+
+While the script can be run, its main purpose is to document the process rather than
+serve as a general-purpose tool. The configuration values are intentionally hardcoded
+to match the published dataset versions.
+
+Dataset: A link to the newest version can be found in the pyscrew library.
+Repository: https://github.com/nikolaiwest/pyscrew
 """
 
 import json
@@ -23,39 +30,47 @@ from typing import Dict, List, Tuple
 import numpy as np
 import pandas as pd
 
-from pyscrew.utils.data_model import CsvFields, JsonFields
+from pyscrew.config import ScenarioConfig
+from pyscrew.core import CsvFields, JsonFields
 from pyscrew.utils.logger import get_logger
 
-# Configuration
-# ------------
-# SCENARIO_NAME = "s01_thread-degradation"
-# SCENARIO_NAME = "s02_surface-friction"
-# SCENARIO_NAME = "s03_error-collection-1"
-SCENARIO_NAME = "s05_injection-molding-manipulations-upper-workpiece"
+# Configuration for the published dataset version
+# ----------------------------------------------
 
-# Use your cached data if you want to reproduce the label creation
+# The specific scenario ID as published on Zenodo and in pyscrew
+# SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
+SCENARIO_ID = "s02"  # "s02_variations-in-surface-friction"
+# SCENARIO_ID = "s03"  # "s03_variations-in-assembly-conditions-1"
+# SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
+# SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
+# SCENARIO_ID = "s06" # "s06_variations-in-lower-workpiece-fabrication"
+
+# Path configuration
+# -----------------
+# Hardcoded project root
+PROJECT_ROOT = Path("C:/repo/pyscrew/")
+# Use your cached data if you want to reproduce the metrics calculation
 DEFAULT_CACHE_DIR = None  # ".cache/pyscrew/extracted"
 
 # Logging setup
+# ------------
 logger = get_logger(__name__, level="INFO")
 
 
 class MetricsCalculationError(Exception):
-    """Exception raised for errors in metrics calculation process.
-
-    Args:
-        message: Explanation of the error
-    """
+    """Exception raised for errors in metrics calculation process."""
 
     pass
 
 
-# Data Loading and Validation (Dataset Structure section)
-def load_scenario_data(base_path: str) -> Tuple[pd.DataFrame, List[Path]]:
+# Data Loading and Validation
+def load_scenario_data(
+    scenario_config: ScenarioConfig,
+) -> Tuple[pd.DataFrame, List[Path]]:
     """Load and validate scenario data files.
 
     Args:
-        base_path: Path to scenario directory containing labels.csv and json/
+        scenario_config: ScenarioConfig object with scenario information
 
     Returns:
         Tuple containing:
@@ -66,15 +81,32 @@ def load_scenario_data(base_path: str) -> Tuple[pd.DataFrame, List[Path]]:
         MetricsCalculationError: If data loading or validation fails
     """
     try:
-        scenario_name = Path(base_path).parts[-1]
-        labels_path = Path(base_path).parent / "csv" / f"{scenario_name}.csv"
-        labels_df = pd.read_csv(labels_path.resolve())
+        scenario_full_name = scenario_config.get_full_name()
 
-        json_dir = Path(base_path).parent / "json" / scenario_name
+        # Set up paths
+        if DEFAULT_CACHE_DIR:
+            base_dir = Path.home() / DEFAULT_CACHE_DIR
+        else:
+            base_dir = PROJECT_ROOT / "data"
+
+        labels_path = base_dir / "csv" / f"{scenario_full_name}.csv"
+        json_dir = base_dir / "json" / scenario_full_name
+
+        if not labels_path.exists():
+            raise MetricsCalculationError(f"Labels file not found: {labels_path}")
+
+        if not json_dir.exists():
+            raise MetricsCalculationError(f"JSON directory not found: {json_dir}")
+
+        # Load labels
+        labels_df = pd.read_csv(labels_path)
+
+        # Find JSON files in class directories
         json_files = []
-        for class_value in labels_df[CsvFields.CLASS_VALUE].unique():
-            class_dir = json_dir / str(class_value)
-            json_files.extend(class_dir.rglob("*.json"))
+        class_dirs = [d for d in json_dir.iterdir() if d.is_dir()]
+
+        for class_dir in class_dirs:
+            json_files.extend(class_dir.glob("*.json"))
 
         if not json_files:
             raise MetricsCalculationError(f"No JSON files found in {json_dir}")
@@ -85,6 +117,7 @@ def load_scenario_data(base_path: str) -> Tuple[pd.DataFrame, List[Path]]:
         return labels_df, json_files
 
     except Exception as e:
+        logger.error(f"Data loading error: {e}")
         raise MetricsCalculationError(f"Failed to load scenario data: {e}") from e
 
 
@@ -106,8 +139,8 @@ def _calculate_basic_metrics(labels_df: pd.DataFrame) -> Dict:
             - nok_percentage: Percentage of failed operations
     """
     total = len(labels_df)
-    ok_count = len(labels_df[labels_df[CsvFields.RESULT_VALUE] == "OK"])
-    nok_count = len(labels_df[labels_df[CsvFields.RESULT_VALUE] == "NOK"])
+    ok_count = len(labels_df[labels_df[CsvFields.WORKPIECE_RESULT] == "OK"])
+    nok_count = len(labels_df[labels_df[CsvFields.WORKPIECE_RESULT] == "NOK"])
 
     unique_workpieces = labels_df[CsvFields.WORKPIECE_ID].nunique()
     ops_per_workpiece = total / unique_workpieces if unique_workpieces > 0 else 0
@@ -118,12 +151,11 @@ def _calculate_basic_metrics(labels_df: pd.DataFrame) -> Dict:
         "operations_per_workpiece": round(ops_per_workpiece, 2),
         "ok_count": ok_count,
         "nok_count": nok_count,
-        "ok_percentage": round(ok_count / total * 100, 2),
-        "nok_percentage": round(nok_count / total * 100, 2),
+        "ok_percentage": round(ok_count / total * 100, 2) if total > 0 else 0,
+        "nok_percentage": round(nok_count / total * 100, 2) if total > 0 else 0,
     }
 
-    logger.info("Sample Distribution Metrics calculated:")
-    logger.info(json.dumps(metrics, indent=2))
+    logger.info("Sample Distribution Metrics calculated")
     return metrics
 
 
@@ -147,8 +179,8 @@ def _calculate_class_metrics(labels_df: pd.DataFrame) -> Dict:
     for class_value in labels_df[CsvFields.CLASS_VALUE].unique():
         class_data = labels_df[labels_df[CsvFields.CLASS_VALUE] == class_value]
         total = len(class_data)
-        ok_count = len(class_data[class_data[CsvFields.RESULT_VALUE] == "OK"])
-        nok_count = len(class_data[class_data[CsvFields.RESULT_VALUE] == "NOK"])
+        ok_count = len(class_data[class_data[CsvFields.WORKPIECE_RESULT] == "OK"])
+        nok_count = len(class_data[class_data[CsvFields.WORKPIECE_RESULT] == "NOK"])
 
         metrics[f"class_{class_value}"] = {
             "total_samples": total,
@@ -158,8 +190,7 @@ def _calculate_class_metrics(labels_df: pd.DataFrame) -> Dict:
             "nok_ratio": round(nok_count / total * 100, 2) if total > 0 else 0,
         }
 
-    logger.info("Class Distribution Metrics calculated:")
-    logger.info(json.dumps(metrics, indent=2))
+    logger.info("Class Distribution Metrics calculated")
     return metrics
 
 
@@ -181,34 +212,67 @@ def _calculate_sampling_metrics(json_files: List[Path], sample_size: int = 100) 
     total_points = 0
     expected_points = 0
 
-    for filepath in json_files[:sample_size]:
-        with open(filepath) as f:
-            data = json.load(f)
+    # Limit to sample size or available files, whichever is smaller
+    files_to_process = json_files[: min(sample_size, len(json_files))]
 
-        for step in data[JsonFields.Run.STEPS]:
-            measurements = step[JsonFields.Step.GRAPH]
-            time_values = measurements[JsonFields.Measurements.TIME]
+    for filepath in files_to_process:
+        try:
+            with open(filepath) as f:
+                data = json.load(f)
 
-            if len(time_values) > 1:
-                time_diffs.extend(np.diff(time_values))
-                total_points += len(time_values)
-                expected_duration = time_values[-1] - time_values[0]
-                expected_points += int(
-                    expected_duration / np.median(np.diff(time_values))
-                )
+            # Process each tightening step
+            for step in data.get(JsonFields.Run.STEPS, []):
+                if JsonFields.Step.GRAPH not in step:
+                    continue
 
-    median_diff = np.median(time_diffs)
-    sampling_freq = 1 / median_diff if median_diff > 0 else 0
-    completeness = (total_points / expected_points * 100) if expected_points > 0 else 0
+                measurements = step[JsonFields.Step.GRAPH]
+                if JsonFields.Measurements.TIME not in measurements:
+                    continue
+
+                time_values = measurements[JsonFields.Measurements.TIME]
+
+                if len(time_values) > 1:
+                    # Calculate time differences between consecutive measurements
+                    step_diffs = np.diff(time_values)
+                    time_diffs.extend(step_diffs)
+
+                    # Count actual data points
+                    total_points += len(time_values)
+
+                    # Estimate expected points based on duration and median sampling rate
+                    if len(step_diffs) > 0:
+                        expected_duration = time_values[-1] - time_values[0]
+                        expected_step_points = int(
+                            expected_duration / np.median(step_diffs)
+                        )
+                        expected_points += expected_step_points
+
+        except Exception as e:
+            logger.warning(f"Error processing file {filepath}: {e}")
+            continue
+
+    # Calculate metrics if we have sufficient data
+    if time_diffs:
+        median_diff = np.median(time_diffs)
+        sampling_freq = 1 / median_diff if median_diff > 0 else 0
+        completeness = (
+            (total_points / expected_points * 100) if expected_points > 0 else 0
+        )
+    else:
+        sampling_freq = 0
+        completeness = 0
 
     metrics = {
         "sampling_frequency_hz": round(sampling_freq, 2),
-        "missing_values_percentage": round(100 - completeness, 2),
-        "data_completeness_percentage": round(completeness, 2),
+        "missing_values_percentage": (
+            round(100 - completeness, 2) if completeness <= 100 else 0
+        ),
+        "data_completeness_percentage": (
+            round(completeness, 2) if completeness <= 100 else 100
+        ),
     }
 
-    logger.info("Data Quality Metrics calculated:")
-    logger.info(json.dumps(metrics, indent=2))
+    logger.info("Data Quality Metrics calculated")
     return metrics
 
 
@@ -225,21 +289,32 @@ def _calculate_operation_metrics(labels_df: pd.DataFrame) -> Dict:
             - peak_anomaly_rate: Maximum observed anomaly rate
             - peak_anomaly_cycle: Cycle number with highest anomaly rate
     """
-    labels_df["is_nok"] = labels_df[CsvFields.RESULT_VALUE] == "NOK"
+    labels_df["is_nok"] = labels_df[CsvFields.WORKPIECE_RESULT] == "NOK"
+
+    # Group by usage cycle and calculate anomaly rates
     cycle_stats = labels_df.groupby(CsvFields.WORKPIECE_USAGE)["is_nok"].agg(
         ["mean", "count"]
     )
 
-    metrics = {
-        "initial_anomaly_rate": (
-            round(cycle_stats["mean"].iloc[1] * 100, 2) if len(cycle_stats) > 1 else 0
-        ),
-        "peak_anomaly_rate": round(cycle_stats["mean"].max() * 100, 2),
-        "peak_anomaly_cycle": int(cycle_stats["mean"].idxmax()),
-    }
+    # Handle empty dataset gracefully
+    if cycle_stats.empty:
+        metrics = {
+            "initial_anomaly_rate": 0,
+            "peak_anomaly_rate": 0,
+            "peak_anomaly_cycle": 0,
+        }
+    else:
+        metrics = {
+            "initial_anomaly_rate": (
+                round(cycle_stats["mean"].iloc[1] * 100, 2)
+                if len(cycle_stats) > 1
+                else 0
+            ),
+            "peak_anomaly_rate": round(cycle_stats["mean"].max() * 100, 2),
+            "peak_anomaly_cycle": int(cycle_stats["mean"].idxmax()),
+        }
 
-    logger.info("Operation Metrics calculated:")
-    logger.info(json.dumps(metrics, indent=2))
+    logger.info("Operation Metrics calculated")
     return metrics
 
 
@@ -256,27 +331,39 @@ def _calculate_collection_timeline(json_files: List[Path]) -> Dict:
     timeline = {}
 
     for filepath in json_files:
-        class_value = int(filepath.parts[-2])
+        try:
+            # Extract class from directory name
+            class_value = filepath.parent.name
 
-        with open(filepath) as f:
-            data = json.load(f)
+            # Load JSON data
+            with open(filepath) as f:
+                data = json.load(f)
 
-        date = data.get(JsonFields.Run.DATE)[:10]
-        if date:
-            if class_value not in timeline:
-                timeline[class_value] = {}
-            timeline[class_value][date] = timeline[class_value].get(date, 0) + 1
+            # Extract date (first 10 characters for YYYY-MM-DD format)
+            date_field = JsonFields.Run.DATE
+            if date_field in data and data[date_field]:
+                date = data[date_field][:10]
 
-    logger.info("Collection Timeline calculated:")
-    logger.info(json.dumps(timeline, indent=2))
+                # Initialize class entry if needed
+                if class_value not in timeline:
+                    timeline[class_value] = {}
+
+                # Increment count for this date
+                timeline[class_value][date] = timeline[class_value].get(date, 0) + 1
+
+        except Exception as e:
+            logger.warning(f"Error processing timeline data for {filepath}: {e}")
+            continue
+
+    logger.info("Collection Timeline calculated")
     return timeline
 
 
-def calculate_scenario_metrics(base_path: str) -> Dict:
+def calculate_scenario_metrics(scenario_config: ScenarioConfig) -> Dict:
     """Calculate and collect all metrics for README documentation.
 
     Args:
-        base_path: Path to scenario directory
+        scenario_config: ScenarioConfig object with scenario information
 
     Returns:
         Dictionary containing all calculated metrics organized by README section
@@ -285,9 +372,13 @@ def calculate_scenario_metrics(base_path: str) -> Dict:
         MetricsCalculationError: If any metrics calculation fails
     """
     try:
-        logger.info(f"Starting metrics calculation for {base_path}")
-        labels_df, json_files = load_scenario_data(base_path)
+        scenario_full_name = scenario_config.get_full_name()
+        logger.info(f"Starting metrics calculation for {scenario_full_name}")
 
+        # Load data
+        labels_df, json_files = load_scenario_data(scenario_config)
+
+        # Calculate metrics for each documentation section
         metrics = {
             "sample_distribution": _calculate_basic_metrics(labels_df),
             "class_distribution": _calculate_class_metrics(labels_df),
@@ -296,7 +387,7 @@ def calculate_scenario_metrics(base_path: str) -> Dict:
             "collection_timeline": _calculate_collection_timeline(json_files),
         }
 
-        logger.info("All metrics calculated successfully")
+        logger.info(f"All metrics calculated successfully for {scenario_full_name}")
         return metrics
 
     except Exception as e:
@@ -307,19 +398,31 @@ def calculate_scenario_metrics(base_path: str) -> Dict:
 def main():
     """Calculate metrics for README documentation."""
     try:
-        if DEFAULT_CACHE_DIR:
-            data_dir = Path.home() / DEFAULT_CACHE_DIR / SCENARIO_NAME
-        else:
-            data_dir = (
-                Path(__file__).parent / "../../../data" / SCENARIO_NAME
-            ).resolve()
+        # Load scenario configuration
+        dir_scenarios = PROJECT_ROOT / "src" / "pyscrew" / "scenarios"
+        scenario_config = ScenarioConfig(
+            scenario_id=SCENARIO_ID,
+            base_dir=dir_scenarios,
+        )
 
-        logger.info(f"Processing documentation metrics for {SCENARIO_NAME}")
+        logger.info(f"Processing documentation metrics for {scenario_config}")
 
-        metrics = calculate_scenario_metrics(data_dir)
-        # Print all
+        # Calculate metrics
+        metrics = calculate_scenario_metrics(scenario_config)
+
+        # Print metrics summary
         print("\nFinal metrics summary:")
         print(json.dumps(metrics, indent=2))
+
+        # Optional: Save metrics to file
+        metrics_dir = PROJECT_ROOT / "data" / "metrics"
+        metrics_dir.mkdir(parents=True, exist_ok=True)
+
+        metrics_file = metrics_dir / f"{scenario_config.get_full_name()}_metrics.json"
+        with open(metrics_file, "w") as f:
+            json.dump(metrics, f, indent=2)
+
+        logger.info(f"Metrics saved to {metrics_file}")
 
     except Exception as e:
         logger.error(f"Script execution failed: {e}")
