@@ -29,12 +29,12 @@ from pyscrew.utils.logger import get_logger
 # ----------------------------------------------
 
 # The specific scenario ID as published on Zenodo and in pyscrew
-# SCENARIO_ID = "s01"
-# SCENARIO_ID = "s02"
-# SCENARIO_ID = "s03"
-# SCENARIO_ID = "s04"
-SCENARIO_ID = "s05"
-# SCENARIO_ID = "s06"
+SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
+# SCENARIO_ID = "s02" # "s02_variations-in-surface-friction"
+# SCENARIO_ID = "s03" # "s03_variations-in-assembly-conditions-1"
+# SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
+# SCENARIO_ID = "s05" # "s05_variations-in-upper-workpiece-fabrication"
+# SCENARIO_ID = "s06" # "s06_variations-in-lower-workpiece-fabrication"
 
 # Path configuration
 # -----------------
@@ -173,7 +173,8 @@ def main():
         # Load scenario configuration from scenarios directory
         dir_scenarios = PROJECT_ROOT / "src" / "pyscrew" / "scenarios"
         scenario_config = ScenarioConfig(
-            scenario_id=SCENARIO_ID, base_dir=dir_scenarios
+            scenario_id=SCENARIO_ID,
+            base_dir=dir_scenarios,
         )
         scenario_full_name = scenario_config.get_full_name()
 
