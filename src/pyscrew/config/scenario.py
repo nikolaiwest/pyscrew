@@ -120,7 +120,11 @@ class ScenarioConfig:
 
     def __str__(self) -> str:
         """String representation of the scenario configuration."""
+        if len(self.classes) == 1:
+            n_classes = "class"
+        else:
+            n_classes = "classes"
         return (
             f"Scenario {self.scenario_id}: {self.get_name()} - "
-            f"{len(self.classes)} classes, {self.get_total_observations()} observations"
+            f"{len(self.classes)} {n_classes}, {self.get_total_observations()} observations"
         )

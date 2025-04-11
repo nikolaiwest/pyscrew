@@ -98,12 +98,13 @@ class CsvFields:
     and provide classification information.
 
     Attributes:
-        ID: Unique identifier for each run
+        RUN_ID: Unique identifier for each run
         FILE_NAME: Links to corresponding JSON file
         CLASS_VALUE: Scenario-specific classification label
-        RESULT_VALUE: Result from screw program ("OK"/"NOK")
         WORKPIECE_ID: Data matrix code identifying the workpiece
+        WORKPIECE_DATE: Date of recording in the screw run
         WORKPIECE_USAGE: Number of times this workpiece has been used
+        WORKPIECE_RESULT: Result from screw program ("OK"/"NOK")
         WORKPIECE_LOCATION: Screw position in workpiece (0 or 1)
     """
 
@@ -113,11 +114,12 @@ class CsvFields:
 
     # Value fields
     CLASS_VALUE: str = "class_value"
-    RESULT_VALUE: str = "result_value"
 
     # Workpiece-related fields
     WORKPIECE_ID: str = "workpiece_id"
+    WORKPIECE_DATE: str = "workpiece_date"
     WORKPIECE_USAGE: str = "workpiece_usage"
+    WORKPIECE_RESULT: str = "workpiece_result"
     WORKPIECE_LOCATION: str = "workpiece_location"
 
     @dataclass
