@@ -1,0 +1,354 @@
+{
+  "sample_distribution": {
+    "total_operations": 1800,
+    "unique_workpieces": 878,
+    "operations_per_workpiece": 2.05,
+    "ok_count": 1167,
+    "nok_count": 633,
+    "ok_percentage": 64.83,
+    "nok_percentage": 35.17
+  },
+  "class_distribution": {
+    "class_001_control-group-1": {
+      "total_samples": 100,
+      "ok_count": 100,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_002_control-group-2": {
+      "total_samples": 100,
+      "ok_count": 96,
+      "nok_count": 4,
+      "ok_ratio": 96.0,
+      "nok_ratio": 4.0
+    },
+    "class_003_control-group-3": {
+      "total_samples": 100,
+      "ok_count": 100,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_004_control-group-from-s01": {
+      "total_samples": 200,
+      "ok_count": 200,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_005_control-group-from-s02": {
+      "total_samples": 100,
+      "ok_count": 100,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_101_m4-washer-in-upper-piece": {
+      "total_samples": 50,
+      "ok_count": 6,
+      "nok_count": 44,
+      "ok_ratio": 12.0,
+      "nok_ratio": 88.0
+    },
+    "class_102_m3-washer-in-upper-piece": {
+      "total_samples": 50,
+      "ok_count": 0,
+      "nok_count": 50,
+      "ok_ratio": 0.0,
+      "nok_ratio": 100.0
+    },
+    "class_103_m3-half-washer-in-upper-part": {
+      "total_samples": 50,
+      "ok_count": 1,
+      "nok_count": 49,
+      "ok_ratio": 2.0,
+      "nok_ratio": 98.0
+    },
+    "class_201_adhesive-thread": {
+      "total_samples": 50,
+      "ok_count": 43,
+      "nok_count": 7,
+      "ok_ratio": 86.0,
+      "nok_ratio": 14.0
+    },
+    "class_202_deformed-thread-1": {
+      "total_samples": 100,
+      "ok_count": 94,
+      "nok_count": 6,
+      "ok_ratio": 94.0,
+      "nok_ratio": 6.0
+    },
+    "class_203_deformed-thread-2": {
+      "total_samples": 50,
+      "ok_count": 5,
+      "nok_count": 45,
+      "ok_ratio": 10.0,
+      "nok_ratio": 90.0
+    },
+    "class_301_material-in-the-screw-head": {
+      "total_samples": 50,
+      "ok_count": 22,
+      "nok_count": 28,
+      "ok_ratio": 44.0,
+      "nok_ratio": 56.0
+    },
+    "class_302_material-in-the-lower-part": {
+      "total_samples": 50,
+      "ok_count": 37,
+      "nok_count": 13,
+      "ok_ratio": 74.0,
+      "nok_ratio": 26.0
+    },
+    "class_401_drilling-out-the-workpiece": {
+      "total_samples": 50,
+      "ok_count": 0,
+      "nok_count": 50,
+      "ok_ratio": 0.0,
+      "nok_ratio": 100.0
+    },
+    "class_402_shortening-the-screw-1": {
+      "total_samples": 50,
+      "ok_count": 1,
+      "nok_count": 49,
+      "ok_ratio": 2.0,
+      "nok_ratio": 98.0
+    },
+    "class_403_shortening-the-screw-2": {
+      "total_samples": 50,
+      "ok_count": 2,
+      "nok_count": 48,
+      "ok_ratio": 4.0,
+      "nok_ratio": 96.0
+    },
+    "class_404_tearing-off-the-screw-1": {
+      "total_samples": 50,
+      "ok_count": 0,
+      "nok_count": 50,
+      "ok_ratio": 0.0,
+      "nok_ratio": 100.0
+    },
+    "class_405_tearing-off-the-screw-2": {
+      "total_samples": 50,
+      "ok_count": 0,
+      "nok_count": 50,
+      "ok_ratio": 0.0,
+      "nok_ratio": 100.0
+    },
+    "class_501_offset-of-the-screw-hole": {
+      "total_samples": 50,
+      "ok_count": 1,
+      "nok_count": 49,
+      "ok_ratio": 2.0,
+      "nok_ratio": 98.0
+    },
+    "class_502_offset-of-the-work-piece": {
+      "total_samples": 50,
+      "ok_count": 49,
+      "nok_count": 1,
+      "ok_ratio": 98.0,
+      "nok_ratio": 2.0
+    },
+    "class_601_surface-used": {
+      "total_samples": 100,
+      "ok_count": 99,
+      "nok_count": 1,
+      "ok_ratio": 99.0,
+      "nok_ratio": 1.0
+    },
+    "class_602_surface-moisture": {
+      "total_samples": 50,
+      "ok_count": 50,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_603_surface-lubricant": {
+      "total_samples": 50,
+      "ok_count": 2,
+      "nok_count": 48,
+      "ok_ratio": 4.0,
+      "nok_ratio": 96.0
+    },
+    "class_604_surface-adhesive": {
+      "total_samples": 50,
+      "ok_count": 45,
+      "nok_count": 5,
+      "ok_ratio": 90.0,
+      "nok_ratio": 10.0
+    },
+    "class_605_surface-sanded-40": {
+      "total_samples": 50,
+      "ok_count": 43,
+      "nok_count": 7,
+      "ok_ratio": 86.0,
+      "nok_ratio": 14.0
+    },
+    "class_606_surface-sanded-400": {
+      "total_samples": 50,
+      "ok_count": 44,
+      "nok_count": 6,
+      "ok_ratio": 88.0,
+      "nok_ratio": 12.0
+    },
+    "class_607_surface-scratched": {
+      "total_samples": 50,
+      "ok_count": 27,
+      "nok_count": 23,
+      "ok_ratio": 54.0,
+      "nok_ratio": 46.0
+    }
+  },
+  "data_quality": {
+    "sampling_frequency_hz": 833.33,
+    "missing_values_percentage": 3.65,
+    "data_completeness_percentage": 96.35
+  },
+  "key_characteristics": {
+    "initial_anomaly_rate": 0,
+    "peak_anomaly_rate": 35.17,
+    "peak_anomaly_cycle": 0
+  },
+  "collection_timeline": {
+    "001_control-group-1": {
+      "2023-03-20": 100
+    },
+    "002_control-group-2": {
+      "2024-02-14": 40,
+      "2024-02-16": 24,
+      "2024-02-19": 36
+    },
+    "003_control-group-3": {
+      "2023-02-06": 12,
+      "2023-02-08": 24,
+      "2023-02-20": 17,
+      "2023-02-27": 15,
+      "2023-03-06": 23,
+      "2023-06-01": 9
+    },
+    "004_control-group-from-s01": {
+      "2022-09-05": 12,
+      "2022-09-06": 24,
+      "2022-09-07": 12,
+      "2022-09-08": 20,
+      "2022-09-09": 26,
+      "2022-09-12": 6,
+      "2022-09-13": 24,
+      "2022-09-14": 26,
+      "2022-09-16": 50
+    },
+    "005_control-group-from-s02": {
+      "2023-07-12": 14,
+      "2023-07-13": 42,
+      "2023-07-14": 20,
+      "2023-07-17": 24
+    },
+    "101_m4-washer-in-upper-piece": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "102_m3-washer-in-upper-piece": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "103_m3-half-washer-in-upper-part": {
+      "2023-09-18": 3,
+      "2023-09-25": 10,
+      "2023-09-26": 8,
+      "2023-09-28": 10,
+      "2023-09-29": 19
+    },
+    "201_adhesive-thread": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "202_deformed-thread-1": {
+      "2023-03-20": 100
+    },
+    "203_deformed-thread-2": {
+      "2023-06-01": 30,
+      "2023-06-05": 20
+    },
+    "301_material-in-the-screw-head": {
+      "2023-09-19": 7,
+      "2023-09-25": 9,
+      "2023-09-26": 9,
+      "2023-09-28": 7,
+      "2023-09-29": 18
+    },
+    "302_material-in-the-lower-part": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "401_drilling-out-the-workpiece": {
+      "2023-05-30": 50
+    },
+    "402_shortening-the-screw-1": {
+      "2023-06-01": 50
+    },
+    "403_shortening-the-screw-2": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 9,
+      "2023-09-29": 17,
+      "2024-05-03": 4
+    },
+    "404_tearing-off-the-screw-1": {
+      "2023-06-05": 50
+    },
+    "405_tearing-off-the-screw-2": {
+      "2023-09-25": 10,
+      "2023-09-26": 9,
+      "2023-09-28": 8,
+      "2023-09-29": 18,
+      "2024-05-03": 5
+    },
+    "501_offset-of-the-screw-hole": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "502_offset-of-the-work-piece": {
+      "2023-09-25": 10,
+      "2023-09-26": 10,
+      "2023-09-28": 10,
+      "2023-09-29": 20
+    },
+    "601_surface-used": {
+      "2023-07-12": 14,
+      "2023-07-13": 42,
+      "2023-07-14": 20,
+      "2023-07-17": 24
+    },
+    "602_surface-moisture": {
+      "2024-04-25": 50
+    },
+    "603_surface-lubricant": {
+      "2023-07-18": 50
+    },
+    "604_surface-adhesive": {
+      "2024-04-15": 32,
+      "2024-04-16": 18
+    },
+    "605_surface-sanded-40": {
+      "2023-07-19": 39,
+      "2023-07-20": 11
+    },
+    "606_surface-sanded-400": {
+      "2023-07-19": 39,
+      "2023-07-20": 11
+    },
+    "607_surface-scratched": {
+      "2024-04-22": 50
+    }
+  }
+}

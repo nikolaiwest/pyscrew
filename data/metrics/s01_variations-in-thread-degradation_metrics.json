@@ -1,0 +1,43 @@
+{
+  "sample_distribution": {
+    "total_operations": 5000,
+    "unique_workpieces": 100,
+    "operations_per_workpiece": 50.0,
+    "ok_count": 4089,
+    "nok_count": 911,
+    "ok_percentage": 81.78,
+    "nok_percentage": 18.22
+  },
+  "class_distribution": {
+    "class_001_control-group": {
+      "total_samples": 5000,
+      "ok_count": 4089,
+      "nok_count": 911,
+      "ok_ratio": 81.78,
+      "nok_ratio": 18.22
+    }
+  },
+  "data_quality": {
+    "sampling_frequency_hz": 833.33,
+    "missing_values_percentage": 4.45,
+    "data_completeness_percentage": 95.55
+  },
+  "key_characteristics": {
+    "initial_anomaly_rate": 0,
+    "peak_anomaly_rate": 18.22,
+    "peak_anomaly_cycle": 0
+  },
+  "collection_timeline": {
+    "001_control-group": {
+      "2022-09-05": 300,
+      "2022-09-06": 600,
+      "2022-09-07": 300,
+      "2022-09-08": 500,
+      "2022-09-09": 650,
+      "2022-09-12": 150,
+      "2022-09-13": 600,
+      "2022-09-14": 650,
+      "2022-09-16": 1250
+    }
+  }
+}

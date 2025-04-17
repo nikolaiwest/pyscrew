@@ -1,0 +1,277 @@
+{
+  "sample_distribution": {
+    "total_operations": 5000,
+    "unique_workpieces": 2500,
+    "operations_per_workpiece": 2.0,
+    "ok_count": 4307,
+    "nok_count": 693,
+    "ok_percentage": 86.14,
+    "nok_percentage": 13.86
+  },
+  "class_distribution": {
+    "class_001_control-group": {
+      "total_samples": 200,
+      "ok_count": 199,
+      "nok_count": 1,
+      "ok_ratio": 99.5,
+      "nok_ratio": 0.5
+    },
+    "class_101_deformed-thread": {
+      "total_samples": 200,
+      "ok_count": 187,
+      "nok_count": 13,
+      "ok_ratio": 93.5,
+      "nok_ratio": 6.5
+    },
+    "class_102_filed-screw-tip": {
+      "total_samples": 200,
+      "ok_count": 189,
+      "nok_count": 11,
+      "ok_ratio": 94.5,
+      "nok_ratio": 5.5
+    },
+    "class_103_glued-screw-tip": {
+      "total_samples": 200,
+      "ok_count": 186,
+      "nok_count": 14,
+      "ok_ratio": 93.0,
+      "nok_ratio": 7.0
+    },
+    "class_104_coated-screw": {
+      "total_samples": 200,
+      "ok_count": 166,
+      "nok_count": 34,
+      "ok_ratio": 83.0,
+      "nok_ratio": 17.0
+    },
+    "class_105_worn-out-screw": {
+      "total_samples": 200,
+      "ok_count": 163,
+      "nok_count": 37,
+      "ok_ratio": 81.5,
+      "nok_ratio": 18.5
+    },
+    "class_201_damaged-contact-surface": {
+      "total_samples": 200,
+      "ok_count": 196,
+      "nok_count": 4,
+      "ok_ratio": 98.0,
+      "nok_ratio": 2.0
+    },
+    "class_202_broken-contact-surface": {
+      "total_samples": 200,
+      "ok_count": 164,
+      "nok_count": 36,
+      "ok_ratio": 82.0,
+      "nok_ratio": 18.0
+    },
+    "class_203_metal-ring-upper-part": {
+      "total_samples": 200,
+      "ok_count": 123,
+      "nok_count": 77,
+      "ok_ratio": 61.5,
+      "nok_ratio": 38.5
+    },
+    "class_204_rubber-ring-upper-part": {
+      "total_samples": 200,
+      "ok_count": 110,
+      "nok_count": 90,
+      "ok_ratio": 55.0,
+      "nok_ratio": 45.0
+    },
+    "class_205_different-material": {
+      "total_samples": 200,
+      "ok_count": 194,
+      "nok_count": 6,
+      "ok_ratio": 97.0,
+      "nok_ratio": 3.0
+    },
+    "class_301_plastic-pin-screw-hole": {
+      "total_samples": 200,
+      "ok_count": 169,
+      "nok_count": 31,
+      "ok_ratio": 84.5,
+      "nok_ratio": 15.5
+    },
+    "class_302_enlarged-screw-hole": {
+      "total_samples": 200,
+      "ok_count": 99,
+      "nok_count": 101,
+      "ok_ratio": 49.5,
+      "nok_ratio": 50.5
+    },
+    "class_303_less-glass-fiber": {
+      "total_samples": 200,
+      "ok_count": 148,
+      "nok_count": 52,
+      "ok_ratio": 74.0,
+      "nok_ratio": 26.0
+    },
+    "class_304_glued-screw-hole": {
+      "total_samples": 200,
+      "ok_count": 198,
+      "nok_count": 2,
+      "ok_ratio": 99.0,
+      "nok_ratio": 1.0
+    },
+    "class_305_gap-between-parts": {
+      "total_samples": 200,
+      "ok_count": 199,
+      "nok_count": 1,
+      "ok_ratio": 99.5,
+      "nok_ratio": 0.5
+    },
+    "class_401_surface-lubricant": {
+      "total_samples": 200,
+      "ok_count": 89,
+      "nok_count": 111,
+      "ok_ratio": 44.5,
+      "nok_ratio": 55.5
+    },
+    "class_402_surface-moisture": {
+      "total_samples": 200,
+      "ok_count": 188,
+      "nok_count": 12,
+      "ok_ratio": 94.0,
+      "nok_ratio": 6.0
+    },
+    "class_403_plastic-chip": {
+      "total_samples": 200,
+      "ok_count": 193,
+      "nok_count": 7,
+      "ok_ratio": 96.5,
+      "nok_ratio": 3.5
+    },
+    "class_404_increased-temperature": {
+      "total_samples": 200,
+      "ok_count": 164,
+      "nok_count": 36,
+      "ok_ratio": 82.0,
+      "nok_ratio": 18.0
+    },
+    "class_405_decreased-temperature": {
+      "total_samples": 200,
+      "ok_count": 199,
+      "nok_count": 1,
+      "ok_ratio": 99.5,
+      "nok_ratio": 0.5
+    },
+    "class_501_increased-ang-velocity": {
+      "total_samples": 200,
+      "ok_count": 200,
+      "nok_count": 0,
+      "ok_ratio": 100.0,
+      "nok_ratio": 0.0
+    },
+    "class_502_decreased-ang-velocity": {
+      "total_samples": 200,
+      "ok_count": 196,
+      "nok_count": 4,
+      "ok_ratio": 98.0,
+      "nok_ratio": 2.0
+    },
+    "class_503_increased-torque": {
+      "total_samples": 200,
+      "ok_count": 190,
+      "nok_count": 10,
+      "ok_ratio": 95.0,
+      "nok_ratio": 5.0
+    },
+    "class_504_decreased-torque": {
+      "total_samples": 200,
+      "ok_count": 198,
+      "nok_count": 2,
+      "ok_ratio": 99.0,
+      "nok_ratio": 1.0
+    }
+  },
+  "data_quality": {
+    "sampling_frequency_hz": 833.33,
+    "missing_values_percentage": 2.8,
+    "data_completeness_percentage": 97.2
+  },
+  "key_characteristics": {
+    "initial_anomaly_rate": 0,
+    "peak_anomaly_rate": 13.86,
+    "peak_anomaly_cycle": 0
+  },
+  "collection_timeline": {
+    "001_control-group": {
+      "2024-09-06": 200
+    },
+    "101_deformed-thread": {
+      "2024-09-03": 200
+    },
+    "102_filed-screw-tip": {
+      "2024-09-03": 200
+    },
+    "103_glued-screw-tip": {
+      "2024-09-03": 194,
+      "2024-09-06": 6
+    },
+    "104_coated-screw": {
+      "2024-09-03": 200
+    },
+    "105_worn-out-screw": {
+      "2024-09-04": 200
+    },
+    "201_damaged-contact-surface": {
+      "2024-09-04": 200
+    },
+    "202_broken-contact-surface": {
+      "2024-09-05": 200
+    },
+    "203_metal-ring-upper-part": {
+      "2024-09-04": 200
+    },
+    "204_rubber-ring-upper-part": {
+      "2024-09-04": 200
+    },
+    "205_different-material": {
+      "2024-09-04": 200
+    },
+    "301_plastic-pin-screw-hole": {
+      "2024-09-05": 200
+    },
+    "302_enlarged-screw-hole": {
+      "2024-09-05": 200
+    },
+    "303_less-glass-fiber": {
+      "2024-09-05": 200
+    },
+    "304_glued-screw-hole": {
+      "2024-09-05": 200
+    },
+    "305_gap-between-parts": {
+      "2024-09-06": 200
+    },
+    "401_surface-lubricant": {
+      "2024-09-04": 200
+    },
+    "402_surface-moisture": {
+      "2024-09-04": 200
+    },
+    "403_plastic-chip": {
+      "2024-09-06": 200
+    },
+    "404_increased-temperature": {
+      "2024-09-05": 200
+    },
+    "405_decreased-temperature": {
+      "2024-09-05": 200
+    },
+    "501_increased-ang-velocity": {
+      "2024-09-06": 200
+    },
+    "502_decreased-ang-velocity": {
+      "2024-09-06": 180,
+      "2024-09-09": 20
+    },
+    "503_increased-torque": {
+      "2024-09-06": 200
+    },
+    "504_decreased-torque": {
+      "2024-09-06": 200
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "sample_distribution": {
+    "total_operations": 12500,
+    "unique_workpieces": 250,
+    "operations_per_workpiece": 50.0,
+    "ok_count": 9512,
+    "nok_count": 2988,
+    "ok_percentage": 76.1,
+    "nok_percentage": 23.9
+  },
+  "class_distribution": {
+    "class_001_control-group": {
+      "total_samples": 2500,
+      "ok_count": 2094,
+      "nok_count": 406,
+      "ok_ratio": 83.76,
+      "nok_ratio": 16.24
+    },
+    "class_101_used-upper-workpiece": {
+      "total_samples": 2500,
+      "ok_count": 2273,
+      "nok_count": 227,
+      "ok_ratio": 90.92,
+      "nok_ratio": 9.08
+    },
+    "class_201_lubricant-water": {
+      "total_samples": 1250,
+      "ok_count": 1101,
+      "nok_count": 149,
+      "ok_ratio": 88.08,
+      "nok_ratio": 11.92
+    },
+    "class_202_lubricant-oil-based": {
+      "total_samples": 1250,
+      "ok_count": 488,
+      "nok_count": 762,
+      "ok_ratio": 39.04,
+      "nok_ratio": 60.96
+    },
+    "class_301_sanding-coarse": {
+      "total_samples": 1250,
+      "ok_count": 770,
+      "nok_count": 480,
+      "ok_ratio": 61.6,
+      "nok_ratio": 38.4
+    },
+    "class_302_sanding-fine": {
+      "total_samples": 1250,
+      "ok_count": 672,
+      "nok_count": 578,
+      "ok_ratio": 53.76,
+      "nok_ratio": 46.24
+    },
+    "class_401_plastic-adhesive": {
+      "total_samples": 1250,
+      "ok_count": 1074,
+      "nok_count": 176,
+      "ok_ratio": 85.92,
+      "nok_ratio": 14.08
+    },
+    "class_402_surface-chipped": {
+      "total_samples": 1250,
+      "ok_count": 1040,
+      "nok_count": 210,
+      "ok_ratio": 83.2,
+      "nok_ratio": 16.8
+    }
+  },
+  "data_quality": {
+    "sampling_frequency_hz": 833.33,
+    "missing_values_percentage": 4.03,
+    "data_completeness_percentage": 95.97
+  },
+  "key_characteristics": {
+    "initial_anomaly_rate": 0,
+    "peak_anomaly_rate": 23.9,
+    "peak_anomaly_cycle": 0
+  },
+  "collection_timeline": {
+    "001_control-group": {
+      "2023-07-12": 350,
+      "2023-07-13": 1050,
+      "2023-07-14": 500,
+      "2023-07-17": 600
+    },
+    "101_used-upper-workpiece": {
+      "2023-07-12": 350,
+      "2023-07-13": 1050,
+      "2023-07-14": 500,
+      "2023-07-17": 600
+    },
+    "201_lubricant-water": {
+      "2024-04-25": 1250
+    },
+    "202_lubricant-oil-based": {
+      "2023-07-18": 1250
+    },
+    "301_sanding-coarse": {
+      "2023-07-19": 951,
+      "2023-07-20": 299
+    },
+    "302_sanding-fine": {
+      "2023-07-19": 951,
+      "2023-07-20": 299
+    },
+    "401_plastic-adhesive": {
+      "2024-04-15": 782,
+      "2024-04-16": 450,
+      "2024-05-03": 18
+    },
+    "402_surface-chipped": {
+      "2024-04-22": 1250
+    }
+  }
+}
