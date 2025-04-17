@@ -1,13 +1,13 @@
 # Screw Driving Dataset - s02_variations-in-surface-friction
 
 <!-- Dataset Information -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14887942.svg)](https://zenodo.org/uploads/14887942)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15123922.svg)](https://zenodo.org/uploads/15123922)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-12500_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
 [![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/nikolaiwest/pyscrew)
-[![Updated](https://img.shields.io/badge/Updated-2025/04/16-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Updated](https://img.shields.io/badge/Updated-2025/04/17-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
 [![Paper](https://img.shields.io/badge/DOI-10.24251%2FHICSS.2024.126-green)](https://hdl.handle.net/10125/106504)
@@ -55,17 +55,20 @@ The dataset consists of three primary components:
 
 ### Labels File Structure
 
-The `labels.csv` contains seven columns:
+The `labels.csv` contains nine columns:
 
-| Column             | Type    | Description                                                      |
-|--------------------|---------|------------------------------------------------------------------|
-| run_id             | int     | Unique cycle number as recorded by the screw station             |
-| file_name          | string  | Name of corresponding JSON file with the measurements            |
-| class_value        | integer | Specifies the [respective class](#classification-labels-classes) |
-| result_value       | string  | Operation outcome (OK/NOK) as determined by the station          |
-| workpiece_id       | string  | Unique workpiece identifier (14-digit) as data matrix code       |
-| workpiece_usage    | integer | Previous operations count (0-24): number of screw runs           |
-| workpiece_location | integer | Screw position (0: left, 1: right)                               |
+| Column               | Type    | Description                                                      |
+|----------------------|---------|------------------------------------------------------------------|
+| run_id               | int     | Unique cycle number as recorded by the screw station             |
+| file_name            | string  | Name of corresponding JSON file with the measurements            |
+| class_value          | string  | Specifies the [respective class](#classification-labels-classes) |
+| workpiece_id         | string  | Unique workpiece identifier (14-digit) as data matrix code       |
+| workpiece_date       | datetime| Timestamp of when the workpiece was processed                    |
+| workpiece_usage      | integer | Previous operations count (0-24): number of screw runs           |
+| workpiece_result     | string  | Operation outcome (OK/NOK) as determined by the station          |
+| workpiece_location   | string  | Screw position (left/right)                                      |
+| scenario_condition   | string  | Experimental condition applied to the sample (normal or fautly)  |
+| scenario_exception   | integer | Exception flag for special conditions (0: none)                  |
 
 ### Classification Labels (Classes)
 
@@ -207,7 +210,7 @@ Recommended approaches:
 
 ## Citations
 If using this dataset, please cite:
-- West, N., Trianni, A. & Deuse, J. (2024). Data-driven analysis of bolted joints in plastic housings with surface-based anomalies using supervised and unsupervised machine learning. CIE51 Proceedings. (DOI will follow after publication of the proceedings)
+- West, N., Trianni, A. & Deuse, J. (2024). Detection of surface-based anomalies for self-tapping screws in plastic housings using supervised machine learning. CIE51 Proceedings. (DOI will follow after publication of the proceedings)
 
 ## Repository
 Issues and questions: https://github.com/nikolaiwest/pyscrew
@@ -233,13 +236,27 @@ More information regarding the research project is available at [prodata-projekt
 
 ## License
 
-**MIT License**
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**
 
+*This dataset is licensed under a Creative Commons Attribution 4.0 International License.*
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this dataset and associated documentation files, to deal in the dataset without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the dataset, and to permit persons to whom the dataset is furnished to do so, subject to the following conditions:
+You are free to:
+* **Share** — copy and redistribute the material in any medium or format
+* **Adapt** — remix, transform, and build upon the material for any purpose, even commercially
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the dataset.
+Under the following terms:
+* **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 
-THE DATASET IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE DATASET OR THE USE OR OTHER DEALINGS IN THE DATASET.
+The full text of this license is available at: https://creativecommons.org/licenses/by/4.0/legalcode
+
+**Citation Requirement**: 
+
+* When using this dataset in academic or research work, please cite:
+
+  > West, N., & Deuse, J. (2024). A Comparative Study of Machine Learning Approaches for Anomaly Detection in Industrial Screw Driving Data. Proceedings of the 57th Hawaii International Conference on System Sciences (HICSS), 1050-1059. https://hdl.handle.net/10125/106504
+
+* For non-academic work, please include the following attribution:
+
+  > Screw Driving Dataset - s02_variations-in-surface-friction by Nikolai West @ RIF/IPS; Source: https://github.com/nikolaiwest/pyscrew; DOI: 10.5281/zenodo.15123922
 
 *Copyright (c) 2025 Nikolai West @ RIF/IPS*

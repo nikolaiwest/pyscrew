@@ -1,8 +1,8 @@
 # Screw Driving Dataset - [SCENARIO_NAME]
 
 <!-- Dataset Information -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14769379.svg)](https://zenodo.org/uploads/14769379)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15123922.svg)](https://zenodo.org/uploads/15123922)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-[NUMBER_OF_SAMPLES]_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
@@ -54,26 +54,29 @@ y_values = data["class values"]
 The dataset consists of three primary components:
 
 1. `/json` directory: Contains [NUMBER_OF_SAMPLES] individual JSON files of unprocessed screw driving operations, each recording the complete measurement data of a single screwing process.
-2. `[labels].csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
+2. `labels.csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
 3. `README.md`: This readme-file providing stand-alone context for the dataset.
 
 ### Labels File Structure
 
-The `labels.csv` contains seven columns:
+The `labels.csv` contains nine columns:
 
-| Column             | Type    | Description                                                      |
-|--------------------|---------|------------------------------------------------------------------|
-| run_id             | int     | Unique cycle number as recorded by the screw station             |
-| file_name          | string  | Name of corresponding JSON file with the measurements            |
-| class_value        | integer | Specifies the [respective class](#classification-labels-classes) |
-| result_value       | string  | Operation outcome (OK/NOK) as determined by the station          |
-| workpiece_id       | string  | Unique workpiece identifier (14-digit) as data matrix code       |
-| workpiece_usage    | integer | Previous operations count (0-24): number of screw runs           |
-| workpiece_location | integer | Screw position (0: left, 1: right)                               |
+| Column               | Type    | Description                                                      |
+|----------------------|---------|------------------------------------------------------------------|
+| run_id               | int     | Unique cycle number as recorded by the screw station             |
+| file_name            | string  | Name of corresponding JSON file with the measurements            |
+| class_value          | string  | Specifies the [respective class](#classification-labels-classes) |
+| workpiece_id         | string  | Unique workpiece identifier (14-digit) as data matrix code       |
+| workpiece_date       | datetime| Timestamp of when the workpiece was processed                    |
+| workpiece_usage      | integer | Previous operations count (0-24): number of screw runs           |
+| workpiece_result     | string  | Operation outcome (OK/NOK) as determined by the station          |
+| workpiece_location   | string  | Screw position (left/right)                                      |
+| scenario_condition   | string  | Experimental condition applied to the sample                     |
+| scenario_exception   | integer | Exception flag for special conditions (0: none)                  |
 
 ### Classification Labels (Classes)
 
-<!-- List all classes with descriptions. Example formatas table :
+<!-- List all classes with descriptions. Example format as table :
 | NR     | Name      | Amount | Description                               |
 |--------|-----------|--------|-------------------------------------------|
 | 0      | Baseline  | 5000   | No additional manipulations, only wear down from repeated use |
@@ -235,13 +238,27 @@ More information regarding the research project is available at [prodata-projekt
 
 ## License
 
-**MIT License**
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**
 
+This dataset is licensed under a Creative Commons Attribution 4.0 International License.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this dataset and associated documentation files, to deal in the dataset without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the dataset, and to permit persons to whom the dataset is furnished to do so, subject to the following conditions:
+You are free to:
+- **Share** — copy and redistribute the material in any medium or format
+- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the dataset.
+Under the following terms:
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 
-THE DATASET IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE DATASET OR THE USE OR OTHER DEALINGS IN THE DATASET.
+The full text of this license is available at: https://creativecommons.org/licenses/by/4.0/legalcode
+
+### Citation Requirement
+
+* When using this dataset in academic or research work, please cite:
+
+> [ACADEMIC_CITATION]
+
+* For non-academic work, please include the following attribution:
+
+> Dataset: Screw Driving Dataset - [SCENARIO_NAME] by Nikolai West @ RIF/IPS; Source: https://github.com/nikolaiwest/pyscrew; DOI: [DATASET_DOI]
 
 *Copyright (c) 2025 Nikolai West @ RIF/IPS*
