@@ -34,12 +34,12 @@ from pyscrew.utils.logger import get_logger
 # ----------------------------------------------
 
 # The specific scenario ID as published on Zenodo and in pyscrew
-# SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
+SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
 # SCENARIO_ID = "s02"  # "s02_variations-in-surface-friction"
 # SCENARIO_ID = "s03"  # "s03_variations-in-assembly-conditions-1"
 # SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
-SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
-# SCENARIO_ID = "s06" # "s06_variations-in-lower-workpiece-fabrication"
+# SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
+# SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
 
 # ZIP is the preferred format (better compression), but TAR is supported for compatibility
 ARCHIVE_FORMATS = ["tar", "zip"]

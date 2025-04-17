@@ -29,12 +29,12 @@ from pyscrew.utils.logger import get_logger
 # ----------------------------------------------
 
 # The specific scenario ID as published on Zenodo and in pyscrew
-# SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
+SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
 # SCENARIO_ID = "s02"  # "s02_variations-in-surface-friction"
 # SCENARIO_ID = "s03"  # "s03_variations-in-assembly-conditions-1"
 # SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
 # SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
-SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
+# SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
 
 # Path configuration
 # -----------------
@@ -70,7 +70,7 @@ def position_usage_generator() -> Generator[tuple[int, int], None, None]:
             usage += 1
 
 
-def generate_labels(
+def generate_csv_labels(
     dir_json_data: Path,
     scenario_config: ScenarioConfig,
 ) -> pd.DataFrame:
@@ -367,7 +367,7 @@ def main():
         # Generate labels using the scenario configuration
         logger.info(f"Processing JSON files from {dir_json_data}")
         logger.info(f"Using scenario configuration: {scenario_config}")
-        labels_df = generate_labels(dir_json_data, scenario_config)
+        labels_df = generate_csv_labels(dir_json_data, scenario_config)
 
         # Save to CSV
         dir_csv_target = PROJECT_ROOT / "data" / "csv"
