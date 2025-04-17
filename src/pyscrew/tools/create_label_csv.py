@@ -30,11 +30,11 @@ from pyscrew.utils.logger import get_logger
 
 # The specific scenario ID as published on Zenodo and in pyscrew
 SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
-# SCENARIO_ID = "s02" # "s02_variations-in-surface-friction"
-# SCENARIO_ID = "s03" # "s03_variations-in-assembly-conditions-1"
+# SCENARIO_ID = "s02"  # "s02_variations-in-surface-friction"
+# SCENARIO_ID = "s03"  # "s03_variations-in-assembly-conditions-1"
 # SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
-# SCENARIO_ID = "s05" # "s05_variations-in-upper-workpiece-fabrication"
-# SCENARIO_ID = "s06" # "s06_variations-in-lower-workpiece-fabrication"
+# SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
+# SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
 
 # Path configuration
 # -----------------
@@ -85,82 +85,200 @@ def generate_labels(
         DataFrame with columns matching CsvFields structure
     """
     try:
-        # Get class counts from scenario configuration
-        class_counts: dict = scenario_config.get_class_counts()
+        # Validate scenario configuration
+        _validate_scenario_config(scenario_config)
 
-        if not class_counts:
-            raise LabelGenerationError(
-                f"No class counts defined for scenario {scenario_config.scenario_id}"
-            )
+        # Load exception files from experiment notes
+        exception_files = _load_exception_files(scenario_config.scenario_id)
 
-        # Process JSON files
-        rows = []
-        workpiece_generators: Dict[str, Generator[tuple[int, int], None, None]] = {}
-
-        for class_dir in dir_json_data.iterdir():
-            if not class_dir.is_dir():
-                logger.error(f"{class_dir} is not a valid file directory.")
-                raise LabelGenerationError(f"Found invalid file in {class_dir}") from e
-
-            all_json_paths = sorted(class_dir.glob("*.json"))
-
-            logger.info(
-                f"- Processing class {class_dir.name}: {len(all_json_paths)} files ({len(workpiece_generators)})"
-            )
-
-            for json_path in all_json_paths:
-                # Load JSON data
-                with open(json_path) as file:
-                    json_data = json.load(file)
-
-                # Extract workpiece ID
-                try:
-                    workpiece_id = str(json_data[JsonFields.Run.WORKPIECE_ID])
-                except KeyError as e:
-                    logger.error(f"Missing workpiece ID in {json_path}")
-                    raise LabelGenerationError(f"Required field missing: {e}") from e
-
-                # Get position and usage from generator
-                if workpiece_id not in workpiece_generators:
-                    workpiece_generators[workpiece_id] = position_usage_generator()
-                workpiece_location, workpiece_usage = next(
-                    workpiece_generators[workpiece_id]
-                )
-
-                # Create row with usage and position info
-                row = {
-                    CsvFields.RUN_ID: json_data[JsonFields.Run.ID],
-                    CsvFields.FILE_NAME: json_path.name,
-                    CsvFields.CLASS_VALUE: class_dir.name,
-                    CsvFields.WORKPIECE_ID: workpiece_id,
-                    CsvFields.WORKPIECE_DATE: json_data[JsonFields.Run.DATE],
-                    CsvFields.WORKPIECE_USAGE: workpiece_usage,
-                    CsvFields.WORKPIECE_RESULT: json_data[JsonFields.Run.RESULT_VALUE],
-                    CsvFields.WORKPIECE_LOCATION: workpiece_location,
-                }
-                rows.append(row)
+        # Process JSON files to create DataFrame rows
+        rows = _process_json_files(dir_json_data, scenario_config, exception_files)
 
         # Create DataFrame with explicit column order
-        columns = [
-            CsvFields.RUN_ID,
-            CsvFields.FILE_NAME,
-            CsvFields.CLASS_VALUE,
-            CsvFields.WORKPIECE_ID,
-            CsvFields.WORKPIECE_DATE,
-            CsvFields.WORKPIECE_USAGE,
-            CsvFields.WORKPIECE_RESULT,
-            CsvFields.WORKPIECE_LOCATION,
-        ]
+        columns = _get_csv_column_order()
         df = pd.DataFrame(rows, columns=columns)
 
+        # Log statistics about exceptions
+        exception_count = df[df[CsvFields.SCENARIO_EXCEPTION] == 1].shape[0]
+        workpiece_count = len(_get_unique_workpieces(rows))
+
+        logger.info(f"Applied {exception_count} exceptions from notes")
         logger.info(
-            f"Generated labels for {len(df)} files from {len(workpiece_generators)} unique workpieces"
+            f"Generated labels for {len(df)} files from {workpiece_count} unique workpieces"
         )
+
         return df
 
     except Exception as e:
         logger.error(f"Label generation failed: {e}")
         raise LabelGenerationError(f"Failed to generate labels: {e}") from e
+
+
+def _validate_scenario_config(scenario_config: ScenarioConfig) -> None:
+    """Validate the scenario configuration has required data."""
+    class_counts = scenario_config.get_class_counts()
+    if not class_counts:
+        raise LabelGenerationError(
+            f"No class counts defined for scenario {scenario_config.scenario_id}"
+        )
+
+
+def _load_exception_files(scenario_id: str) -> set:
+    """
+    Load file names marked as exceptions from experiment notes.
+
+    Args:
+        scenario_id: The ID of the scenario (e.g., 's05')
+
+    Returns:
+        Set of file names marked as exceptions
+    """
+    exception_files = set()
+    notes_file_path = (
+        PROJECT_ROOT / "data" / "notes" / f"{scenario_id}_experiment-notes.csv"
+    )
+
+    if notes_file_path.exists():
+        try:
+            notes_df = pd.read_csv(notes_file_path)
+            # Extract file names with scenario_exception value of 1
+            exception_files = set(
+                notes_df[notes_df["scenario_exception"] == 1]["file_name"].tolist()
+            )
+            logger.info(
+                f"Loaded {len(exception_files)} exception files from {notes_file_path}"
+            )
+        except Exception as e:
+            logger.warning(
+                f"Failed to load experiment notes: {e}. No exceptions will be applied."
+            )
+    else:
+        logger.info(
+            f"No experiment notes found at {notes_file_path}. No exceptions will be applied."
+        )
+
+    return exception_files
+
+
+def _process_json_files(
+    dir_json_data: Path, scenario_config: ScenarioConfig, exception_files: set
+) -> list:
+    """
+    Process JSON files and create data rows.
+
+    Args:
+        dir_json_data: Directory containing class-specific JSON subdirectories
+        scenario_config: ScenarioConfig object with scenario information
+        exception_files: Set of file names marked as exceptions
+
+    Returns:
+        List of dictionaries containing row data for DataFrame
+    """
+    rows = []
+    workpiece_generators = {}
+    class_conditions = scenario_config.get_class_conditions()
+
+    for class_dir in dir_json_data.iterdir():
+        if not class_dir.is_dir():
+            logger.error(f"{class_dir} is not a valid file directory.")
+            raise LabelGenerationError(f"Found invalid file in {class_dir}")
+
+        all_json_paths = sorted(class_dir.glob("*.json"))
+
+        logger.info(
+            f"- Processing class {class_dir.name}: {len(all_json_paths)} files ({len(workpiece_generators)})"
+        )
+
+        for json_path in all_json_paths:
+            row = _create_row_from_json(
+                json_path,
+                class_dir.name,
+                class_conditions,
+                workpiece_generators,
+                exception_files,
+            )
+            rows.append(row)
+
+    return rows
+
+
+def _create_row_from_json(
+    json_path: Path,
+    class_name: str,
+    class_conditions: dict,
+    workpiece_generators: dict,
+    exception_files: set,
+) -> dict:
+    """
+    Create a single row of data from a JSON file.
+
+    Args:
+        json_path: Path to the JSON file
+        class_name: Name of the class directory
+        class_conditions: Dictionary mapping class names to conditions
+        workpiece_generators: Dictionary of workpiece generators
+        exception_files: Set of file names marked as exceptions
+
+    Returns:
+        Dictionary containing row data
+    """
+    # Load JSON data
+    with open(json_path) as file:
+        json_data = json.load(file)
+
+    # Extract workpiece ID
+    try:
+        workpiece_id = str(json_data[JsonFields.Run.WORKPIECE_ID])
+    except KeyError as e:
+        logger.error(f"Missing workpiece ID in {json_path}")
+        raise LabelGenerationError(f"Required field missing: {e}") from e
+
+    # Get position and usage from generator
+    if workpiece_id not in workpiece_generators:
+        workpiece_generators[workpiece_id] = position_usage_generator()
+    workpiece_location, workpiece_usage = next(workpiece_generators[workpiece_id])
+
+    # Get scenario condition
+    scenario_condition = class_conditions[class_name]
+
+    # Check if the file is marked as an exception
+    file_name = json_path.name
+    scenario_exception = 1 if file_name in exception_files else 0
+
+    # Create row with usage and position info
+    return {
+        CsvFields.RUN_ID: json_data[JsonFields.Run.ID],
+        CsvFields.FILE_NAME: file_name,
+        CsvFields.CLASS_VALUE: class_name,
+        CsvFields.WORKPIECE_ID: workpiece_id,
+        CsvFields.WORKPIECE_DATE: json_data[JsonFields.Run.DATE],
+        CsvFields.WORKPIECE_USAGE: workpiece_usage,
+        CsvFields.WORKPIECE_RESULT: json_data[JsonFields.Run.RESULT_VALUE],
+        CsvFields.WORKPIECE_LOCATION: workpiece_location,
+        CsvFields.SCENARIO_CONDITION: scenario_condition,
+        CsvFields.SCENARIO_EXCEPTION: scenario_exception,
+    }
+
+
+def _get_csv_column_order() -> list:
+    """Get the standardized column order for the CSV file."""
+    return [
+        CsvFields.RUN_ID,
+        CsvFields.FILE_NAME,
+        CsvFields.CLASS_VALUE,
+        CsvFields.WORKPIECE_ID,
+        CsvFields.WORKPIECE_DATE,
+        CsvFields.WORKPIECE_USAGE,
+        CsvFields.WORKPIECE_RESULT,
+        CsvFields.WORKPIECE_LOCATION,
+        CsvFields.SCENARIO_CONDITION,
+        CsvFields.SCENARIO_EXCEPTION,
+    ]
+
+
+def _get_unique_workpieces(rows: list) -> set:
+    """Extract unique workpiece IDs from the row data."""
+    return {row[CsvFields.WORKPIECE_ID] for row in rows}
 
 
 def main():
