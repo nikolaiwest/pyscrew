@@ -1,13 +1,13 @@
-# Screw Driving Dataset - s02_surface-friction
+# Screw Driving Dataset - s02_variations-in-surface-friction
 
 <!-- Dataset Information -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14769379.svg)](https://zenodo.org/uploads/14769379)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14887942.svg)](https://zenodo.org/uploads/14887942)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-12500_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
 [![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/nikolaiwest/pyscrew)
-[![Updated](https://img.shields.io/badge/Updated-2025/02/12-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Updated](https://img.shields.io/badge/Updated-2025/04/16-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
 [![Paper](https://img.shields.io/badge/DOI-10.24251%2FHICSS.2024.126-green)](https://hdl.handle.net/10125/106504)
@@ -26,8 +26,9 @@
 - [License](#license)
 
 ## Overview
-This dataset examines the impact of different surface conditions on screw driving operations in plastic material. It was generated using an automatic screwing station from EV motor control unit assembly.It captures the effects of various surface treatments and conditions on the fastening process. 
-A total of seven different errors were recorded. The main focus of the experiment was seeing the effect that repeated screwing has on the upper work piece. Using an upper workpiece multiple times leaves residue in the contact area of the screw head and the upper workpiece, visually altering the surface structure. The goal was to deterime whether these effects alter the screwing behaviour. 
+This dataset examines how different **surface conditions** affect screw driving performance. We tested various *surface modifications* including wear, lubrication, surface treatments, and contamination to create realistic scenarios encountered in manufacturing environments. The dataset includes `12,500` total observations across `8` distinct surface conditions.
+
+The purpose is to analyze how different surface conditions impact screw driving metrics, providing insights for quality control measures and optimal manufacturing parameters under varying surface friction scenarios.
 
 Collection Date: Jul. 2023 - Apr. 2024 *(some errors were recorded later to inspect more friction variations)*
 
@@ -37,7 +38,7 @@ Collection Date: Jul. 2023 - Apr. 2024 *(some errors were recorded later to insp
 from pyscrew import get_data
 
 # Load and prepare the data (returns a dictionary)
-data = get_data(scenario_name="s02_surface-friction")
+data = get_data(scenario_name="s02_variations-in-surface-friction")
 
 # Access measurements and labels
 x_values = data["torque values"] # Available: torque, angle, time, gradient, step, class
@@ -48,7 +49,7 @@ y_values = data["class values"]
 
 The dataset consists of three primary components:
 
-1. `/json` directory: Contains [NUMBER_OF_SAMPLES] individual JSON files of unprocessed screw driving operations, each recording the complete measurement data of a single screwing process.
+1. `/json` directory: Contains 12,500 individual JSON files of unprocessed screw driving operations, each recording the complete measurement data of a single screwing process.
 2. `labels.csv`: A metadata file that collects key information from each operation (e.g. for classification). More Details are displayed in the table below.
 3. `README.md`: This readme-file providing stand-alone context for the dataset.
 
@@ -68,16 +69,16 @@ The `labels.csv` contains seven columns:
 
 ### Classification Labels (Classes)
 
-| Value  | Name           | Amount | Description                                                             |
-|--------|----------------|--------|-------------------------------------------------------------------------|
-| 0      | Baseline       | 2500   | No additional manipulations, baseline data for reference                |
-| 1      | Up to 50       | 2500   | Upper workpiece was used 25 times, showing surface weardown             |
-| 2      | With water     | 1250   | Decreased friction due to water-contaminated workpiece surface          |
-| 3      | With lubricant | 1250   | Decreased friction due to lubricant-contaminated workpiece surface      |
-| 4      | Sanded 40      | 1250   | Increased friction due to coarse surface treatment by sanding (40 grit) |
-| 5      | Sanded 400     | 1250   | Increased friction due to fine surface treatment by sanding (400 grit)  |
-| 6      | With adhesive  | 1250   | Alien material by producing adhesive-contaminated surfaces              |
-| 7      | Scratched      | 1250   | Alien material by a chip due to with mechanically damaged surfaces      |
+| NR    | Name                     | Amount | Description                                                             |
+|-------|--------------------------|--------|-------------------------------------------------------------------------|
+| 0     | 001_control-group        | 2500   | No additional manipulations, baseline data for reference                |
+| 1     | 101_used-upper-workpiece | 2500   | Upper workpiece was used 25 times, showing surface weardown             |
+| 2     | 201_lubricant-water      | 1250   | Decreased friction due to water-contaminated workpiece surface          |
+| 3     | 202_lubricant-oil-based  | 1250   | Decreased friction due to lubricant-contaminated workpiece surface      |
+| 4     | 301_sanding-coarse       | 1250   | Increased friction due to coarse surface treatment by sanding (40 grit) |
+| 5     | 302_sanding-fine         | 1250   | Increased friction due to fine surface treatment by sanding (400 grit)  |
+| 6     | 401_plastic-adhesive     | 1250   | Alien material by producing adhesive-contaminated surfaces              |
+| 7     | 402_surface-chipped      | 1250   | Alien material by a chip due to with mechanically damaged surfaces      |
 
 ### JSON File Structure
 Each JSON file represents a complete screw driving operation with the following structure:
@@ -146,7 +147,7 @@ The dataset is provided *"as raw as possible"* and underwent no additional prepr
 - Maximum 25 cycles per location
 - 250 unique workpieces
 - 12,500 total operations
-- 8 unique error classes as decribed [above](#classification-labels-classes)
+- 8 unique error classes as described [above](#classification-labels-classes)
 
 ## Dataset Statistics
 
@@ -154,40 +155,31 @@ The dataset is provided *"as raw as possible"* and underwent no additional prepr
 - Sample Metrics:
   - Total operations: 12500
   - Unique workpieces: 250
-  - Operations per workpiece: 50 (25 cycles x 2 sides)
+  - Operations per workpiece: 50.0
 - Quality Distribution:
   - Normal (OK): 9512 (76.10%)
   - Anomalous (NOK): 2988 (23.90%)
 
 ### Distribution by Class
 
-| Value | Name           | Samples | #OK   | #NOK | %OK   | %NOK  |
-|-------|---------------|---------|-------|------|-------|-------|
-| 0     | Baseline      | 2500    | 2094  | 406  | 83.76 | 16.24 |
-| 1     | Up to 50      | 2500    | 2273  | 227  | 90.92 | 9.08  |
-| 2     | With water    | 1250    | 1101  | 149  | 88.08 | 11.92 |
-| 3     | With lubricant| 1250    | 488   | 762  | 39.04 | 60.96 |
-| 4     | Sanded 40     | 1250    | 770   | 480  | 61.60 | 38.40 |
-| 5     | Sanded 400    | 1250    | 672   | 578  | 53.76 | 46.24 |
-| 6     | With adhesive | 1250    | 1074  | 176  | 85.92 | 14.08 |
-| 7     | Scratched     | 1250    | 1040  | 210  | 83.20 | 16.80 |
+| NR    | Name                     | Samples | #OK   | #NOK  | %OK   | %NOK   |
+|-------|--------------------------|---------|-------|-------|-------|--------|
+| 0     | 001_control-group        | 2500    | 2094  | 406   | 83.76 | 16.24  |
+| 1     | 101_used-upper-workpiece | 2500    | 2273  | 227   | 90.92 | 9.08   |
+| 2     | 201_lubricant-water      | 1250    | 1101  | 149   | 88.08 | 11.92  |
+| 3     | 202_lubricant-oil-based  | 1250    | 488   | 762   | 39.04 | 60.96  |
+| 4     | 301_sanding-coarse       | 1250    | 770   | 480   | 61.60 | 38.40  |
+| 5     | 302_sanding-fine         | 1250    | 672   | 578   | 53.76 | 46.24  |
+| 6     | 401_plastic-adhesive     | 1250    | 1074  | 176   | 85.92 | 14.08  |
+| 7     | 402_surface-chipped      | 1250    | 1040  | 210   | 83.20 | 16.80  |
 
 ### Collection Timeline
 
-**Initial Dataset (July 2023)**
-- Jul 12-17: Baseline data collection (Class 0: 2500 samples)
-- Jul 12-17: Multiple usage tests (Class 1: 2500 samples)
-- Jul 18: Lubricant tests (Class 3: 1250 samples)
-- Jul 19-20: Surface treatment experiments
-  - Coarse sanding tests (Class 4: 1250 samples)
-  - Fine sanding tests (Class 5: 1250 samples)
+**July 2023**
+- Initial data collection including baseline samples, multiple usage tests, lubricant tests, and surface treatment experiments
 
-**Extended Collection (April 2024)**
-- Apr 15-16: Adhesive contamination tests (Class 6: 1250 samples)
-- Apr 22: Surface scratch tests (Class 7: 1250 samples)
-- Apr 25: Water contamination tests (Class 2: 1250 samples)
-
-*Note: The extended collection period in April 2024 focused on additional friction variations to complete the dataset with different surface contamination scenarios.*
+**April 2024**
+- Extended collection focusing on additional friction variations (adhesive contamination, surface scratch tests, water contamination)
 
 ### Data Quality
 - Sampling frequency: 833.33 Hz
@@ -196,9 +188,9 @@ The dataset is provided *"as raw as possible"* and underwent no additional prepr
 
 ### Key Characteristics
 - Group of distinct errors related to surface properties
-- Matches similar errors by type and number (e.g. 2&3, 4&5, 6&7)
-- Initial anomaly rate: 12.6%
-- Peak anomaly rate: 51.6% (in the final cycle 24)
+- Matches similar errors by type and number (e.g. classes 201/202, 301/302, 401/402)
+- Initial anomaly rate: 0%
+- Peak anomaly rate: 23.90%
 
 ## Usage Guidelines
 
@@ -211,7 +203,7 @@ Recommended approaches:
 - Torque-angle relationship evolution
 - Multi-class classification for specific error types
 - Clustering-based approaches to identify similar cause-effect-relationships
-- Comparison of anomaly effects ("How severe/different are the 7 error classes?")
+- Comparison of anomaly effects ("How severe/different are the 8 error classes?")
 
 ## Citations
 If using this dataset, please cite:

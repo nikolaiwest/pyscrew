@@ -1,13 +1,13 @@
-# Screw Driving Dataset - s01_thread-degradation
+# Screw Driving Dataset - s01_variations-in-thread-degradation
 
 <!-- Dataset Information -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14855576.svg)](https://zenodo.org/uploads/14855576)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14887942.svg)](https://zenodo.org/uploads/14887942)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-5000_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
 [![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/nikolaiwest/pyscrew)
-[![Updated](https://img.shields.io/badge/Updated-2025/02/12-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Updated](https://img.shields.io/badge/Updated-2025/04/16-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
 [![Paper](https://img.shields.io/badge/DOI-10.24251%2FHICSS.2024.126-green)](https://hdl.handle.net/10125/106504)
@@ -26,9 +26,9 @@
 - [License](#license)
 
 ## Overview
-This dataset examines thread degradation in plastic materials through repeated fastening operations.
-It was generated using an automatic screwing station from EV motor control unit assembly.
-It captures the progressive wear of plastic threads over multiple fastening cycles, providing insights into material degradation patterns and failure prediction.
+This dataset captures the **natural degradation of plastic threads** over repeated use. We conducted `25` screw driving experiments without any manipulations, using two screws per workpiece across `25` repetitions, resulting in `5,000` total observations. Rather than introducing artificial defects, we allowed the *natural degradation process* to occur as threads were repeatedly cut into the plastic workpiece components, providing realistic wear patterns.
+
+The purpose is to analyze how thread quality naturally degrades through repeated use cycles, establishing baseline degradation patterns for quality control and predictive maintenance applications.
 
 Collection Date: Sept. 2022
 
@@ -38,7 +38,7 @@ Collection Date: Sept. 2022
 from pyscrew import get_data
 
 # Load and prepare the data (returns a dictionary)
-data = get_data(scenario_name="s01_thread-degradation")
+data = get_data(scenario_name="s01_variations-in-thread-degradation")
 
 # Access measurements and labels
 x_values = data["torque values"] # Available: torque, angle, time, gradient, step, class
@@ -69,9 +69,9 @@ The `labels.csv` contains seven columns:
 
 ### Classification Labels (Classes)
 
-| Value  | Name      | Amount | Description                                                   |
-|--------|-----------|--------|---------------------------------------------------------------|
-| 0      | Baseline  | 5000   | No additional manipulations, only wear down from repeated use |
+| NR     | Name              | Amount | Description                                                   |
+|--------|-------------------|--------|---------------------------------------------------------------|
+| 0      | 001_control-group | 5000   | No additional manipulations, only wear down from repeated use |
 
 
 ### JSON File Structure
@@ -145,27 +145,24 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 
 ### Sample Distribution
 - Sample Metrics:
-  - Total operations: 5,000
+  - Total operations: 5000
   - Unique workpieces: 100
-  - Operations per workpiece: 50 (25 cycles × 2 sides)
+  - Operations per workpiece: 50.0
 - Quality Distribution:
-  - Normal (OK): 4,089 (81.78%)
+  - Normal (OK): 4089 (81.78%)
   - Anomalous (NOK): 911 (18.22%)
 
 ### Distribution by Class
 
-| Value  | Name      | Samples | #OK  | #NOK | %OK   | %NOK  |
-|--------|-----------|---------|------|------|-------|-------|
-| 0      | Baseline  | 5000    | 4089 |  911 | 81.78 | 18.22 |
+| NR     | Name              | Samples | #OK  | #NOK | %OK   | %NOK  |
+|--------|-------------------|---------|------|------|-------|-------|
+| 0      | 001_control-group | 5000    | 4089 | 911  | 81.78 | 18.22 |
 
 
 ### Collection Timeline
 
 **September 2022**
-- Sep 5-7: Initial data collection (1,200 samples)
-- Sep 8-9: Extended collection (1,150 samples)
-- Sep 12-14: Further testing (1,400 samples)
-- Sep 16: Final collection phase (1,250 samples)
+- All 5,000 samples were collected throughout September 2022
 
 ### Data Quality
 - Sampling frequency: 833.33 Hz
@@ -174,8 +171,8 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 
 ### Key Characteristics
 - Natural degradation progression
-- Initial anomaly rate: 1.5% (from second connection)
-- Peak anomaly rate: 41% (final cycle)
+- Initial anomaly rate: 0%
+- Peak anomaly rate: 18.22%
 - Complete lifecycle coverage
 - Dual independent test locations
 
@@ -219,7 +216,7 @@ The preparation and provision of the research was supported by:
 
 This research is part of the funding program ["Data competencies for early career researchers"](https://www.bmbf.de/DE/Forschung/Wissenschaftssystem/Forschungsdaten/DatenkompetenzenInDerWissenschaft/datenkompetenzeninderwissenschaft_node.html). 
 
-More information regarding the research project is available our [project homepage](https://prodata-projekt.de/).
+More information regarding the research project is available at [prodata-projekt.de](https://prodata-projekt.de/).
 
 ## License
 

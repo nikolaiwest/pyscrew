@@ -74,7 +74,7 @@ The `labels.csv` contains seven columns:
 ### Classification Labels (Classes)
 
 <!-- List all classes with descriptions. Example formatas table :
-| Value  | Name      | Amount | Description                               |
+| NR     | Name      | Amount | Description                               |
 |--------|-----------|--------|-------------------------------------------|
 | 0      | Baseline  | 5000   | No additional manipulations, only wear down from repeated use |
 -->
@@ -169,7 +169,7 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 <!-- If applicable, add class-specific distribution -->
 ### Distribution by Class
 <!-- Example format:
-| Value  | Name      | Samples | #OK  | #NOK | %OK   | %NOK  |
+| NR     | Name      | Samples | #OK  | #NOK | %OK   | %NOK  |
 |--------|-----------|---------|------|------|-------|-------|
 | 0      | Baseline  | 5000    | 4089 |  911 | 81.78 | 18.22 |
 [CLASS_DISTRIBUTION]
