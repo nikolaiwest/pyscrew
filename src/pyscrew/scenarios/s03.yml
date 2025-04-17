@@ -24,141 +24,168 @@ metadata:
 classes:
   001_control-group-1:
     count: 100
+    condition: normal
     description: >
       No manipulations, standard reference data for comparison with other experiment groups; 
       recorded for s03 in March 2023
   002_control-group-2:
     count: 100
+    condition: normal
     description: >
       No manipulations, standard reference data for comparison with other experiment groups; 
       recorded for s03 in February 2024
   003_control-group-3:
     count: 100
+    condition: normal
     description: >
       No manipulations, standard reference data for comparison with other experiment groups; 
       recorded for s03 during multiple sessions between February and June 2023
   004_control-group-from-s01:
     count: 200
+    condition: normal
     description: >
       No manipulations like 001; the observations were taken from s01-001 control group, 
       using first cycles only to maintain comparability with other experiments
   005_control-group-from-s02:
     count: 100
+    condition: normal
     description: >
       No manipulations like 001; the observations were taken from s02-001 control group, 
       using first cycles only to maintain comparability with other experiments
   101_m4-washer-in-upper-piece:
     count: 50
+    condition: faulty
     description: >
       Reduced screw insertion depth using a custom-cut polyamide washer with 4mm inner diameter; 
       the washer was placed inside the upper part during fastening and secured together with 
       the screw, creating controlled thread interference
   102_m3-washer-in-upper-piece:
     count: 50
+    condition: faulty
     description: >
       Reduced screw insertion depth using a standard M3 polyamide washer; the washer was placed 
       inside the upper part during fastening and secured together with the screw, creating 
       controlled thread interference
   103_m3-half-washer-in-upper-part:
     count: 50
+    condition: faulty
     description: >
       Reduced screw insertion depth and asymmetric load distribution using half of an M3 
       polyamide washer; the half-washer was placed inside the upper part during fastening 
       and secured together with the screw, creating non-uniform thread engagement
   201_adhesive-thread:
     count: 50
+    condition: faulty
     description: >
       Modified thread behavior by applying a metal adhesive to the screw tip, creating partial 
       binding and increased resistance during fastening due to secondary material interference
   202_deformed-thread-1:
     count: 100
+    condition: faulty
     description: >
       Damaged thread by mechanically deforming multiple thread sections, causing irregular 
       engagement and variations in torque requirements; reforded for s03 in March 2023
   203_deformed-thread-2:
     count: 50
+    condition: faulty
     description: >
       Damaged thread by mechanically like 202; observations collected under similar experimental 
       conditions but recorded three months later, in June 2023
   301_material-in-the-screw-head:
     count: 50
+    condition: faulty
     description: >
       Compromised tool engagement by applying melted adhesive to the Delta PT screw head, causing 
       driver slippage during automated fastening and inconsistent torque transfer
   302_material-in-the-lower-part:
     count: 50
+    condition: faulty
     description: >
       Inserted plastic adhesive into the lower workpiece's screw-in hole, creating higher 
       mechanical opposition as the screw enters and rotates during tightening
   401_drilling-out-the-workpiece:
     count: 50
+    condition: faulty
     description: >
       Reduced thread engagement by enlarging the pilot holes in the lower part with a fine drill, 
       decreasing available material for thread formation and weakening the connection
   402_shortening-the-screw-1:
     count: 50
+    condition: faulty
     description: >
       Caused rotation angle tolerance deviations by removing approximately two thread turns 
       and the screw tip using a saw, reducing total length of thread engagement and tip
   403_shortening-the-screw-2:
     count: 50
+    condition: faulty
     description: >
       Caused rotation angle tolerance deviations like 402; observations collected under similar 
       experimental conditions but recorded three months later, in September 2023
   404_tearing-off-the-screw-1:
     count: 50
+    condition: faulty
     description: >
       Simulated catastrophic screw failure by partially sawing through the screw shaft just below 
       the screw head, causing complete fastener failure during assembly, recorded in June 2023
   405_tearing-off-the-screw-2:
     count: 50
+    condition: faulty
     description: >
       Simulated catastrophic screw failure like 404; observations collected under similar 
       experimental conditions but recorded three months later, in September 2023
   501_offset-of-the-screw-hole:
     count: 50
+    condition: faulty
     description: >
       Created horizontal misalignment by using a polyamide washer to offset the screwdriver 
       relative to the joining part; effectively reducing the through-hole so the screw contacts 
       the washer before reaching the lower part
   502_offset-of-the-work-piece:
     count: 50
+    condition: faulty
     description: >
       Generated angular misalignment between screw axis and insertion tube by placing foreign 
       material between component and tool carrier (on just one side), resulting in angled 
       fastening and non-perpendicular insertion
   601_surface-used:
     count: 100
+    condition: faulty
     description: >
       Upper workpiece was used 25 times, showing surface weardown; runs were taken from s02-101 
       using only the first screw cycles with no thread/surface degradation
   602_surface-moisture:
     count: 50
+    condition: faulty
     description: >
       Decreased friction due to water-contaminated workpiece surface; runs were taken from s02-201 
       using only the first screw cycles with no thread/surface degradation
   603_surface-lubricant:
     count: 50
+    condition: faulty
     description: >
       Decreased friction due to lubricant-contaminated workpiece surface; runs were taken from 
       s02-202 using only the first screw cycles with no thread/surface degradation
   604_surface-adhesive:
     count: 50
+    condition: faulty
     description: >
       Alien material by producing adhesive-contaminated surfaces; runs were taken from s02-401 
       using only the first screw cycles with no thread/surface degradation
   605_surface-sanded-40:
     count: 50
+    condition: faulty
     description: >
       Increased friction due to coarse surface treatment by sanding (40 grit); runs were taken 
       from s02-301 using only the first screw cycles with no thread/surface degradation
   606_surface-sanded-400:
     count: 50
+    condition: faulty
     description: >
       Increased friction due to fine surface treatment by sanding (400 grit); runs were taken 
       from s02-302 using only the first screw cycles with no thread/surface degradation
   607_surface-scratched:
     count: 50
+    condition: faulty
     description: >
       Alien material by a chip due to with mechanically damaged surfaces; runs were taken from 
       s02-402 using only the first screw cycles with no thread/surface degradation

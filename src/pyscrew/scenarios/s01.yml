@@ -24,4 +24,5 @@ metadata:
 classes:
   001_control-group:
     count: 5000
+    condition: normal 
     description: No additional manipulations, only wear down from repeated use

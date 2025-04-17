@@ -23,25 +23,33 @@ metadata:
 classes:
   001_control-group:
     count: 2500
+    condition: normal 
     description: No additional manipulations, baseline data for reference
   101_used-upper-workpiece:
     count: 2500
+    condition: faulty 
     description: Upper workpiece was used 25 times, showing surface weardown
   201_lubricant-water:
     count: 1250
+    condition: faulty 
     description: Decreased friction due to water-contaminated workpiece surface
   202_lubricant-oil-based:
     count: 1250
+    condition: faulty 
     description: Decreased friction due to lubricant-contaminated workpiece surface
   301_sanding-coarse:
     count: 1250
+    condition: faulty 
     description: Increased friction due to coarse surface treatment by sanding (40 grit)
   302_sanding-fine:
     count: 1250
+    condition: faulty 
     description: Increased friction due to fine surface treatment by sanding (400 grit)
   401_plastic-adhesive:
     count: 1250
+    condition: faulty 
     description: Alien material by producing adhesive-contaminated surfaces
   402_surface-chipped:
     count: 1250
+    condition: faulty 
     description: Alien material by a chip due to with mechanically damaged surfaces

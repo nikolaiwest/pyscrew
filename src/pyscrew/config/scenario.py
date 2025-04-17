@@ -22,6 +22,7 @@ class ScenarioKeys:
 
     # Class fields
     COUNT: ClassVar[str] = "count"
+    CONDITION: ClassVar[str] = "condition"  # e.g. "normal", "faulty" or "mixed"
     DESCRIPTION: ClassVar[str] = "description"
 
     # Data fields
@@ -92,6 +93,17 @@ class ScenarioConfig:
         """Get dictionary of class counts."""
         return {
             class_name: class_info[self.Keys.COUNT]
+            for class_name, class_info in self.classes.items()
+        }
+
+    def get_class_conditions(self) -> Dict[str, str]:
+        """Get dictionary of class conditions.
+
+        Returns:
+            Dictionary mapping class names to their condition values ('normal' by default)
+        """
+        return {
+            class_name: class_info[self.Keys.CONDITION]
             for class_name, class_info in self.classes.items()
         }
 

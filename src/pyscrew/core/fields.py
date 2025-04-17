@@ -106,6 +106,8 @@ class CsvFields:
         WORKPIECE_USAGE: Number of times this workpiece has been used
         WORKPIECE_RESULT: Result from screw program ("OK"/"NOK")
         WORKPIECE_LOCATION: Screw position in workpiece (0 or 1)
+        SCENARIO_CONDITION: Condition of the experiment ("normal" or "faulty")
+        SCENARIO_EXCEPTION: Flag indicating if there were issues during the experiment (0 for "no issues", 1 otherwise)
     """
 
     # Identifier fields
@@ -121,6 +123,10 @@ class CsvFields:
     WORKPIECE_USAGE: str = "workpiece_usage"
     WORKPIECE_RESULT: str = "workpiece_result"
     WORKPIECE_LOCATION: str = "workpiece_location"
+
+    # Experiment-related fields
+    SCENARIO_CONDITION: str = "scenario_condition"
+    SCENARIO_EXCEPTION: str = "scenario_exception"
 
     @dataclass
     class DatasetFields:

@@ -24,227 +24,271 @@ metadata:
 classes:
   001_reference_01:
     count: 240
+    condition: normal
     description: >
       Standard reference material and process parameters; represents the baseline for all comparisons 
       with optimal mechanical properties and flow characteristics
   101_cooling_time_25:
     count: 269
+    condition: normal
     description: >
       Cooling time of 25 seconds; baseline cooling time setting providing optimal curing conditions 
       for the workpiece and serving as the reference for the first test series
   102_cooling_time_26:
     count: 237
+    condition: faulty
     description: >
       Increased cooling time to 26 seconds; minor extension of curing phase, simulating slight 
       variations in cooling efficiency due to normal process fluctuations
   103_cooling_time_27:
     count: 232
+    condition: faulty
     description: >
       Increased cooling time to 27 seconds; moderate extension of curing phase, simulating noticeable 
       variations in cooling efficiency across production cycles
   104_cooling_time_28:
     count: 236
+    condition: faulty
     description: >
       Increased cooling time to 28 seconds; significant extension of curing phase, simulating 
       substantial variations in cooling efficiency throughout the process
   105_cooling_time_29:
     count: 200
+    condition: faulty
     description: >
       Increased cooling time to 29 seconds; considerable extension of curing phase, simulating major 
       variations in cooling efficiency impacting solidification dynamics
   106_cooling_time_30:
     count: 156
+    condition: faulty
     description: >
       Increased cooling time to 30 seconds; extensive extension of curing phase, simulating extreme 
       variations in cooling efficiency with pronounced impact on cycle time
   107_cooling_time_25:
     count: 190
+    condition: normal
     description: >
       Second reference condition with 25 seconds cooling time; repeat of standard setting recorded in 
       second test series to verify reproducibility across testing periods
   201_mold_temperature_30:
     count: 252
+    condition: normal
     description: >
       Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the 
       injection mold cooling channels, representing optimal thermal conditions for part solidification
   202_mold_temperature_35:
     count: 160
+    condition: faulty
     description: >
       Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating 
       minor fluctuation in the cooling circuit possibly caused by temperature control unit variation
   203_mold_temperature_45:
     count: 330
+    condition: faulty
     description: >
       Increased mold temperature to 45°C; substantially elevated cooling medium temperature, simulating 
       significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels
   204_mold_temperature_55:
     count: 248
+    condition: faulty
     description: >
       Increased mold temperature to 55°C; highly elevated cooling medium temperature, simulating severe 
       fluctuation in the cooling circuit, significantly altering part cooling and crystallization behavior
   205_mold_temperature_65:
     count: 166
+    condition: faulty
     description: >
       Increased mold temperature to 65°C; extremely elevated cooling medium temperature, simulating 
       critical fluctuation in the cooling circuit, dramatically changing solidification dynamics and cycle time
   301_glass_fiber_content_30:
     count: 326
+    condition: normal
     description: >
       Standard reference material with 30% glass fiber content in the plastic granulate; represents the 
       baseline specification for the upper workpiece material composition with optimal mechanical 
       properties and flow characteristics
   302_glass_fiber_content_25:
     count: 268
+    condition: faulty
     description: >
       Reduced glass fiber content to 25% by mixing base material with unreinforced granules of the same 
       base polymer; simulates moderate material batch fluctuations with decreased reinforcement 
       properties and altered flow behavior
   303_glass_fiber_content_20:
     count: 274
+    condition: faulty
     description: >
       Reduced glass fiber content to 20% by mixing base material with unreinforced granules of the same 
       base polymer; simulates severe material batch fluctuations with compromised mechanical properties 
       and altered thermal behavior
   304_glass_fiber_content_15:
     count: 254
+    condition: faulty
     description: >
       Reduced glass fiber content to 15% by mixing base material with unreinforced granules of the same 
       base polymer; simulates major material batch fluctuations with substantially decreased reinforcement 
       properties and pronounced changes in flow characteristics
   305_glass_fiber_content_10:
     count: 104
+    condition: faulty
     description: >
       Reduced glass fiber content to 10% by mixing base material with unreinforced granules of the same 
       base polymer; simulates extreme material batch fluctuations with minimally reinforced polymer 
       exhibiting dramatically altered viscosity and mechanical properties
   401_switching_point_22_1:
     count: 352
+    condition: normal
     description: >
       First reference condition with 22 cm³ switching point; standard setting where system transitions 
       from velocity-controlled injection to pressure-controlled packing; recorded in first test series 
       for baseline comparison
   402_switching_point_20:
     count: 205
+    condition: faulty
     description: >
       Decreased switching point to 20 cm³; minor reduction in melt volume at transition, simulating slight 
       early closing of non-return valve, altering the filling and packing phases relationship
   403_switching_point_18:
     count: 100
+    condition: faulty
     description: >
       Decreased switching point to 18 cm³; moderate reduction in melt volume at transition, simulating 
       noticeable early closing of non-return valve, changing the filling-packing relationship
   404_switching_point_17:
     count: 100
+    condition: faulty
     description: >
       Decreased switching point to 17 cm³; significant reduction in melt volume at transition, simulating 
       substantial early closing of non-return valve, considerably altering packing phase initiation
   405_switching_point_16:
     count: 154
+    condition: faulty
     description: >
       Decreased switching point to 16 cm³; major reduction in melt volume at transition, simulating 
       considerable early closing of non-return valve, dramatically changing packing dynamics
   406_switching_point_15:
     count: 98
+    condition: faulty
     description: >
       Decreased switching point to 15 cm³; extreme reduction in melt volume at transition, simulating 
       major early closing of non-return valve, significantly impacting part quality and dimensions
   407_switching_point_14:
     count: 108
+    condition: faulty
     description: >
       Decreased switching point to 14 cm³; severe reduction in melt volume at transition, representing 
       critical deviation in process control with pronounced effect on cavity pressure development
   408_switching_point_13:
     count: 96
+    condition: faulty
     description: >
       Decreased switching point to 13 cm³; minimal melt volume at transition, representing extreme 
       deviation in process control with possible incomplete filling prior to packing phase initiation
   409_switching_point_22_2:
     count: 100
+    condition: normal
     description: >
       Second reference condition with 22 cm³ switching point; repeat of standard setting recorded in 
       second test series to verify reproducibility across testing periods
   410_switching_point_24:
     count: 98
+    condition: faulty
     description: >
       Increased switching point to 24 cm³; minor increase in melt volume at transition, simulating slight 
       delay in non-return valve closing behavior, modifying filling-packing relationship
   411_switching_point_26:
     count: 95
+    condition: faulty
     description: >
       Increased switching point to 26 cm³; moderate increase in melt volume at transition, simulating 
       noticeable delay in non-return valve closing, substantially altering packing phase initiation
   412_switching_point_28:
     count: 102
+    condition: faulty
     description: >
       Increased switching point to 28 cm³; significant increase in melt volume at transition, simulating 
       substantial delay in non-return valve closing, considerably changing process dynamics
   413_switching_point_30:
     count: 100
+    condition: faulty
     description: >
       Increased switching point to 30 cm³; major increase in melt volume at transition, simulating 
       considerable delay in non-return valve closing, dramatically altering pressure profile
   414_switching_point_32:
     count: 104
+    condition: faulty
     description: >
       Increased switching point to 32 cm³; extreme increase in melt volume at transition, simulating 
       critical delay in non-return valve closing with potential risk of flash formation
   501_injection_velocity_030_1:
     count: 350
+    condition: normal
     description: >
       First reference condition with 30 cm³/s primary injection velocity; standard setting recorded in 
       first test series for baseline comparison of flow behavior and filling patterns
   502_injection_velocity_050:
     count: 100
+    condition: faulty
     description: >
       Increased primary injection velocity to 50 cm³/s; moderately accelerated melt flow during filling phase, 
       simulating minor variation in velocity control of screw movement
   503_injection_velocity_070:
     count: 98
+    condition: faulty
     description: >
       Increased primary injection velocity to 70 cm³/s; substantially accelerated melt flow during filling 
       phase, simulating moderate variation in velocity control with altered shear conditions
   504_injection_velocity_090:
     count: 110
+    condition: faulty
     description: >
       Increased primary injection velocity to 90 cm³/s; significantly accelerated melt flow during filling 
       phase, simulating considerable variation in velocity control with pronounced shear effects
   505_injection_velocity_110:
     count: 98
+    condition: faulty
     description: >
       Increased primary injection velocity to 110 cm³/s; highly accelerated melt flow during filling phase, 
       simulating major variation in velocity control with potential fiber orientation changes
   506_injection_velocity_130:
     count: 130
+    condition: faulty
     description: >
       Increased primary injection velocity to 130 cm³/s; dramatically accelerated melt flow during filling 
       phase, simulating extreme variation in velocity control with altered pressure development
   507_injection_velocity_150:
     count: 98
+    condition: faulty
     description: >
       Increased primary injection velocity to 150 cm³/s; extremely accelerated melt flow during filling phase, 
       creating severe shear conditions and potentially affecting material properties
   508_injection_velocity_170:
     count: 102
+    condition: faulty
     description: >
       Increased primary injection velocity to 170 cm³/s; maximum accelerated melt flow during filling phase, 
       creating critical shear conditions with high potential for molded-in stress
   509_injection_velocity_030_2:
     count: 100
+    condition: normal
     description: >
       Second reference condition with 30 cm³/s primary injection velocity; repeat of standard setting 
       recorded in second test series to verify reproducibility across testing periods
   510_injection_velocity_025:
     count: 138
+    condition: faulty
     description: >
       Decreased primary injection velocity to 25 cm³/s; slightly slowed melt flow during filling phase, 
       simulating minor reduction in screw movement control with reduced shear conditions
   511_injection_velocity_020:
     count: 106
+    condition: faulty
     description: >
       Decreased primary injection velocity to 20 cm³/s; moderately slowed melt flow during filling phase, 
       simulating significant reduction in screw movement control with minimal shear
   512_injection_velocity_015:
     count: 98
+    condition: faulty
     description: >
       Decreased primary injection velocity to 15 cm³/s; dramatically slowed melt flow during filling phase, 
       simulating extreme reduction in screw movement control with potential for premature freezing
