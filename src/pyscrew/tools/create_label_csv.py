@@ -29,12 +29,12 @@ from pyscrew.utils.logger import get_logger
 # ----------------------------------------------
 
 # The specific scenario ID as published on Zenodo and in pyscrew
-SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
+# SCENARIO_ID = "s01"  # "s01_variations-in-thread-degradation"
 # SCENARIO_ID = "s02"  # "s02_variations-in-surface-friction"
 # SCENARIO_ID = "s03"  # "s03_variations-in-assembly-conditions-1"
 # SCENARIO_ID = "s04"  # "s04_variations-in-assembly-conditions-2"
 # SCENARIO_ID = "s05"  # "s05_variations-in-upper-workpiece-fabrication"
-# SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
+SCENARIO_ID = "s06"  # "s06_variations-in-lower-workpiece-fabrication"
 
 # Path configuration
 # -----------------
@@ -88,11 +88,16 @@ def generate_labels(
         # Validate scenario configuration
         _validate_scenario_config(scenario_config)
 
-        # Load exception files from experiment notes
-        exception_files = _load_exception_files(scenario_config.scenario_id)
+        # Determine if this is scenario s04 which requires special handling
+        is_s04 = scenario_config.scenario_id == "s04"
+
+        # Load metadata from experiment notes (for s04 we load more fields)
+        metadata_dict = _load_metadata_from_notes(scenario_config.scenario_id, is_s04)
 
         # Process JSON files to create DataFrame rows
-        rows = _process_json_files(dir_json_data, scenario_config, exception_files)
+        rows = _process_json_files(
+            dir_json_data, scenario_config, metadata_dict, is_s04
+        )
 
         # Create DataFrame with explicit column order
         columns = _get_csv_column_order()
@@ -123,17 +128,21 @@ def _validate_scenario_config(scenario_config: ScenarioConfig) -> None:
         )
 
 
-def _load_exception_files(scenario_id: str) -> set:
+def _load_metadata_from_notes(scenario_id: str, is_s04: bool = False) -> dict:
     """
-    Load file names marked as exceptions from experiment notes.
+    Load metadata from experiment notes.
+
+    For most scenarios, this just loads exception files.
+    For s04, it loads full metadata including class_value, workpiece_location, and scenario_condition.
 
     Args:
-        scenario_id: The ID of the scenario (e.g., 's05')
+        scenario_id: The ID of the scenario (e.g., 's04', 's05')
+        is_s04: Whether this is scenario s04 which requires special handling
 
     Returns:
-        Set of file names marked as exceptions
+        Dictionary with metadata by file name
     """
-    exception_files = set()
+    metadata_dict = {}
     notes_file_path = (
         PROJECT_ROOT / "data" / "notes" / f"{scenario_id}_experiment-notes.csv"
     )
@@ -141,27 +150,46 @@ def _load_exception_files(scenario_id: str) -> set:
     if notes_file_path.exists():
         try:
             notes_df = pd.read_csv(notes_file_path)
-            # Extract file names with scenario_exception value of 1
-            exception_files = set(
-                notes_df[notes_df["scenario_exception"] == 1]["file_name"].tolist()
-            )
-            logger.info(
-                f"Loaded {len(exception_files)} exception files from {notes_file_path}"
-            )
+
+            if is_s04:
+                # For s04, store all metadata columns by file name
+                for _, row in notes_df.iterrows():
+                    metadata_dict[row["file_name"]] = {
+                        "class_value": row["class_value"],
+                        "workpiece_location": row["workpiece_location"],
+                        "scenario_condition": row["scenario_condition"],
+                        "scenario_exception": row["scenario_exception"],
+                    }
+                logger.info(
+                    f"Loaded full metadata for {len(metadata_dict)} files from {notes_file_path}"
+                )
+            else:
+                # For other scenarios, just track exception files
+                exception_files = set(
+                    notes_df[notes_df["scenario_exception"] == 1]["file_name"].tolist()
+                )
+                for file_name in exception_files:
+                    metadata_dict[file_name] = {"scenario_exception": 1}
+                logger.info(
+                    f"Loaded {len(metadata_dict)} exception files from {notes_file_path}"
+                )
         except Exception as e:
             logger.warning(
-                f"Failed to load experiment notes: {e}. No exceptions will be applied."
+                f"Failed to load experiment notes: {e}. No metadata will be applied."
             )
     else:
         logger.info(
-            f"No experiment notes found at {notes_file_path}. No exceptions will be applied."
+            f"No experiment notes found at {notes_file_path}. No metadata will be applied."
         )
 
-    return exception_files
+    return metadata_dict
 
 
 def _process_json_files(
-    dir_json_data: Path, scenario_config: ScenarioConfig, exception_files: set
+    dir_json_data: Path,
+    scenario_config: ScenarioConfig,
+    metadata_dict: dict,
+    is_s04: bool = False,
 ) -> list:
     """
     Process JSON files and create data rows.
@@ -169,7 +197,8 @@ def _process_json_files(
     Args:
         dir_json_data: Directory containing class-specific JSON subdirectories
         scenario_config: ScenarioConfig object with scenario information
-        exception_files: Set of file names marked as exceptions
+        metadata_dict: Dictionary containing metadata by file name
+        is_s04: Whether this is scenario s04 which requires special handling
 
     Returns:
         List of dictionaries containing row data for DataFrame
@@ -195,7 +224,8 @@ def _process_json_files(
                 class_dir.name,
                 class_conditions,
                 workpiece_generators,
-                exception_files,
+                metadata_dict,
+                is_s04,
             )
             rows.append(row)
 
@@ -207,7 +237,8 @@ def _create_row_from_json(
     class_name: str,
     class_conditions: dict,
     workpiece_generators: dict,
-    exception_files: set,
+    metadata_dict: dict,
+    is_s04: bool = False,
 ) -> dict:
     """
     Create a single row of data from a JSON file.
@@ -217,7 +248,8 @@ def _create_row_from_json(
         class_name: Name of the class directory
         class_conditions: Dictionary mapping class names to conditions
         workpiece_generators: Dictionary of workpiece generators
-        exception_files: Set of file names marked as exceptions
+        metadata_dict: Dictionary containing metadata by file name
+        is_s04: Whether this is scenario s04 which requires special handling
 
     Returns:
         Dictionary containing row data
@@ -233,31 +265,56 @@ def _create_row_from_json(
         logger.error(f"Missing workpiece ID in {json_path}")
         raise LabelGenerationError(f"Required field missing: {e}") from e
 
-    # Get position and usage from generator
-    if workpiece_id not in workpiece_generators:
-        workpiece_generators[workpiece_id] = position_usage_generator()
-    workpiece_location, workpiece_usage = next(workpiece_generators[workpiece_id])
-
-    # Get scenario condition
-    scenario_condition = class_conditions[class_name]
-
-    # Check if the file is marked as an exception
     file_name = json_path.name
-    scenario_exception = 1 if file_name in exception_files else 0
 
-    # Create row with usage and position info
-    return {
+    # For s04, get metadata from experiment notes
+    if is_s04 and file_name in metadata_dict:
+        metadata = metadata_dict[file_name]
+        class_value = metadata["class_value"]
+        workpiece_location = metadata["workpiece_location"]
+        scenario_condition = metadata["scenario_condition"]
+        scenario_exception = int(metadata["scenario_exception"])
+
+        # Verify that we're in the right class directory
+        if class_value != class_name:
+            logger.warning(
+                f"Metadata mismatch: File {file_name} is in directory {class_name} "
+                f"but metadata indicates it should be in {class_value}"
+            )
+    else:
+        # For other scenarios, use normal logic
+        class_value = class_name
+
+        # Get position and usage from generator
+        if workpiece_id not in workpiece_generators:
+            workpiece_generators[workpiece_id] = position_usage_generator()
+        workpiece_location, workpiece_usage = next(workpiece_generators[workpiece_id])
+
+        # Get scenario condition
+        scenario_condition = class_conditions[class_name]
+
+        # Check if the file is marked as an exception
+        scenario_exception = metadata_dict.get(file_name, {}).get(
+            "scenario_exception", 0
+        )
+
+    # Create row with all information
+    row = {
         CsvFields.RUN_ID: json_data[JsonFields.Run.ID],
         CsvFields.FILE_NAME: file_name,
-        CsvFields.CLASS_VALUE: class_name,
+        CsvFields.CLASS_VALUE: class_value,
         CsvFields.WORKPIECE_ID: workpiece_id,
         CsvFields.WORKPIECE_DATE: json_data[JsonFields.Run.DATE],
-        CsvFields.WORKPIECE_USAGE: workpiece_usage,
+        CsvFields.WORKPIECE_USAGE: (
+            0 if is_s04 else workpiece_usage
+        ),  # No usage tracking for s04
         CsvFields.WORKPIECE_RESULT: json_data[JsonFields.Run.RESULT_VALUE],
         CsvFields.WORKPIECE_LOCATION: workpiece_location,
         CsvFields.SCENARIO_CONDITION: scenario_condition,
         CsvFields.SCENARIO_EXCEPTION: scenario_exception,
     }
+
+    return row
 
 
 def _get_csv_column_order() -> list:
