@@ -22,6 +22,12 @@ data/json/*
 # data/metrics/
 # data/notes/
 
+# PyScrew downloads
+src/pyscrew/downloads/archives/*
+src/pyscrew/downloads/extracted/*
+!src/pyscrew/downloads/archives/.gitkeep
+!src/pyscrew/downloads/extracted/.gitkeep
+
 # Testing and coverage
 test_temp.py
 .coverage*

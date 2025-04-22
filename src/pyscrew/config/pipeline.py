@@ -2,6 +2,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Optional, Union
 
+from pyscrew.utils import get_logger, resolve_scenario_name
+
+logger = get_logger(__name__)
+
 
 @dataclass
 class PipelineKeys:
@@ -15,7 +19,8 @@ class PipelineKeys:
 
     # Scenario keys
     SCENARIO_NAME: ClassVar[str] = "scenario_name"
-    SCENARIO_ID: ClassVar[str] = "scenario_id"
+    SCENARIO_LONG_NAME: ClassVar[str] = "scenario_long_name"
+    SCENARIO_FULL_NAME: ClassVar[str] = "scenario_full_name"
 
     # Filtering keys
     SCENARIO_CLASSES: ClassVar[str] = "scenario_classes"
@@ -58,69 +63,18 @@ class PipelineOptions:
         return value in options_list
 
 
-class ScenarioMap:
-    """Mapping between scenario names/codes and IDs."""
-
-    FULL_NAMES: Dict[str, int] = {
-        "thread-degradation": 1,
-        "surface-friction": 2,
-        "injection-molding-manipulations-upper-workpiece": 5,
-        "injection-molding-manipulations-lower-workpiece": 6,
-    }
-
-    SHORT_CODES: Dict[str, int] = {
-        "s01": 1,
-        "s02": 2,
-        "s05": 5,
-        "s06": 6,
-    }
-
-    @classmethod
-    def get_map(cls) -> Dict[str, int]:
-        """Return combined mapping of all scenario identifiers to IDs."""
-        combined = {}
-        combined.update(cls.FULL_NAMES)
-        combined.update(cls.SHORT_CODES)
-        return combined
-
-    @classmethod
-    def get_id(cls, scenario_name: Union[str, int]) -> int:
-        """Get scenario ID from name, short code, or ID."""
-        if isinstance(scenario_name, int):
-            # Verify it's a valid ID
-            valid_ids = set(cls.get_map().values())
-            if scenario_name not in valid_ids:
-                raise ValueError(f"Invalid scenario ID: {scenario_name}")
-            return scenario_name
-
-        # Convert string to lowercase for case-insensitive matching
-        name = scenario_name.lower()
-        scenario_id = cls.get_map().get(name)
-
-        if scenario_id is None:
-            valid_options = sorted(
-                set(cls.get_map().keys()) | set(map(str, set(cls.get_map().values())))
-            )
-            raise ValueError(
-                f"Invalid scenario identifier. Valid options are: {', '.join(valid_options)}"
-            )
-
-        return scenario_id
-
-
 class PipelineConfig:
     """Configuration for data loading and processing pipeline."""
 
     # Class-level access to keys and options
     Keys = PipelineKeys
     Options = PipelineOptions
-    Scenarios = ScenarioMap
 
     def __init__(
         self,
-        scenario_name: Union[str, int],
+        scenario_name: str,
         measurements: Optional[List[str]] = None,
-        scenario_classes: Optional[List[int]] = None,
+        scenario_classes: Optional[List[str]] = None,
         screw_phases: Optional[List[int]] = None,
         screw_cycles: Optional[List[int]] = None,
         screw_positions: str = "both",
@@ -138,7 +92,7 @@ class PipelineConfig:
         Initialize pipeline configuration.
 
         Args:
-            scenario_name: Scenario identifier (name, short code, or ID)
+            scenario_name: Scenario identifier (can be short code, long name, or full name)
             measurements: Measurements to return (torque, angle, gradient, time)
             scenario_classes: List of scenario classes to include
             screw_phases: Screw phases to include (1-4)
@@ -154,9 +108,17 @@ class PipelineConfig:
             cache_dir: Directory for caching downloaded data
             force_download: Force re-download even if cached
         """
-        # Scenario identification
-        self.scenario_name = scenario_name
-        self.scenario_id = self.Scenarios.get_id(scenario_name)
+        # Resolve the scenario name to standardized format
+        short_name, long_name, full_name = resolve_scenario_name(scenario_name)
+
+        # Store all name variants
+        self.scenario_name = short_name
+        self.scenario_long_name = long_name
+        self.scenario_full_name = full_name
+
+        logger.debug(
+            f"Initialized pipeline config for scenario: {short_name} ({long_name})"
+        )
 
         # Filtering settings
         self.scenario_classes = scenario_classes
@@ -251,7 +213,8 @@ class PipelineConfig:
         return {
             self.Keys.SCENARIO: {
                 self.Keys.SCENARIO_NAME: self.scenario_name,
-                self.Keys.SCENARIO_ID: self.scenario_id,
+                self.Keys.SCENARIO_LONG_NAME: self.scenario_long_name,
+                self.Keys.SCENARIO_FULL_NAME: self.scenario_full_name,
             },
             self.Keys.FILTERING: {
                 self.Keys.SCENARIO_CLASSES: self.scenario_classes,
@@ -278,7 +241,7 @@ class PipelineConfig:
     def __str__(self) -> str:
         """String representation of the pipeline configuration."""
         return (
-            f"Pipeline Config for {self.scenario_name} (ID: {self.scenario_id})\n"
+            f"Pipeline Config for {self.scenario_name} ({self.scenario_long_name})\n"
             f"Measurements: {self.measurements or 'all'}\n"
             f"Format: {self.output_format}, Target length: {self.target_length}"
         )

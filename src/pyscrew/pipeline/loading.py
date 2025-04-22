@@ -111,12 +111,15 @@ class DataLoader:
 
         # Set up cache directory structure
         if cache_dir is None:
-            cache_dir = Path.home() / ".cache" / "pyscrew"
+            # Path relative to the current file (src/pyscrew/pipeline/loading.py)
+            package_root = Path(__file__).parent.parent  # This reaches src/pyscrew/
+            cache_dir = package_root / "downloads"
+
         self.cache_dir = Path(cache_dir)
         self.archive_cache = self.cache_dir / "archives"
         self.data_cache = self.cache_dir / "extracted"
 
-        # Create cache directories with secure permissions to prevent tampering
+        # Create directories with secure permissions to prevent tampering
         self._create_secure_directory(self.archive_cache)
         self._create_secure_directory(self.data_cache)
 
@@ -153,21 +156,24 @@ class DataLoader:
             try:
                 self._verify_archive(archive_path)
             except ExtractionError:
-                logger.error("Archive verification failed")
+                logger.error(
+                    f"Archive verification failed for '{archive_path.name}'. The file may be corrupted."
+                )
                 # Remove potentially corrupted file
                 archive_path.unlink()
 
                 # Implement single retry unless force was specified
-                # force=True typically indicates user expects fresh download
                 if not force:
-                    logger.info("Retrying download...")
+                    logger.info(
+                        f"Retrying download of '{self.file_name}' after verification failure..."
+                    )
                     archive_path = self._download_file(force=True)
                     self._verify_archive(archive_path)
 
             return archive_path
 
         except Exception as e:
-            logger.error(f"Error getting data: {str(e)}")
+            logger.error(f"Error getting data for '{self.file_name}': {str(e)}")
             raise
 
     def extract_data(self, force: bool = False) -> Path:
@@ -195,7 +201,9 @@ class DataLoader:
             SecurityError: If security checks fail during extraction
             ChecksumError: If archive verification fails
         """
-        logger.info(f"Extracting data with force={force}")
+        logger.info(
+            f"Beginning data extraction for scenario '{self.file_name}' (force={force})"
+        )
         archive_path = self.get_data(force=force)
 
         # Get scenario name without extension
@@ -207,7 +215,9 @@ class DataLoader:
 
         # Check if json directory already exists and has content
         if not force and json_path.exists() and any(json_path.iterdir()):
-            logger.info(f"Using existing extracted data at {json_path}")
+            logger.info(
+                f"Using existing extracted data for scenario '{scenario_name}' at: {json_path}"
+            )
             return data_path
 
         try:
@@ -218,20 +228,24 @@ class DataLoader:
             # Create scenario directory
             data_path.mkdir(parents=True, exist_ok=True)
 
-            logger.info(f"Extracting {archive_path} to {data_path}")
+            logger.info(
+                f"Extracting archive '{archive_path.name}' to directory: {data_path}"
+            )
             self._extract_archive(archive_path, data_path)
 
             # Verify json directory exists after extraction
             if not json_path.exists():
                 raise ExtractionError(
-                    "Expected json directory not found in extracted data"
+                    f"Expected json directory not found in extracted data for '{scenario_name}'"
                 )
 
-            logger.info("Extraction completed successfully")
+            logger.info(
+                f"Extraction of '{archive_path.name}' completed successfully to: {data_path}"
+            )
             return data_path
 
         except Exception as e:
-            logger.error(f"Extraction failed: {str(e)}")
+            logger.error(f"Failed to extract dataset '{scenario_name}': {str(e)}")
             if data_path.exists():
                 # Clean up on failure
                 self._clean_directory(data_path)
@@ -246,7 +260,7 @@ class DataLoader:
         - Group: read/execute (5)
         - Others: no permissions (0)
         """
-        logger.debug(f"Creating directory {path} with mode {oct(mode)}")
+        logger.debug(f"Creating directory '{path}' with permissions {oct(mode)}")
         path.mkdir(parents=True, exist_ok=True)
         path.chmod(mode)
 
@@ -256,7 +270,9 @@ class DataLoader:
         Empty files could indicate interrupted downloads or extraction.
         """
         exists = file_path.exists() and file_path.stat().st_size > 0
-        logger.debug(f"File {file_path} exists: {exists}")
+        logger.debug(
+            f"File existence check: '{file_path.name}' exists={exists}, size={file_path.stat().st_size if exists else 0:,} bytes"
+        )
         return exists
 
     def _get_archive_path(self) -> Path:
@@ -272,7 +288,7 @@ class DataLoader:
         - Maintains consistent memory usage regardless of file size
         - Allows for progress monitoring if needed
         """
-        logger.debug(f"Calculating MD5 for {file_path}")
+        logger.debug(f"Beginning MD5 calculation for '{file_path.name}'")
         md5_hash = hashlib.md5()
 
         with open(file_path, "rb") as f:
@@ -283,7 +299,7 @@ class DataLoader:
 
     def _verify_checksum(self, file_path: Path) -> bool:
         """Verify the MD5 checksum of downloaded file."""
-        logger.info("Verifying MD5 checksum...")
+        logger.info(f"Verifying MD5 checksum for '{file_path.name}'...")
         calculated_hash = self._calculate_md5(file_path)
 
         if calculated_hash != self.scenario_config.get_md5_checksum():
@@ -292,7 +308,9 @@ class DataLoader:
             logger.error(f"Got: {calculated_hash}")
             raise ChecksumError(f"File checksum mismatch for {file_path}")
 
-        logger.info("Checksum verification successful")
+        logger.info(
+            f"Checksum verification successful for '{file_path.name}' (MD5: {calculated_hash})"
+        )
         return True
 
     def _download_file(self, force: bool = False) -> Path:
@@ -322,14 +340,20 @@ class DataLoader:
         if not force and archive_path.exists():
             try:
                 if self._verify_checksum(archive_path):
-                    logger.info(f"Using existing verified file at {archive_path}")
+                    logger.info(
+                        f"Using existing verified file '{archive_path.name}' at: {archive_path}"
+                    )
                     return archive_path
             except ChecksumError:
-                logger.warning("Existing file failed checksum verification")
-                logger.info("Will download fresh copy")
+                logger.warning(
+                    f"Existing file '{archive_path.name}' failed checksum verification"
+                )
+                logger.info(f"Will download fresh copy of '{self.file_name}'")
                 archive_path.unlink()
 
-        logger.info(f"Downloading {self.file_name} from Zenodo...")
+        logger.info(
+            f"Downloading dataset '{self.file_name}' from Zenodo URL: {self.download_url}"
+        )
         try:
             # Start streaming download
             response = requests.get(self.download_url, stream=True)
@@ -342,7 +366,11 @@ class DataLoader:
 
             with open(temp_path, "wb") as f:
                 with tqdm(
-                    total=total_size, unit="iB", unit_scale=True, desc="Downloading"
+                    total=total_size,
+                    unit="iB",
+                    unit_scale=True,
+                    desc="Downloading",
+                    leave=False,
                 ) as pbar:
                     for data in response.iter_content(self.CHUNK_SIZE):
                         size = f.write(data)
@@ -357,17 +385,23 @@ class DataLoader:
                 archive_path.unlink()  # Required for Windows
             temp_path.rename(archive_path)
 
-            logger.info("Download completed. Verifying checksum...")
+            logger.info(
+                f"Download of '{self.file_name}' completed ({total_size:,} bytes). Beginning checksum verification..."
+            )
             self._verify_checksum(archive_path)
             return archive_path
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Download failed: {str(e)}")
+            logger.error(
+                f"Network error while downloading '{self.file_name}': {str(e)}"
+            )
             if archive_path.exists():
                 archive_path.unlink()
             raise DownloadError(f"Failed to download {self.file_name}: {str(e)}") from e
         except Exception as e:
-            logger.error(f"Unexpected error during download: {str(e)}")
+            logger.error(
+                f"Unexpected error during download of '{self.file_name}': {str(e)}"
+            )
             if archive_path.exists():
                 archive_path.unlink()
             raise
@@ -383,7 +417,9 @@ class DataLoader:
         try:
             shutil.rmtree(path, ignore_errors=False)
         except Exception as e:
-            logger.warning(f"Failed to remove directory {path}: {e}")
+            logger.warning(
+                f"Unable to remove directory '{path}' (will try manual removal): {e}"
+            )
             # If rmtree fails, try manual removal
             try:
                 for item in path.iterdir():
@@ -393,7 +429,9 @@ class DataLoader:
                         self._clean_directory(item)
                 path.rmdir()
             except Exception as e:
-                logger.error(f"Failed to clean directory {path}: {e}")
+                logger.error(
+                    f"Failed to clean directory '{path}'. Manual removal unsuccessful: {e}"
+                )
 
     def _verify_archive(self, archive_path: Path) -> bool:
         """
@@ -420,7 +458,9 @@ class DataLoader:
                     raise ExtractionError("ZIP archive is corrupted")
             return True
         except Exception as e:
-            logger.error(f"Archive verification failed: {str(e)}")
+            logger.error(
+                f"ZIP archive verification failed for '{archive_path.name}': {str(e)}"
+            )
             raise ExtractionError(f"Archive verification failed: {str(e)}") from e
 
     def _check_path_traversal(self, path: Union[str, Path]) -> bool:
@@ -496,4 +536,5 @@ def load_data(scenario_config: ScenarioConfig) -> Path:
     loader = DataLoader(scenario_config)
 
     # Extract data (handles caching internally)
-    loader.extract_data()
+    extracted_path = loader.extract_data()
+    return extracted_path

@@ -23,6 +23,8 @@ from typing import Dict, List, Union, cast
 
 from sklearn.pipeline import Pipeline
 
+from pyscrew.config import PipelineConfig
+from pyscrew.core import ScrewDataset
 from pyscrew.transformers import (
     HandleDuplicatesTransformer,
     HandleLengthsTransformer,
@@ -30,23 +32,13 @@ from pyscrew.transformers import (
     PipelineLoggingTransformer,
     UnpackStepsTransformer,
 )
-from pyscrew.config import PipelineConfig
-from pyscrew.core import ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 class ProcessingError(Exception):
-    """
-    Raised when data processing fails.
-
-    Common triggers:
-        - Pipeline configuration errors
-        - Transformer execution failures
-        - Data validation errors
-        - Input/output format mismatches
-    """
+    """Raised when pipeline processing fails due to invalid data, configuration, or operation constraints."""
 
     pass
 
