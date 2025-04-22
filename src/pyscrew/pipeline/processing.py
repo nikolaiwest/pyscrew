@@ -30,8 +30,8 @@ from pyscrew.transformers import (
     PipelineLoggingTransformer,
     UnpackStepsTransformer,
 )
-from pyscrew.utils.config_schema import ConfigSchema
-from pyscrew.utils.data_model import ScrewDataset
+from pyscrew.config import PipelineConfig
+from pyscrew.core import ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -51,7 +51,7 @@ class ProcessingError(Exception):
     pass
 
 
-def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
+def create_processing_pipeline(config: PipelineConfig) -> Pipeline:
     """
     Create a configured processing pipeline for screw operation data.
 
@@ -144,7 +144,7 @@ def create_processing_pipeline(config: ConfigSchema) -> Pipeline:
 
 
 def process_data(
-    data_path: Union[str, Path], config: ConfigSchema
+    data_path: Union[str, Path], config: PipelineConfig
 ) -> Dict[str, List[float]]:
     """
     Process screw operation data according to configuration.

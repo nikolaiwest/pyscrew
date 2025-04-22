@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Any, Union
 
-from pyscrew.utils.config_schema import ConfigSchema
+from pyscrew.config import PipelineConfig
 
 
-def validate_loaded_data(data_path: Union[str, Path], config: ConfigSchema) -> None:
+def validate_loaded_data(data_path: Union[str, Path], config: PipelineConfig) -> None:
     """Validate the raw data structure after loading.
 
     Args:
@@ -21,7 +21,7 @@ def validate_loaded_data(data_path: Union[str, Path], config: ConfigSchema) -> N
     pass
 
 
-def validate_processed_data(data: Any, config: ConfigSchema) -> None:
+def validate_processed_data(data: Any, config: PipelineConfig) -> None:
     """Validate the processed data before format conversion.
 
     Args:
@@ -39,7 +39,7 @@ def validate_processed_data(data: Any, config: ConfigSchema) -> None:
     pass
 
 
-def validate_converted_data(data: Any, config: ConfigSchema) -> None:
+def validate_converted_data(data: Any, config: PipelineConfig) -> None:
     """Validate the data after format conversion.
 
     Args:

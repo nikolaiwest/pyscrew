@@ -46,7 +46,8 @@ class ScenarioConfig:
             base_dir: Base directory where scenario YAML files are stored
         """
         self.scenario_id = scenario_id
-        self.base_dir = Path(base_dir)
+        self.config_dir = Path(__file__).parent.parent / "scenarios"
+        self.config_path = self.config_dir / f"{scenario_id}.yml"
         self.names = {}
         self.classes = {}
         self.data = {}
@@ -57,12 +58,13 @@ class ScenarioConfig:
 
     def load_config(self) -> None:
         """Load the scenario configuration from YAML file."""
-        config_path = self.base_dir / f"{self.scenario_id}.yml"
 
-        if not config_path.exists():
-            raise FileNotFoundError(f"Scenario config file not found: {config_path}")
+        if not self.config_path.exists():
+            raise FileNotFoundError(
+                f"Scenario config file not found: {self.config_path}"
+            )
 
-        with open(config_path, "r") as f:
+        with open(self.config_path, "r") as f:
             config = yaml.safe_load(f)
 
         # Update fields with loaded config
@@ -129,6 +131,13 @@ class ScenarioConfig:
     def get_md5_checksum(self) -> str:
         """Get the MD5 checksum from the data section."""
         return self.data[self.Keys.MD5_CHECKSUM]
+
+    def get_download_url(self) -> str:
+        """Generate download URL for this scenario's dataset on Zenodo."""
+        ZENODO_BASE_URL = "https://zenodo.org/records"
+        record_id = self.data[self.Keys.RECORD_ID]
+        file_name = self.data[self.Keys.FILE_NAME]
+        return f"{ZENODO_BASE_URL}/{record_id}/files/{file_name}?download=1"
 
     def __str__(self) -> str:
         """String representation of the scenario configuration."""
