@@ -9,7 +9,7 @@ files and CSV label files.
 import json
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Set, Union
+from typing import Dict, Iterator, List, Optional, Set, Union
 
 import pandas as pd
 
@@ -35,7 +35,7 @@ class ScrewDataset:
         data_path: Path to directory containing data files
         scenario_classes: Optional list of class labels to include
         screw_cycles: Optional list of workpiece usage counts to include
-        screw_positions: Optional specific workpiece location to filter by
+        screw_positions: Optional specific workpiece location to filter by ("left", "right", or "both")
 
     Attributes:
         data_path: Path to data directory
@@ -51,24 +51,18 @@ class ScrewDataset:
     Example:
         >>> dataset = ScrewDataset(
         ...     data_path="data/",
-        ...     scenario_classes=[0, 1],
+        ...     scenario_classes=["001_control-group", "002_faulty-condition"],
         ...     screw_cycles=[1, 2],
         ...     screw_positions="left"
         ... )
         >>> print(len(dataset))  # Number of runs matching filters
         >>> for run in dataset:  # Iterate through matching runs
-        ...     print(run.program_result)
+        ...     print(run.workpiece_result)
 
     Raises:
         FileNotFoundError: If required files are not found
         ValueError: If filter parameters are invalid
     """
-
-    POSITION_MAP: Dict[str, Optional[int]] = {
-        "left": 0,
-        "right": 1,
-        "both": None,
-    }
 
     VALID_MEASUREMENTS: Set[str] = {
         JsonFields.Measurements.TIME,
@@ -80,7 +74,7 @@ class ScrewDataset:
     def __init__(
         self,
         data_path: Union[str, Path],
-        scenario_classes: Optional[List[int]] = None,
+        scenario_classes: Optional[List[str]] = None,
         screw_cycles: Optional[List[int]] = None,
         screw_positions: Optional[str] = None,
     ) -> None:
@@ -104,23 +98,20 @@ class ScrewDataset:
         self.screw_runs = self._load_runs()
 
     @classmethod
-    def from_config(
-        cls, data_path: Union[str, Path], config: PipelineConfig
-    ) -> "ScrewDataset":
+    def from_config(cls, config: PipelineConfig) -> "ScrewDataset":
         """
         Create a dataset instance from a configuration object.
 
         This factory method simplifies dataset creation when using configuration files.
 
         Args:
-            data_path: Path to data directory
-            config: Configuration object containing filter parameters
+            config: Configuration object containing filter parameters and data path
 
         Returns:
             New ScrewDataset instance configured according to config object
         """
         return cls(
-            data_path=data_path,
+            data_path=config.get_data_path(),
             scenario_classes=config.scenario_classes,
             screw_cycles=config.screw_cycles,
             screw_positions=config.screw_positions,
@@ -148,11 +139,14 @@ class ScrewDataset:
             dtype={
                 CsvFields.RUN_ID: int,
                 CsvFields.FILE_NAME: str,
-                CsvFields.CLASS_VALUE: int,
-                CsvFields.RESULT_VALUE: str,
+                CsvFields.CLASS_VALUE: str,
                 CsvFields.WORKPIECE_ID: str,
+                CsvFields.WORKPIECE_DATE: str,
                 CsvFields.WORKPIECE_USAGE: int,
-                CsvFields.WORKPIECE_LOCATION: int,
+                CsvFields.WORKPIECE_RESULT: str,
+                CsvFields.WORKPIECE_LOCATION: str,
+                CsvFields.SCENARIO_CONDITION: str,
+                CsvFields.SCENARIO_EXCEPTION: int,
             },
         )
         return df.set_index(CsvFields.FILE_NAME)
@@ -191,17 +185,15 @@ class ScrewDataset:
 
         # Handle position filtering
         if self.screw_positions is not None:
-            if self.screw_positions not in self.POSITION_MAP:
+            valid_positions = ["left", "right", "both"]
+            if self.screw_positions not in valid_positions:
                 raise ValueError(
                     f"Invalid position value: {self.screw_positions}. "
-                    f"Must be one of: {list(self.POSITION_MAP.keys())}"
+                    f"Must be one of: {valid_positions}"
                 )
 
             if self.screw_positions != "both":
-                mask &= (
-                    df[CsvFields.WORKPIECE_LOCATION]
-                    == self.POSITION_MAP[self.screw_positions]
-                )
+                mask &= df[CsvFields.WORKPIECE_LOCATION] == self.screw_positions
 
         filtered_files = df[mask].index.tolist()
         logger.info(f"Selected {len(filtered_files)} files")
@@ -220,9 +212,9 @@ class ScrewDataset:
 
         The JSON directory structure is:
         json/
-        ├── 0/         # Class 0 measurements
-        ├── 1/         # Class 1 measurements
-        └── n/         # Class n measurements
+        ├── 001_control-group/    # Control group measurements
+        ├── 002_faulty-condition/ # Faulty condition measurements
+        └── other_class_names/    # Other scenario classes
 
         Returns:
             List of ScrewRun objects representing the loaded runs
@@ -260,10 +252,13 @@ class ScrewDataset:
                     CsvFields.RUN_ID: row[CsvFields.RUN_ID],
                     CsvFields.FILE_NAME: file_name,
                     CsvFields.CLASS_VALUE: row[CsvFields.CLASS_VALUE],
-                    CsvFields.RESULT_VALUE: row[CsvFields.RESULT_VALUE],
                     CsvFields.WORKPIECE_ID: row[CsvFields.WORKPIECE_ID],
+                    CsvFields.WORKPIECE_DATE: row[CsvFields.WORKPIECE_DATE],
                     CsvFields.WORKPIECE_USAGE: row[CsvFields.WORKPIECE_USAGE],
+                    CsvFields.WORKPIECE_RESULT: row[CsvFields.WORKPIECE_RESULT],
                     CsvFields.WORKPIECE_LOCATION: row[CsvFields.WORKPIECE_LOCATION],
+                    CsvFields.SCENARIO_CONDITION: row[CsvFields.SCENARIO_CONDITION],
+                    CsvFields.SCENARIO_EXCEPTION: row[CsvFields.SCENARIO_EXCEPTION],
                 }
 
                 # Create ScrewRun instance using both data sources

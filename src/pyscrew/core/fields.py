@@ -21,7 +21,8 @@ class JsonFields:
 
     Note: The string values (e.g. "id code", "time values") are pre-defined by
     the screw driving control and cannot be changed. Our constant names use a
-    more consistent style.
+    more consistent style and align with the CSV field naming (e.g., mapping JSON's
+    "result" to WORKPIECE_RESULT to match the CSV's "workpiece_result" field).
     """
 
     @dataclass
@@ -39,7 +40,7 @@ class JsonFields:
 
         ID: str = "cycle"
         DATE: str = "date"
-        RESULT_VALUE: str = "result"
+        WORKPIECE_RESULT: str = "result"
         WORKPIECE_ID: str = "id code"
         STEPS: str = "tightening steps"
 
@@ -50,17 +51,16 @@ class JsonFields:
         These fields describe individual steps within a screw operation run.
 
         Attributes:
-            ID: Cycle identifier for the step
             NAME: Name identifier as set in screw driving control
-            TYPE: Type classification (simply "standard")
-            RESULT: Result status ("OK"/"NOK")
-            QUALITY: Quality assessment code
-            GRAPH: Measurement data dictionary
+            STEP_TYPE: Type classification (simply "standard")
+            WORKPIECE_RESULT: Result status ("OK"/"NOK") for this step
+            QUALITY_CODE: Quality assessment code
+            GRAPH: Measurement data dictionary containing time, torque, angle, and gradient values
         """
 
         NAME: str = "name"
-        STEP_TYPE: str = "step type"  # dont just use type as it is a reserved keyword
-        RESULT_VALUE: str = "result"
+        STEP_TYPE: str = "step type"
+        WORKPIECE_RESULT: str = "result"
         QUALITY_CODE: str = "quality code"
         GRAPH: str = "graph"
 
@@ -75,17 +75,20 @@ class JsonFields:
             TORQUE: Torque measurements
             ANGLE: Angle measurements (0.25° amplitude)
             GRADIENT: Gradient measurements
+            STEP: Step values added during processing pipeline (not in raw data)
+            CLASS: Class values added during processing pipeline (not in raw data)
 
         Note:
             "angleRed values" and "torqueRed values" exist but are always [0,...,0]
             and are not used in processing.
+            STEP and CLASS fields are added during later processing and are not
+            present in the raw JSON data.
         """
 
         TIME: str = "time values"
         TORQUE: str = "torque values"
         ANGLE: str = "angle values"
         GRADIENT: str = "gradient values"
-        # Added with the unpacking steps
         STEP: str = "step values"
         CLASS: str = "class values"
 
@@ -105,13 +108,13 @@ class CsvFields:
         WORKPIECE_DATE: Date of recording in the screw run
         WORKPIECE_USAGE: Number of times this workpiece has been used
         WORKPIECE_RESULT: Result from screw program ("OK"/"NOK")
-        WORKPIECE_LOCATION: Screw position in workpiece (0 or 1)
+        WORKPIECE_LOCATION: Screw position in workpiece ("left" or "right")
         SCENARIO_CONDITION: Condition of the experiment ("normal" or "faulty")
         SCENARIO_EXCEPTION: Flag indicating if there were issues during the experiment (0 for "no issues", 1 otherwise)
     """
 
     # Identifier fields
-    RUN_ID: str = "run_id"  # aka "cycle" in the json data
+    RUN_ID: str = "run_id"
     FILE_NAME: str = "file_name"
 
     # Value fields
@@ -143,4 +146,4 @@ class CsvFields:
         TORQUE_VALUES: str = "torque_values"
         ANGLE_VALUES: str = "angle_values"
         GRADIENT_VALUES: str = "gradient_values"
-        CLASS_VALUES: str = "class_labels"
+        CLASS_VALUES: str = "class_values"

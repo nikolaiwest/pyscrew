@@ -207,7 +207,7 @@ class DataLoader:
         archive_path = self.get_data(force=force)
 
         # Get scenario name without extension
-        scenario_name = self.file_name
+        scenario_name = Path(self.file_name).stem
 
         # Create extraction path at the correct level
         data_path = self.data_cache / scenario_name
@@ -512,20 +512,17 @@ class DataLoader:
             raise ExtractionError(f"Failed to extract {archive_path}: {str(e)}") from e
 
 
-def load_data(scenario_config: ScenarioConfig) -> Path:
+def load_data(scenario_config: ScenarioConfig) -> None:
     """
     Load dataset according to pipeline configuration.
 
     This function handles the complete data loading process:
-    1. Downloads and extracts the dataset if needed
+    1. Downloads and extracts the dataset (if needed)
     2. Creates a ScrewDataset instance with proper filtering
     3. Validates measurement data integrity
 
     Args:
         config: Pipeline configuration object containing scenario and filter settings
-
-    Returns:
-        Path to the extracted dataset directory
 
     Raises:
         ValueError: If configuration is invalid
@@ -535,6 +532,5 @@ def load_data(scenario_config: ScenarioConfig) -> Path:
     # Initialize loader for the configured scenario
     loader = DataLoader(scenario_config)
 
-    # Extract data (handles caching internally)
-    extracted_path = loader.extract_data()
-    return extracted_path
+    # Extract data
+    loader.extract_data()

@@ -29,8 +29,8 @@ class ScrewRun:
         id: Unique run identifier from CSV data
         date: Date when the run was performed
         workpiece_id: Data matrix code identifying the workpiece
-        program_result: Result from the screw program ("OK" or "NOK")
-        class_label: Scenario-specific classification label
+        workpiece_result: Result from the screw program ("OK" or "NOK")
+        class_value: Scenario-specific classification label
         workpiece_usage: Number of times this workpiece has been used
         workpiece_location: Screw position in workpiece (0 or 1)
         steps: List of ScrewStep objects representing each step in the run
@@ -46,21 +46,22 @@ class ScrewRun:
         ...     "result": "OK",
         ...     "tightening steps": [
         ...         {
-        ...             "cycle": "1",
         ...             "name": "Step 1",
         ...             "step type": "standard",
         ...             "result": "OK",
+        ...             "quality code": "A1",
         ...             "graph": {...}
         ...         }
         ...     ]
         ... }
         >>> label_data = {
-        ...     'id': 'run1',
-        ...     'workpiece_id': 'DMC123',
-        ...     'result_value': 'OK',
-        ...     'workpiece_usage': 1,
-        ...     'workpiece_location': 0,
-        ...     'class_value': 0
+        ...     'run_id': 1234,
+        ...     'file_name': 'Ch_000...1234.json',
+        ...     'workpiece_id': '300000...1234',
+        ...     'workpiece_result': 'OK',
+        ...     'workpiece_usage': 0,
+        ...     'workpiece_location': "left"",
+        ...     'class_value': '001_control-group'
         ... }
         >>> run = ScrewRun(json_data, label_data)
     """
@@ -73,12 +74,12 @@ class ScrewRun:
             # Set attributes from JSON data
             self.date = str(json_data[JsonFields.Run.DATE])
             self.workpiece_id = str(json_data[JsonFields.Run.WORKPIECE_ID])
-            self.program_result = str(json_data[JsonFields.Run.RESULT_VALUE])
+            self.workpiece_result = str(json_data[JsonFields.Run.WORKPIECE_RESULT])
 
             # Set attributes from CSV label data
-            self.class_label = int(label_data[CsvFields.CLASS_VALUE])
+            self.class_value = str(label_data[CsvFields.CLASS_VALUE])
             self.workpiece_usage = int(label_data[CsvFields.WORKPIECE_USAGE])
-            self.workpiece_location = int(label_data[CsvFields.WORKPIECE_LOCATION])
+            self.workpiece_location = str(label_data[CsvFields.WORKPIECE_LOCATION])
 
             # Cross-validate data from both sources
             if self.workpiece_id != label_data[CsvFields.WORKPIECE_ID]:
@@ -88,11 +89,11 @@ class ScrewRun:
                     f"CSV={label_data[CsvFields.WORKPIECE_ID]}"
                 )
 
-            if self.program_result != label_data[CsvFields.RESULT_VALUE]:
+            if self.workpiece_result != label_data[CsvFields.WORKPIECE_RESULT]:
                 raise ValueError(
                     f"Result mismatch: "
-                    f"JSON={self.program_result}, "
-                    f"CSV={label_data[CsvFields.RESULT_VALUE]}"
+                    f"JSON={self.workpiece_result}, "
+                    f"CSV={label_data[CsvFields.WORKPIECE_RESULT]}"
                 )
 
             # Create steps from tightening steps data
@@ -124,10 +125,13 @@ class ScrewRun:
             ValueError: If measurement_name is not a valid measurement type
 
         Example:
-            >>> run = ScrewRun("run1", json_data, label_data)
+            >>> json_data = {...}  # JSON data
+            >>> label_data = {...}  # Label data
+            >>> run = ScrewRun(json_data, label_data)
             >>> torque_values = run.get_values(JsonFields.Measurements.TORQUE)
             >>> print(f"Total torque measurements: {len(torque_values)}")
         """
+
         all_values = []
         for step in self.steps:
             step_values = step.get_values(measurement_name)
@@ -142,6 +146,6 @@ class ScrewRun:
         """Return a string representation of the run."""
         return (
             f"ScrewRun(id={self.id!r}, "
-            f"result={self.program_result!r}, "
+            f"result={self.workpiece_result!r}, "
             f"steps={len(self.steps)})"
         )

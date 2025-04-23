@@ -238,6 +238,18 @@ class PipelineConfig:
             },
         }
 
+    def get_data_path(self) -> Path:
+        """Get the standardized path to the extracted scenario data."""
+        # Use custom cache dir if provided in pipeline config
+        if self.cache_dir:
+            base_dir = self.cache_dir
+        else:
+            package_root = Path(__file__).parent.parent  # This reaches src/pyscrew/
+            base_dir = package_root / "downloads"
+        scenario_name = f"{self.scenario_name}_{self.scenario_full_name}"
+        data_path = base_dir / "extracted" / scenario_name
+        return data_path
+
     def __str__(self) -> str:
         """String representation of the pipeline configuration."""
         return (

@@ -135,9 +135,7 @@ def create_processing_pipeline(config: PipelineConfig) -> Pipeline:
         raise ProcessingError(f"Failed to create processing pipeline: {str(e)}") from e
 
 
-def process_data(
-    data_path: Union[str, Path], config: PipelineConfig
-) -> Dict[str, List[float]]:
+def process_data(pipeline_config: PipelineConfig) -> Dict[str, List[float]]:
     """
     Process screw operation data according to configuration.
 
@@ -168,10 +166,10 @@ def process_data(
     """
     try:
         # Create dataset from configuration
-        dataset = ScrewDataset.from_config(data_path, config)
+        dataset = ScrewDataset.from_config(pipeline_config)
 
         # Create and execute pipeline
-        pipeline = create_processing_pipeline(config)
+        pipeline = create_processing_pipeline(pipeline_config)
         processed_dataset = cast(ScrewDataset, pipeline.fit_transform(dataset))
 
         # Return the processed data dictionary

@@ -1,12 +1,12 @@
 """
-Core data model for screw operation analysis.
+Core data model for screw data analysis.
 
 This module implements a hierarchical data structure for analyzing screw operations:
 
 ScrewDataset
     └── ScrewRun (multiple)
         └── ScrewStep (multiple)
-            └── Measurements (time, torque, angle, gradient) + "step" to track measurement origin
+            └── contains measurements (like time, torque, angle, gradient) and a "step" to track origin
 
 The data comes from two sources:
 1. JSON files: Contain measurement data and step information

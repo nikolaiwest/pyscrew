@@ -22,14 +22,13 @@ class ScrewStep:
 
     Args:
         step_data: Dictionary containing step metadata and measurements
-        step_number: Sequential number of this step in the run
+        step_number: Sequential number of this step in the run (0-indexed)
 
     Attributes:
-        id: Step cycle identifier from screw program
         step_number: Position in sequence of steps (0-indexed)
         name: Identifier name of the step
         step_type: Classification of step type (typically "standard")
-        result: Result status ("OK" or "NOK")
+        workpiece_result: Result status ("OK" or "NOK")
         quality_code: Quality assessment code
         time: List of time measurements in 0.0012s increments
         torque: List of torque measurements
@@ -41,7 +40,6 @@ class ScrewStep:
 
     Example:
         >>> step_data = {
-        ...     "cycle": "1",
         ...     "name": "Step 1",
         ...     "step type": "standard",
         ...     "result": "OK",
@@ -67,9 +65,8 @@ class ScrewStep:
             # Use direct dictionary access to raise KeyError if missing
             self.name = step_data[JsonFields.Step.NAME]
             self.step_type = step_data[JsonFields.Step.STEP_TYPE]
-            self.result = step_data[JsonFields.Step.RESULT_VALUE]
+            self.workpiece_result = step_data[JsonFields.Step.WORKPIECE_RESULT]
             self.quality_code = step_data[JsonFields.Step.QUALITY_CODE]
-
             # Get measurement data as lists from "graph" in the json file
             graph_data = step_data[JsonFields.Step.GRAPH]
             self.time = graph_data[JsonFields.Measurements.TIME]
@@ -103,6 +100,7 @@ class ScrewStep:
             ValueError: If measurement_name is not a valid measurement type
 
         Example:
+            >>> # Assuming step_data is properly defined
             >>> step = ScrewStep(step_data, 0)
             >>> time_values = step.get_values(JsonFields.Measurements.TIME)
             >>> print(time_values[:3])  # First three time points
@@ -129,4 +127,4 @@ class ScrewStep:
 
     def __repr__(self) -> str:
         """Return a string representation of the step."""
-        return f"ScrewStep(number={self.step_number}, type={self.step_type!r}, result={self.result!r})"
+        return f"ScrewStep(number={self.step_number}, type={self.step_type!r}, result={self.workpiece_result!r})"
