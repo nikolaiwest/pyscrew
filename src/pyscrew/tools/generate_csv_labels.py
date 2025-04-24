@@ -305,10 +305,9 @@ def _create_row_from_json(
         CsvFields.CLASS_VALUE: class_value,
         CsvFields.WORKPIECE_ID: workpiece_id,
         CsvFields.WORKPIECE_DATE: json_data[JsonFields.Run.DATE],
-        CsvFields.WORKPIECE_USAGE: (
-            0 if is_s04 else workpiece_usage
-        ),  # No usage tracking for s04
-        CsvFields.WORKPIECE_RESULT: json_data[JsonFields.Run.RESULT_VALUE],
+        # No usage tracking for s04
+        CsvFields.WORKPIECE_USAGE: (0 if is_s04 else workpiece_usage),
+        CsvFields.WORKPIECE_RESULT: json_data[JsonFields.Run.WORKPIECE_RESULT],
         CsvFields.WORKPIECE_LOCATION: workpiece_location,
         CsvFields.SCENARIO_CONDITION: scenario_condition,
         CsvFields.SCENARIO_EXCEPTION: scenario_exception,

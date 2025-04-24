@@ -9,294 +9,294 @@
     "nok_percentage": 0.12
   },
   "class_distribution": {
-    "class_101_glass_fiber_content_30": {
+    "class_101_glass-fiber-content-30": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_102_glass_fiber_content_28": {
+    "class_102_glass-fiber-content-28": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_103_glass_fiber_content_26": {
+    "class_103_glass-fiber-content-26": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_104_glass_fiber_content_24": {
+    "class_104_glass-fiber-content-24": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_105_glass_fiber_content_22": {
+    "class_105_glass-fiber-content-22": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_106_glass_fiber_content_20": {
+    "class_106_glass-fiber-content-20": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_107_glass_fiber_content_18": {
+    "class_107_glass-fiber-content-18": {
       "total_samples": 80,
       "ok_count": 79,
       "nok_count": 1,
       "ok_ratio": 98.75,
       "nok_ratio": 1.25
     },
-    "class_201_recyclate_content_000": {
+    "class_201_recyclate-content-000": {
       "total_samples": 80,
       "ok_count": 79,
       "nok_count": 1,
       "ok_ratio": 98.75,
       "nok_ratio": 1.25
     },
-    "class_202_recyclate_content_010": {
+    "class_202_recyclate-content-010": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_203_recyclate_content_020": {
+    "class_203_recyclate-content-020": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_204_recyclate_content_030": {
+    "class_204_recyclate-content-030": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_205_recyclate_content_040": {
+    "class_205_recyclate-content-040": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_206_recyclate_content_050": {
+    "class_206_recyclate-content-050": {
       "total_samples": 80,
       "ok_count": 79,
       "nok_count": 1,
       "ok_ratio": 98.75,
       "nok_ratio": 1.25
     },
-    "class_207_recyclate_content_060": {
+    "class_207_recyclate-content-060": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_208_recyclate_content_070": {
+    "class_208_recyclate-content-070": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_209_recyclate_content_080": {
+    "class_209_recyclate-content-080": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_210_recyclate_content_090": {
+    "class_210_recyclate-content-090": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_211_recyclate_content_100": {
+    "class_211_recyclate-content-100": {
       "total_samples": 80,
       "ok_count": 80,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_301_switching_point_15_1": {
+    "class_301_switching-point-15-1": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_302_switching_point_16": {
+    "class_302_switching-point-16": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_303_switching_point_17": {
+    "class_303_switching-point-17": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_304_switching_point_18": {
+    "class_304_switching-point-18": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_305_switching_point_19": {
+    "class_305_switching-point-19": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_306_switching_point_15_2": {
+    "class_306_switching-point-15-2": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_307_switching_point_14": {
+    "class_307_switching-point-14": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_308_switching_point_13": {
+    "class_308_switching-point-13": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_309_switching_point_12": {
+    "class_309_switching-point-12": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_310_switching_point_11": {
+    "class_310_switching-point-11": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_401_injection_velocity_60_1": {
+    "class_401_injection-velocity-60-1": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_402_injection_velocity_70": {
+    "class_402_injection-velocity-70": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_403_injection_velocity_80": {
+    "class_403_injection-velocity-80": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_404_injection_velocity_90": {
+    "class_404_injection-velocity-90": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_405_injection_velocity_100": {
+    "class_405_injection-velocity-100": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_406_injection_velocity_60_2": {
+    "class_406_injection-velocity-60-2": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_407_injection_velocity_50": {
+    "class_407_injection-velocity-50": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_408_injection_velocity_40": {
+    "class_408_injection-velocity-40": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_409_injection_velocity_30": {
+    "class_409_injection-velocity-30": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_410_injection_velocity_20": {
+    "class_410_injection-velocity-20": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_501_mold_temperature_30": {
+    "class_501_mold-temperature-30": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_502_mold_temperature_35": {
+    "class_502_mold-temperature-35": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_503_mold_temperature_40": {
+    "class_503_mold-temperature-40": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_504_mold_temperature_45": {
+    "class_504_mold-temperature-45": {
       "total_samples": 40,
       "ok_count": 40,
       "nok_count": 0,
@@ -315,130 +315,130 @@
     "peak_anomaly_cycle": 0
   },
   "collection_timeline": {
-    "101_glass_fiber_content_30": {
+    "101_glass-fiber-content-30": {
       "2024-12-05": 80
     },
-    "102_glass_fiber_content_28": {
+    "102_glass-fiber-content-28": {
       "2024-12-05": 80
     },
-    "103_glass_fiber_content_26": {
+    "103_glass-fiber-content-26": {
       "2024-12-05": 80
     },
-    "104_glass_fiber_content_24": {
+    "104_glass-fiber-content-24": {
       "2024-12-05": 80
     },
-    "105_glass_fiber_content_22": {
+    "105_glass-fiber-content-22": {
       "2024-12-05": 80
     },
-    "106_glass_fiber_content_20": {
+    "106_glass-fiber-content-20": {
       "2024-12-05": 80
     },
-    "107_glass_fiber_content_18": {
+    "107_glass-fiber-content-18": {
       "2024-12-05": 80
     },
-    "201_recyclate_content_000": {
+    "201_recyclate-content-000": {
       "2024-12-06": 80
     },
-    "202_recyclate_content_010": {
+    "202_recyclate-content-010": {
       "2024-12-06": 80
     },
-    "203_recyclate_content_020": {
+    "203_recyclate-content-020": {
       "2024-12-06": 80
     },
-    "204_recyclate_content_030": {
+    "204_recyclate-content-030": {
       "2024-12-06": 80
     },
-    "205_recyclate_content_040": {
+    "205_recyclate-content-040": {
       "2024-12-06": 80
     },
-    "206_recyclate_content_050": {
+    "206_recyclate-content-050": {
       "2024-12-06": 80
     },
-    "207_recyclate_content_060": {
+    "207_recyclate-content-060": {
       "2024-12-09": 80
     },
-    "208_recyclate_content_070": {
+    "208_recyclate-content-070": {
       "2024-12-09": 80
     },
-    "209_recyclate_content_080": {
+    "209_recyclate-content-080": {
       "2024-12-09": 80
     },
-    "210_recyclate_content_090": {
+    "210_recyclate-content-090": {
       "2024-12-09": 80
     },
-    "211_recyclate_content_100": {
+    "211_recyclate-content-100": {
       "2024-12-09": 80
     },
-    "301_switching_point_15_1": {
+    "301_switching-point-15-1": {
       "2024-12-09": 40
     },
-    "302_switching_point_16": {
+    "302_switching-point-16": {
       "2024-12-09": 40
     },
-    "303_switching_point_17": {
+    "303_switching-point-17": {
       "2024-12-09": 40
     },
-    "304_switching_point_18": {
+    "304_switching-point-18": {
       "2024-12-11": 40
     },
-    "305_switching_point_19": {
+    "305_switching-point-19": {
       "2024-12-11": 40
     },
-    "306_switching_point_15_2": {
+    "306_switching-point-15-2": {
       "2024-12-11": 40
     },
-    "307_switching_point_14": {
+    "307_switching-point-14": {
       "2024-12-11": 40
     },
-    "308_switching_point_13": {
+    "308_switching-point-13": {
       "2024-12-11": 40
     },
-    "309_switching_point_12": {
+    "309_switching-point-12": {
       "2024-12-11": 40
     },
-    "310_switching_point_11": {
+    "310_switching-point-11": {
       "2024-12-11": 40
     },
-    "401_injection_velocity_60_1": {
+    "401_injection-velocity-60-1": {
       "2024-12-11": 40
     },
-    "402_injection_velocity_70": {
+    "402_injection-velocity-70": {
       "2024-12-11": 40
     },
-    "403_injection_velocity_80": {
+    "403_injection-velocity-80": {
       "2024-12-11": 40
     },
-    "404_injection_velocity_90": {
+    "404_injection-velocity-90": {
       "2024-12-11": 40
     },
-    "405_injection_velocity_100": {
+    "405_injection-velocity-100": {
       "2024-12-11": 40
     },
-    "406_injection_velocity_60_2": {
+    "406_injection-velocity-60-2": {
       "2024-12-11": 40
     },
-    "407_injection_velocity_50": {
+    "407_injection-velocity-50": {
       "2024-12-11": 40
     },
-    "408_injection_velocity_40": {
+    "408_injection-velocity-40": {
       "2024-12-11": 40
     },
-    "409_injection_velocity_30": {
+    "409_injection-velocity-30": {
       "2024-12-11": 40
     },
-    "410_injection_velocity_20": {
+    "410_injection-velocity-20": {
       "2024-12-11": 40
     },
-    "501_mold_temperature_30": {
+    "501_mold-temperature-30": {
       "2024-12-11": 40
     },
-    "502_mold_temperature_35": {
+    "502_mold-temperature-35": {
       "2024-12-11": 40
     },
-    "503_mold_temperature_40": {
+    "503_mold-temperature-40": {
       "2024-12-11": 40
     },
-    "504_mold_temperature_45": {
+    "504_mold-temperature-45": {
       "2024-12-11": 40
     }
   }

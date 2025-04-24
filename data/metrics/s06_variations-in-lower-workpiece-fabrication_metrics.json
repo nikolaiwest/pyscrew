@@ -9,308 +9,308 @@
     "nok_percentage": 2.78
   },
   "class_distribution": {
-    "class_001_reference_01": {
+    "class_001_control-group-01": {
       "total_samples": 240,
       "ok_count": 238,
       "nok_count": 2,
       "ok_ratio": 99.17,
       "nok_ratio": 0.83
     },
-    "class_101_cooling_time_25": {
+    "class_101_cooling-time-25-1": {
       "total_samples": 269,
       "ok_count": 264,
       "nok_count": 5,
       "ok_ratio": 98.14,
       "nok_ratio": 1.86
     },
-    "class_102_cooling_time_26": {
+    "class_102_cooling-time-26": {
       "total_samples": 237,
       "ok_count": 237,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_103_cooling_time_27": {
+    "class_103_cooling-time-27": {
       "total_samples": 232,
       "ok_count": 232,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_104_cooling_time_28": {
+    "class_104_cooling-time-28": {
       "total_samples": 236,
       "ok_count": 236,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_105_cooling_time_29": {
+    "class_105_cooling-time-29": {
       "total_samples": 200,
       "ok_count": 200,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_106_cooling_time_30": {
+    "class_106_cooling-time-30": {
       "total_samples": 156,
       "ok_count": 156,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_107_cooling_time_25": {
+    "class_107_cooling-time-25-2": {
       "total_samples": 190,
       "ok_count": 189,
       "nok_count": 1,
       "ok_ratio": 99.47,
       "nok_ratio": 0.53
     },
-    "class_201_mold_temperature_30": {
+    "class_201_mold-temperature-30": {
       "total_samples": 252,
       "ok_count": 251,
       "nok_count": 1,
       "ok_ratio": 99.6,
       "nok_ratio": 0.4
     },
-    "class_202_mold_temperature_35": {
+    "class_202_mold-temperature-35": {
       "total_samples": 160,
       "ok_count": 160,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_203_mold_temperature_45": {
+    "class_203_mold-temperature-45": {
       "total_samples": 330,
       "ok_count": 330,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_204_mold_temperature_55": {
+    "class_204_mold-temperature-55": {
       "total_samples": 248,
       "ok_count": 248,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_205_mold_temperature_65": {
+    "class_205_mold-temperature-65": {
       "total_samples": 166,
       "ok_count": 166,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_301_glass_fiber_content_30": {
+    "class_301_glass-fiber-content-30": {
       "total_samples": 326,
       "ok_count": 325,
       "nok_count": 1,
       "ok_ratio": 99.69,
       "nok_ratio": 0.31
     },
-    "class_302_glass_fiber_content_25": {
+    "class_302_glass-fiber-content-25": {
       "total_samples": 268,
       "ok_count": 268,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_303_glass_fiber_content_20": {
+    "class_303_glass-fiber-content-20": {
       "total_samples": 274,
       "ok_count": 244,
       "nok_count": 30,
       "ok_ratio": 89.05,
       "nok_ratio": 10.95
     },
-    "class_304_glass_fiber_content_15": {
+    "class_304_glass-fiber-content-15": {
       "total_samples": 254,
       "ok_count": 168,
       "nok_count": 86,
       "ok_ratio": 66.14,
       "nok_ratio": 33.86
     },
-    "class_305_glass_fiber_content_10": {
+    "class_305_glass-fiber-content-10": {
       "total_samples": 104,
       "ok_count": 59,
       "nok_count": 45,
       "ok_ratio": 56.73,
       "nok_ratio": 43.27
     },
-    "class_401_switching_point_22_1": {
+    "class_401_switching-point-22-1": {
       "total_samples": 352,
       "ok_count": 348,
       "nok_count": 4,
       "ok_ratio": 98.86,
       "nok_ratio": 1.14
     },
-    "class_402_switching_point_20": {
+    "class_402_switching-point-20": {
       "total_samples": 205,
       "ok_count": 202,
       "nok_count": 3,
       "ok_ratio": 98.54,
       "nok_ratio": 1.46
     },
-    "class_403_switching_point_18": {
+    "class_403_switching-point-18": {
       "total_samples": 100,
       "ok_count": 99,
       "nok_count": 1,
       "ok_ratio": 99.0,
       "nok_ratio": 1.0
     },
-    "class_404_switching_point_17": {
+    "class_404_switching-point-17": {
       "total_samples": 100,
       "ok_count": 99,
       "nok_count": 1,
       "ok_ratio": 99.0,
       "nok_ratio": 1.0
     },
-    "class_405_switching_point_16": {
+    "class_405_switching-point-16": {
       "total_samples": 154,
       "ok_count": 152,
       "nok_count": 2,
       "ok_ratio": 98.7,
       "nok_ratio": 1.3
     },
-    "class_406_switching_point_15": {
+    "class_406_switching-point-15": {
       "total_samples": 98,
       "ok_count": 98,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_407_switching_point_14": {
+    "class_407_switching-point-14": {
       "total_samples": 108,
       "ok_count": 108,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_408_switching_point_13": {
+    "class_408_switching-point-13": {
       "total_samples": 96,
       "ok_count": 95,
       "nok_count": 1,
       "ok_ratio": 98.96,
       "nok_ratio": 1.04
     },
-    "class_409_switching_point_22_2": {
+    "class_409_switching-point-22-2": {
       "total_samples": 100,
       "ok_count": 100,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_410_switching_point_24": {
+    "class_410_switching-point-24": {
       "total_samples": 98,
       "ok_count": 98,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_411_switching_point_26": {
+    "class_411_switching-point-26": {
       "total_samples": 95,
       "ok_count": 90,
       "nok_count": 5,
       "ok_ratio": 94.74,
       "nok_ratio": 5.26
     },
-    "class_412_switching_point_28": {
+    "class_412_switching-point-28": {
       "total_samples": 102,
       "ok_count": 101,
       "nok_count": 1,
       "ok_ratio": 99.02,
       "nok_ratio": 0.98
     },
-    "class_413_switching_point_30": {
+    "class_413_switching-point-30": {
       "total_samples": 100,
       "ok_count": 96,
       "nok_count": 4,
       "ok_ratio": 96.0,
       "nok_ratio": 4.0
     },
-    "class_414_switching_point_32": {
+    "class_414_switching-point-32": {
       "total_samples": 104,
       "ok_count": 101,
       "nok_count": 3,
       "ok_ratio": 97.12,
       "nok_ratio": 2.88
     },
-    "class_501_injection_velocity_030_1": {
+    "class_501_injection-velocity-030-1": {
       "total_samples": 350,
       "ok_count": 346,
       "nok_count": 4,
       "ok_ratio": 98.86,
       "nok_ratio": 1.14
     },
-    "class_502_injection_velocity_050": {
+    "class_502_injection-velocity-050": {
       "total_samples": 100,
       "ok_count": 99,
       "nok_count": 1,
       "ok_ratio": 99.0,
       "nok_ratio": 1.0
     },
-    "class_503_injection_velocity_070": {
+    "class_503_injection-velocity-070": {
       "total_samples": 98,
       "ok_count": 97,
       "nok_count": 1,
       "ok_ratio": 98.98,
       "nok_ratio": 1.02
     },
-    "class_504_injection_velocity_090": {
+    "class_504_injection-velocity-090": {
       "total_samples": 110,
       "ok_count": 110,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_505_injection_velocity_110": {
+    "class_505_injection-velocity-110": {
       "total_samples": 98,
       "ok_count": 98,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_506_injection_velocity_130": {
+    "class_506_injection-velocity-130": {
       "total_samples": 130,
       "ok_count": 130,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_507_injection_velocity_150": {
+    "class_507_injection-velocity-150": {
       "total_samples": 98,
       "ok_count": 98,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_508_injection_velocity_170": {
+    "class_508_injection-velocity-170": {
       "total_samples": 102,
       "ok_count": 102,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_509_injection_velocity_030_2": {
+    "class_509_injection-velocity-030-2": {
       "total_samples": 100,
       "ok_count": 100,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_510_injection_velocity_025": {
+    "class_510_injection-velocity-025": {
       "total_samples": 138,
       "ok_count": 135,
       "nok_count": 3,
       "ok_ratio": 97.83,
       "nok_ratio": 2.17
     },
-    "class_511_injection_velocity_020": {
+    "class_511_injection-velocity-020": {
       "total_samples": 106,
       "ok_count": 105,
       "nok_count": 1,
       "ok_ratio": 99.06,
       "nok_ratio": 0.94
     },
-    "class_512_injection_velocity_015": {
+    "class_512_injection-velocity-015": {
       "total_samples": 98,
       "ok_count": 96,
       "nok_count": 2,
@@ -329,143 +329,143 @@
     "peak_anomaly_cycle": 0
   },
   "collection_timeline": {
-    "001_reference_01": {
+    "001_control-group-01": {
       "2024-11-07": 240
     },
-    "101_cooling_time_25": {
+    "101_cooling-time-25-1": {
       "2024-11-07": 269
     },
-    "102_cooling_time_26": {
+    "102_cooling-time-26": {
       "2024-11-07": 237
     },
-    "103_cooling_time_27": {
+    "103_cooling-time-27": {
       "2024-11-07": 136,
       "2024-11-08": 96
     },
-    "104_cooling_time_28": {
+    "104_cooling-time-28": {
       "2024-11-08": 236
     },
-    "105_cooling_time_29": {
+    "105_cooling-time-29": {
       "2024-11-08": 200
     },
-    "106_cooling_time_30": {
+    "106_cooling-time-30": {
       "2024-11-08": 156
     },
-    "107_cooling_time_25": {
+    "107_cooling-time-25-2": {
       "2024-11-08": 36,
       "2024-11-11": 154
     },
-    "201_mold_temperature_30": {
+    "201_mold-temperature-30": {
       "2024-11-11": 252
     },
-    "202_mold_temperature_35": {
+    "202_mold-temperature-35": {
       "2024-11-11": 160
     },
-    "203_mold_temperature_45": {
+    "203_mold-temperature-45": {
       "2024-11-11": 274,
       "2024-11-18": 56
     },
-    "204_mold_temperature_55": {
+    "204_mold-temperature-55": {
       "2024-11-18": 248
     },
-    "205_mold_temperature_65": {
+    "205_mold-temperature-65": {
       "2024-11-18": 166
     },
-    "301_glass_fiber_content_30": {
+    "301_glass-fiber-content-30": {
       "2024-11-18": 326
     },
-    "302_glass_fiber_content_25": {
+    "302_glass-fiber-content-25": {
       "2024-11-18": 100,
       "2024-11-19": 168
     },
-    "303_glass_fiber_content_20": {
+    "303_glass-fiber-content-20": {
       "2024-11-19": 274
     },
-    "304_glass_fiber_content_15": {
+    "304_glass-fiber-content-15": {
       "2024-11-19": 254
     },
-    "305_glass_fiber_content_10": {
+    "305_glass-fiber-content-10": {
       "2024-11-19": 104
     },
-    "401_switching_point_22_1": {
+    "401_switching-point-22-1": {
       "2024-11-20": 352
     },
-    "402_switching_point_20": {
+    "402_switching-point-20": {
       "2024-11-20": 205
     },
-    "403_switching_point_18": {
+    "403_switching-point-18": {
       "2024-11-20": 100
     },
-    "404_switching_point_17": {
+    "404_switching-point-17": {
       "2024-11-20": 100
     },
-    "405_switching_point_16": {
+    "405_switching-point-16": {
       "2024-11-20": 154
     },
-    "406_switching_point_15": {
+    "406_switching-point-15": {
       "2024-11-20": 98
     },
-    "407_switching_point_14": {
+    "407_switching-point-14": {
       "2024-11-20": 26,
       "2024-11-21": 82
     },
-    "408_switching_point_13": {
+    "408_switching-point-13": {
       "2024-11-21": 96
     },
-    "409_switching_point_22_2": {
+    "409_switching-point-22-2": {
       "2024-11-21": 100
     },
-    "410_switching_point_24": {
+    "410_switching-point-24": {
       "2024-11-21": 98
     },
-    "411_switching_point_26": {
+    "411_switching-point-26": {
       "2024-11-21": 95
     },
-    "412_switching_point_28": {
+    "412_switching-point-28": {
       "2024-11-21": 102
     },
-    "413_switching_point_30": {
+    "413_switching-point-30": {
       "2024-11-21": 100
     },
-    "414_switching_point_32": {
+    "414_switching-point-32": {
       "2024-11-21": 104
     },
-    "501_injection_velocity_030_1": {
+    "501_injection-velocity-030-1": {
       "2024-11-21": 56,
       "2024-11-22": 294
     },
-    "502_injection_velocity_050": {
+    "502_injection-velocity-050": {
       "2024-11-22": 100
     },
-    "503_injection_velocity_070": {
+    "503_injection-velocity-070": {
       "2024-11-22": 98
     },
-    "504_injection_velocity_090": {
+    "504_injection-velocity-090": {
       "2024-11-22": 110
     },
-    "505_injection_velocity_110": {
+    "505_injection-velocity-110": {
       "2024-11-22": 98
     },
-    "506_injection_velocity_130": {
+    "506_injection-velocity-130": {
       "2024-11-22": 130
     },
-    "507_injection_velocity_150": {
+    "507_injection-velocity-150": {
       "2024-11-22": 98
     },
-    "508_injection_velocity_170": {
+    "508_injection-velocity-170": {
       "2024-11-22": 102
     },
-    "509_injection_velocity_030_2": {
+    "509_injection-velocity-030-2": {
       "2024-11-22": 90,
       "2024-11-25": 10
     },
-    "510_injection_velocity_025": {
+    "510_injection-velocity-025": {
       "2024-11-25": 138
     },
-    "511_injection_velocity_020": {
+    "511_injection-velocity-020": {
       "2024-11-25": 106
     },
-    "512_injection_velocity_015": {
+    "512_injection-velocity-015": {
       "2024-11-25": 98
     }
   }

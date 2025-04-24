@@ -75,48 +75,48 @@ The `labels.csv` contains nine columns:
 
 | NR    | Name                          | Amount | Description                                                             |
 |-------|-------------------------------|--------|-------------------------------------------------------------------------|
-| 0     | 101_glass_fiber_content_30    | 80     | Standard reference material with 30% glass fiber content in the plastic granulate; represents the baseline specification for the upper workpiece material composition with optimal mechanical properties and flow characteristics |
-| 1     | 102_glass_fiber_content_28    | 80     | Reduced glass fiber content to 28% by mixing base material with unreinforced granules of the same base polymer; simulates minor material batch fluctuations with decreased reinforcement properties |
-| 2     | 103_glass_fiber_content_26    | 80     | Reduced glass fiber content to 26% by mixing base material with unreinforced granules of the same base polymer; simulates moderate material batch fluctuations with noticeably decreased reinforcement properties and altered flow behavior |
-| 3     | 104_glass_fiber_content_24    | 80     | Reduced glass fiber content to 24% by mixing base material with unreinforced granules of the same base polymer; simulates significant material batch fluctuations with substantially decreased reinforcement properties and modified viscosity |
-| 4     | 105_glass_fiber_content_22    | 80     | Reduced glass fiber content to 22% by mixing base material with unreinforced granules of the same base polymer; simulates major material batch fluctuations with considerably decreased reinforcement properties and pronounced changes in flow characteristics |
-| 5     | 106_glass_fiber_content_20    | 80     | Reduced glass fiber content to 20% by mixing base material with unreinforced granules of the same base polymer; simulates severe material batch fluctuations with compromised mechanical properties and altered thermal behavior |
-| 6     | 107_glass_fiber_content_18    | 80     | Reduced glass fiber content to 18% by mixing base material with unreinforced granules of the same base polymer; simulates extreme material batch fluctuations with substantially reinforcement properties |
-| 7     | 201_recyclate_content_000     | 80     | Standard reference material with 0% recyclate content; represents the baseline specification using only virgin material with optimal and consistent mechanical properties |
-| 8     | 202_recyclate_content_010     | 80     | Addition of 10% regrind material to simulate minimal recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing minor variations in material properties and fiber length distribution |
-| 9     | 203_recyclate_content_020     | 80     | Addition of 20% regrind material to simulate moderate recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing noticeable variations in viscosity and mechanical properties |
-| 10    | 204_recyclate_content_030     | 80     | Addition of 30% regrind material to simulate significant recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing substantial variations in fiber length distribution and flow characteristics |
-| 11    | 205_recyclate_content_040     | 80     | Addition of 40% regrind material to simulate high recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing considerable variations in material homogeneity and mechanical performance |
-| 12    | 206_recyclate_content_050     | 80     | Addition of 50% regrind material to simulate very high recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, creating equal parts virgin and recycled material with significantly altered viscosity profiles |
-| 13    | 207_recyclate_content_060     | 80     | Addition of 60% regrind material to simulate predominantly recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, creating a majority recyclate mixture with pronounced changes in fiber orientation and length |
-| 14    | 208_recyclate_content_070     | 80     | Addition of 70% regrind material to simulate heavily recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing major variations in flow behavior and molecular weight distribution |
-| 15    | 209_recyclate_content_080     | 80     | Addition of 80% regrind material to simulate extensively recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, with only 20% virgin material remaining, substantially affecting material consistency |
-| 16    | 210_recyclate_content_090     | 80     | Addition of 90% regrind material to simulate nearly complete recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, with minimal virgin material addition, resulting in significantly degraded fiber reinforcement |
-| 17    | 211_recyclate_content_100     | 80     | Complete 100% regrind material to simulate full recyclate use; regrind produced from laboratory-milled workpieces of the same plastic, using no virgin material, representing extreme case with max variation in fiber length distribution and orientation |
-| 18    | 301_switching_point_15_1      | 40     | First reference condition with 15 cm³ switching point; standard setting where system transitions from velocity-controlled injection to pressure-controlled packing; recorded in first test series for baseline comparison |
-| 19    | 302_switching_point_16        | 40     | Increased switching point to 16 cm³; minor change in transition from velocity-controlled injection to pressure-controlled packing, simulating slight variance in non-return valve closing behavior |
-| 20    | 303_switching_point_17        | 40     | Increased switching point to 17 cm³; moderate change in transition from velocity-controlled injection to pressure-controlled packing, simulating noticeable variance in non-return valve closing behavior |
-| 21    | 304_switching_point_18        | 40     | Increased switching point to 18 cm³; significant change in transition from velocity-controlled injection to pressure-controlled packing, simulating substantial variance in non-return valve closing behavior |
-| 22    | 305_switching_point_19        | 40     | Increased switching point to 19 cm³; major change in transition from velocity-controlled injection to pressure-controlled packing, simulating considerable variance in non-return valve closing behavior |
-| 23    | 306_switching_point_15_2      | 40     | Second reference condition with 15 cm³ switching point; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
-| 24    | 307_switching_point_14        | 40     | Decreased switching point to 14 cm³; minor reduction in melt volume at transition, simulating slight early closing of non-return valve, altering the filling and packing phases relationship |
-| 25    | 308_switching_point_13        | 40     | Decreased switching point to 13 cm³; moderate reduction in melt volume at transition, simulating noticeable early closing of non-return valve, substantially changing the filling-packing relationship |
-| 26    | 309_switching_point_12        | 40     | Decreased switching point to 12 cm³; significant reduction in melt volume at transition, simulating substantial early closing of non-return valve, considerably altering packing phase initiation |
-| 27    | 310_switching_point_11        | 40     | Decreased switching point to 11 cm³; extreme reduction in melt volume at transition, simulating major early closing of non-return valve, dramatically changing the process dynamics during molding |
-| 28    | 401_injection_velocity_60_1   | 40     | First reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); standard setting recorded in first test series for baseline comparison of flow behavior |
-| 29    | 402_injection_velocity_70     | 40     | Increased primary injection velocity to 70 cm³/s (secondary velocity at 100 cm³/s); accelerated melt flow during filling phase, simulating minor variation in velocity control of screw movement |
-| 30    | 403_injection_velocity_80     | 40     | Increased primary injection velocity to 80 cm³/s (secondary velocity at 110 cm³/s); substantially accelerated melt flow during filling phase, simulating moderate variation in velocity control |
-| 31    | 404_injection_velocity_90     | 40     | Increased primary injection velocity to 90 cm³/s (secondary velocity at 120 cm³/s); significantly accelerated melt flow during filling phase, simulating considerable variation in velocity control |
-| 32    | 405_injection_velocity_100    | 40     | Increased primary injection velocity to 100 cm³/s (secondary velocity at 130 cm³/s); dramatically accelerated melt flow during filling phase, simulating major variation in velocity control |
-| 33    | 406_injection_velocity_60_2   | 40     | Second reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); repeat of standard setting recorded in second test series to verify reproducibility |
-| 34    | 407_injection_velocity_50     | 40     | Decreased primary injection velocity to 50 cm³/s (secondary velocity at 80 cm³/s); slowed melt flow during filling phase, simulating minor reduction in screw movement control |
-| 35    | 408_injection_velocity_40     | 40     | Decreased primary injection velocity to 40 cm³/s (secondary velocity at 70 cm³/s); substantially slowed melt flow during filling phase, simulating moderate reduction in screw movement control |
-| 36    | 409_injection_velocity_30     | 40     | Decreased primary injection velocity to 30 cm³/s (secondary velocity at 60 cm³/s); significantly slowed melt flow during filling phase, simulating considerable reduction in screw movement control |
-| 37    | 410_injection_velocity_20     | 40     | Decreased primary injection velocity to 20 cm³/s (secondary velocity at 50 cm³/s); dramatically slowed melt flow during filling phase, simulating extreme reduction in screw movement control |
-| 38    | 501_mold_temperature_30       | 40     | Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the injection mold cooling channels, representing optimal thermal conditions for part solidification |
-| 39    | 502_mold_temperature_35       | 40     | Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating minor fluctuation in the cooling circuit possibly caused by temperature control unit variation |
-| 40    | 503_mold_temperature_40       | 40     | Increased mold temperature to 40°C; substantially elevated cooling medium temperature, simulating significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels |
-| 41    | 504_mold_temperature_45       | 40     | Increased mold temperature to 45°C; dramatically elevated cooling medium temperature, simulating extreme fluctuation in the cooling circuit, considerably altering part solidification dynamics |
+| 0     | 101_glass-fiber-content-30    | 80     | Standard reference material with 30% glass fiber content in the plastic granulate; represents the baseline specification for the upper workpiece material composition with optimal mechanical properties and flow characteristics |
+| 1     | 102_glass-fiber-content-28    | 80     | Reduced glass fiber content to 28% by mixing base material with unreinforced granules of the same base polymer; simulates minor material batch fluctuations with decreased reinforcement properties |
+| 2     | 103_glass-fiber-content-26    | 80     | Reduced glass fiber content to 26% by mixing base material with unreinforced granules of the same base polymer; simulates moderate material batch fluctuations with noticeably decreased reinforcement properties and altered flow behavior |
+| 3     | 104_glass-fiber-content-24    | 80     | Reduced glass fiber content to 24% by mixing base material with unreinforced granules of the same base polymer; simulates significant material batch fluctuations with substantially decreased reinforcement properties and modified viscosity |
+| 4     | 105_glass-fiber-content-22    | 80     | Reduced glass fiber content to 22% by mixing base material with unreinforced granules of the same base polymer; simulates major material batch fluctuations with considerably decreased reinforcement properties and pronounced changes in flow characteristics |
+| 5     | 106_glass-fiber-content-20    | 80     | Reduced glass fiber content to 20% by mixing base material with unreinforced granules of the same base polymer; simulates severe material batch fluctuations with compromised mechanical properties and altered thermal behavior |
+| 6     | 107_glass-fiber-content-18    | 80     | Reduced glass fiber content to 18% by mixing base material with unreinforced granules of the same base polymer; simulates extreme material batch fluctuations with substantially reinforcement properties |
+| 7     | 201_recyclate-content-000     | 80     | Standard reference material with 0% recyclate content; represents the baseline specification using only virgin material with optimal and consistent mechanical properties |
+| 8     | 202_recyclate-content-010     | 80     | Addition of 10% regrind material to simulate minimal recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing minor variations in material properties and fiber length distribution |
+| 9     | 203_recyclate-content-020     | 80     | Addition of 20% regrind material to simulate moderate recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing noticeable variations in viscosity and mechanical properties |
+| 10    | 204_recyclate-content-030     | 80     | Addition of 30% regrind material to simulate significant recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing substantial variations in fiber length distribution and flow characteristics |
+| 11    | 205_recyclate-content-040     | 80     | Addition of 40% regrind material to simulate high recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing considerable variations in material homogeneity and mechanical performance |
+| 12    | 206_recyclate-content-050     | 80     | Addition of 50% regrind material to simulate very high recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, creating equal parts virgin and recycled material with significantly altered viscosity profiles |
+| 13    | 207_recyclate-content-060     | 80     | Addition of 60% regrind material to simulate predominantly recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, creating a majority recyclate mixture with pronounced changes in fiber orientation and length |
+| 14    | 208_recyclate-content-070     | 80     | Addition of 70% regrind material to simulate heavily recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, introducing major variations in flow behavior and molecular weight distribution |
+| 15    | 209_recyclate-content-080     | 80     | Addition of 80% regrind material to simulate extensively recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, with only 20% virgin material remaining, substantially affecting material consistency |
+| 16    | 210_recyclate-content-090     | 80     | Addition of 90% regrind material to simulate nearly complete recycled material use; regrind produced from laboratory-milled workpieces of the same plastic, with minimal virgin material addition, resulting in significantly degraded fiber reinforcement |
+| 17    | 211_recyclate-content-100     | 80     | Complete 100% regrind material to simulate full recyclate use; regrind produced from laboratory-milled workpieces of the same plastic, using no virgin material, representing extreme case with max variation in fiber length distribution and orientation |
+| 18    | 301_switching-point-15-1      | 40     | First reference condition with 15 cm³ switching point; standard setting where system transitions from velocity-controlled injection to pressure-controlled packing; recorded in first test series for baseline comparison |
+| 19    | 302_switching-point-16        | 40     | Increased switching point to 16 cm³; minor change in transition from velocity-controlled injection to pressure-controlled packing, simulating slight variance in non-return valve closing behavior |
+| 20    | 303_switching-point-17        | 40     | Increased switching point to 17 cm³; moderate change in transition from velocity-controlled injection to pressure-controlled packing, simulating noticeable variance in non-return valve closing behavior |
+| 21    | 304_switching-point-18        | 40     | Increased switching point to 18 cm³; significant change in transition from velocity-controlled injection to pressure-controlled packing, simulating substantial variance in non-return valve closing behavior |
+| 22    | 305_switching-point-19        | 40     | Increased switching point to 19 cm³; major change in transition from velocity-controlled injection to pressure-controlled packing, simulating considerable variance in non-return valve closing behavior |
+| 23    | 306_switching-point-15-2      | 40     | Second reference condition with 15 cm³ switching point; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
+| 24    | 307_switching-point-14        | 40     | Decreased switching point to 14 cm³; minor reduction in melt volume at transition, simulating slight early closing of non-return valve, altering the filling and packing phases relationship |
+| 25    | 308_switching-point-13        | 40     | Decreased switching point to 13 cm³; moderate reduction in melt volume at transition, simulating noticeable early closing of non-return valve, substantially changing the filling-packing relationship |
+| 26    | 309_switching-point-12        | 40     | Decreased switching point to 12 cm³; significant reduction in melt volume at transition, simulating substantial early closing of non-return valve, considerably altering packing phase initiation |
+| 27    | 310_switching-point-11        | 40     | Decreased switching point to 11 cm³; extreme reduction in melt volume at transition, simulating major early closing of non-return valve, dramatically changing the process dynamics during molding |
+| 28    | 401_injection-velocity-60-1   | 40     | First reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); standard setting recorded in first test series for baseline comparison of flow behavior |
+| 29    | 402_injection-velocity-70     | 40     | Increased primary injection velocity to 70 cm³/s (secondary velocity at 100 cm³/s); accelerated melt flow during filling phase, simulating minor variation in velocity control of screw movement |
+| 30    | 403_injection-velocity-80     | 40     | Increased primary injection velocity to 80 cm³/s (secondary velocity at 110 cm³/s); substantially accelerated melt flow during filling phase, simulating moderate variation in velocity control |
+| 31    | 404_injection-velocity-90     | 40     | Increased primary injection velocity to 90 cm³/s (secondary velocity at 120 cm³/s); significantly accelerated melt flow during filling phase, simulating considerable variation in velocity control |
+| 32    | 405_injection-velocity-100    | 40     | Increased primary injection velocity to 100 cm³/s (secondary velocity at 130 cm³/s); dramatically accelerated melt flow during filling phase, simulating major variation in velocity control |
+| 33    | 406_injection-velocity-60-2   | 40     | Second reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); repeat of standard setting recorded in second test series to verify reproducibility |
+| 34    | 407_injection-velocity-50     | 40     | Decreased primary injection velocity to 50 cm³/s (secondary velocity at 80 cm³/s); slowed melt flow during filling phase, simulating minor reduction in screw movement control |
+| 35    | 408_injection-velocity-40     | 40     | Decreased primary injection velocity to 40 cm³/s (secondary velocity at 70 cm³/s); substantially slowed melt flow during filling phase, simulating moderate reduction in screw movement control |
+| 36    | 409_injection-velocity-30     | 40     | Decreased primary injection velocity to 30 cm³/s (secondary velocity at 60 cm³/s); significantly slowed melt flow during filling phase, simulating considerable reduction in screw movement control |
+| 37    | 410_injection-velocity-20     | 40     | Decreased primary injection velocity to 20 cm³/s (secondary velocity at 50 cm³/s); dramatically slowed melt flow during filling phase, simulating extreme reduction in screw movement control |
+| 38    | 501_mold-temperature-30       | 40     | Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the injection mold cooling channels, representing optimal thermal conditions for part solidification |
+| 39    | 502_mold-temperature-35       | 40     | Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating minor fluctuation in the cooling circuit possibly caused by temperature control unit variation |
+| 40    | 503_mold-temperature-40       | 40     | Increased mold temperature to 40°C; substantially elevated cooling medium temperature, simulating significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels |
+| 41    | 504_mold-temperature-45       | 40     | Increased mold temperature to 45°C; dramatically elevated cooling medium temperature, simulating extreme fluctuation in the cooling circuit, considerably altering part solidification dynamics |
 
 ### JSON File Structure
 Each JSON file represents a complete screw driving operation with the following structure:
@@ -205,48 +205,48 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 
 | NR    | Name                          | Samples | #OK  | #NOK | %OK   | %NOK  |
 |-------|-------------------------------|---------|------|------|-------|-------|
-| 0     | 101_glass_fiber_content_30    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 1     | 102_glass_fiber_content_28    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 2     | 103_glass_fiber_content_26    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 3     | 104_glass_fiber_content_24    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 4     | 105_glass_fiber_content_22    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 5     | 106_glass_fiber_content_20    | 80      | 80   | 0    | 100.0 | 0.0   |
-| 6     | 107_glass_fiber_content_18    | 80      | 79   | 1    | 98.75 | 1.25  |
-| 7     | 201_recyclate_content_000     | 80      | 79   | 1    | 98.75 | 1.25  |
-| 8     | 202_recyclate_content_010     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 9     | 203_recyclate_content_020     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 10    | 204_recyclate_content_030     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 11    | 205_recyclate_content_040     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 12    | 206_recyclate_content_050     | 80      | 79   | 1    | 98.75 | 1.25  |
-| 13    | 207_recyclate_content_060     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 14    | 208_recyclate_content_070     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 15    | 209_recyclate_content_080     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 16    | 210_recyclate_content_090     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 17    | 211_recyclate_content_100     | 80      | 80   | 0    | 100.0 | 0.0   |
-| 18    | 301_switching_point_15_1      | 40      | 40   | 0    | 100.0 | 0.0   |
-| 19    | 302_switching_point_16        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 20    | 303_switching_point_17        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 21    | 304_switching_point_18        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 22    | 305_switching_point_19        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 23    | 306_switching_point_15_2      | 40      | 40   | 0    | 100.0 | 0.0   |
-| 24    | 307_switching_point_14        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 25    | 308_switching_point_13        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 26    | 309_switching_point_12        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 27    | 310_switching_point_11        | 40      | 40   | 0    | 100.0 | 0.0   |
-| 28    | 401_injection_velocity_60_1   | 40      | 40   | 0    | 100.0 | 0.0   |
-| 29    | 402_injection_velocity_70     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 30    | 403_injection_velocity_80     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 31    | 404_injection_velocity_90     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 32    | 405_injection_velocity_100    | 40      | 40   | 0    | 100.0 | 0.0   |
-| 33    | 406_injection_velocity_60_2   | 40      | 40   | 0    | 100.0 | 0.0   |
-| 34    | 407_injection_velocity_50     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 35    | 408_injection_velocity_40     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 36    | 409_injection_velocity_30     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 37    | 410_injection_velocity_20     | 40      | 40   | 0    | 100.0 | 0.0   |
-| 38    | 501_mold_temperature_30       | 40      | 40   | 0    | 100.0 | 0.0   |
-| 39    | 502_mold_temperature_35       | 40      | 40   | 0    | 100.0 | 0.0   |
-| 40    | 503_mold_temperature_40       | 40      | 40   | 0    | 100.0 | 0.0   |
-| 41    | 504_mold_temperature_45       | 40      | 40   | 0    | 100.0 | 0.0   |
+| 0     | 101_glass-fiber-content-30    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 1     | 102_glass-fiber-content-28    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 2     | 103_glass-fiber-content-26    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 3     | 104_glass-fiber-content-24    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 4     | 105_glass-fiber-content-22    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 5     | 106_glass-fiber-content-20    | 80      | 80   | 0    | 100.0 | 0.0   |
+| 6     | 107_glass-fiber-content-18    | 80      | 79   | 1    | 98.75 | 1.25  |
+| 7     | 201_recyclate-content-000     | 80      | 79   | 1    | 98.75 | 1.25  |
+| 8     | 202_recyclate-content-010     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 9     | 203_recyclate-content-020     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 10    | 204_recyclate-content-030     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 11    | 205_recyclate-content-040     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 12    | 206_recyclate-content-050     | 80      | 79   | 1    | 98.75 | 1.25  |
+| 13    | 207_recyclate-content-060     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 14    | 208_recyclate-content-070     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 15    | 209_recyclate-content-080     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 16    | 210_recyclate-content-090     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 17    | 211_recyclate-content-100     | 80      | 80   | 0    | 100.0 | 0.0   |
+| 18    | 301_switching-point-15-1      | 40      | 40   | 0    | 100.0 | 0.0   |
+| 19    | 302_switching-point-16        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 20    | 303_switching-point-17        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 21    | 304_switching-point-18        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 22    | 305_switching-point-19        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 23    | 306_switching-point-15-2      | 40      | 40   | 0    | 100.0 | 0.0   |
+| 24    | 307_switching-point-14        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 25    | 308_switching-point-13        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 26    | 309_switching-point-12        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 27    | 310_switching-point-11        | 40      | 40   | 0    | 100.0 | 0.0   |
+| 28    | 401_injection-velocity-60-1   | 40      | 40   | 0    | 100.0 | 0.0   |
+| 29    | 402_injection-velocity-70     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 30    | 403_injection-velocity-80     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 31    | 404_injection-velocity-90     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 32    | 405_injection-velocity-100    | 40      | 40   | 0    | 100.0 | 0.0   |
+| 33    | 406_injection-velocity-60-2   | 40      | 40   | 0    | 100.0 | 0.0   |
+| 34    | 407_injection-velocity-50     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 35    | 408_injection-velocity-40     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 36    | 409_injection-velocity-30     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 37    | 410_injection-velocity-20     | 40      | 40   | 0    | 100.0 | 0.0   |
+| 38    | 501_mold-temperature-30       | 40      | 40   | 0    | 100.0 | 0.0   |
+| 39    | 502_mold-temperature-35       | 40      | 40   | 0    | 100.0 | 0.0   |
+| 40    | 503_mold-temperature-40       | 40      | 40   | 0    | 100.0 | 0.0   |
+| 41    | 504_mold-temperature-45       | 40      | 40   | 0    | 100.0 | 0.0   |
 
 ### Collection Timeline
 

@@ -75,50 +75,50 @@ The `labels.csv` contains nine columns:
 
 | NR    | Name                          | Amount | Description                                                             |
 |-------|-------------------------------|--------|-------------------------------------------------------------------------|
-| 0     | 001_reference_01              | 240    | Standard reference material and process parameters; represents the baseline for all comparisons with optimal mechanical properties and flow characteristics |
-| 1     | 101_cooling_time_25           | 269    | Cooling time of 25 seconds; baseline cooling time setting providing optimal curing conditions for the workpiece and serving as the reference for the first test series |
-| 2     | 102_cooling_time_26           | 237    | Increased cooling time to 26 seconds; minor extension of curing phase, simulating slight variations in cooling efficiency due to normal process fluctuations |
-| 3     | 103_cooling_time_27           | 232    | Increased cooling time to 27 seconds; moderate extension of curing phase, simulating noticeable variations in cooling efficiency across production cycles |
-| 4     | 104_cooling_time_28           | 236    | Increased cooling time to 28 seconds; significant extension of curing phase, simulating substantial variations in cooling efficiency throughout the process |
-| 5     | 105_cooling_time_29           | 200    | Increased cooling time to 29 seconds; considerable extension of curing phase, simulating major variations in cooling efficiency impacting solidification dynamics |
-| 6     | 106_cooling_time_30           | 156    | Increased cooling time to 30 seconds; extensive extension of curing phase, simulating extreme variations in cooling efficiency with pronounced impact on cycle time |
-| 7     | 107_cooling_time_25           | 190    | Second reference condition with 25 seconds cooling time; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
-| 8     | 201_mold_temperature_30       | 252    | Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the injection mold cooling channels, representing optimal thermal conditions for part solidification |
-| 9     | 202_mold_temperature_35       | 160    | Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating minor fluctuation in the cooling circuit possibly caused by temperature control unit variation |
-| 10    | 203_mold_temperature_45       | 330    | Increased mold temperature to 45°C; substantially elevated cooling medium temperature, simulating significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels |
-| 11    | 204_mold_temperature_55       | 248    | Increased mold temperature to 55°C; highly elevated cooling medium temperature, simulating severe fluctuation in the cooling circuit, significantly altering part cooling and crystallization behavior |
-| 12    | 205_mold_temperature_65       | 166    | Increased mold temperature to 65°C; extremely elevated cooling medium temperature, simulating critical fluctuation in the cooling circuit, dramatically changing solidification dynamics and cycle time |
-| 13    | 301_glass_fiber_content_30    | 326    | Standard reference material with 30% glass fiber content in the plastic granulate; represents the baseline specification for the upper workpiece material composition with optimal mechanical properties and flow characteristics |
-| 14    | 302_glass_fiber_content_25    | 268    | Reduced glass fiber content to 25% by mixing base material with unreinforced granules of the same base polymer; simulates moderate material batch fluctuations with decreased reinforcement properties and altered flow behavior |
-| 15    | 303_glass_fiber_content_20    | 274    | Reduced glass fiber content to 20% by mixing base material with unreinforced granules of the same base polymer; simulates severe material batch fluctuations with compromised mechanical properties and altered thermal behavior |
-| 16    | 304_glass_fiber_content_15    | 254    | Reduced glass fiber content to 15% by mixing base material with unreinforced granules of the same base polymer; simulates major material batch fluctuations with substantially decreased reinforcement properties and pronounced changes in flow characteristics |
-| 17    | 305_glass_fiber_content_10    | 104    | Reduced glass fiber content to 10% by mixing base material with unreinforced granules of the same base polymer; simulates extreme material batch fluctuations with minimally reinforced polymer exhibiting dramatically altered viscosity and mechanical properties |
-| 18    | 401_switching_point_22_1      | 352    | First reference condition with 22 cm³ switching point; standard setting where system transitions from velocity-controlled injection to pressure-controlled packing; recorded in first test series for baseline comparison |
-| 19    | 402_switching_point_20        | 205    | Decreased switching point to 20 cm³; minor reduction in melt volume at transition, simulating slight early closing of non-return valve, altering the filling and packing phases relationship |
-| 20    | 403_switching_point_18        | 100    | Decreased switching point to 18 cm³; moderate reduction in melt volume at transition, simulating noticeable early closing of non-return valve, changing the filling-packing relationship |
-| 21    | 404_switching_point_17        | 100    | Decreased switching point to 17 cm³; significant reduction in melt volume at transition, simulating substantial early closing of non-return valve, considerably altering packing phase initiation |
-| 22    | 405_switching_point_16        | 154    | Decreased switching point to 16 cm³; major reduction in melt volume at transition, simulating considerable early closing of non-return valve, dramatically changing packing dynamics |
-| 23    | 406_switching_point_15        | 98     | Decreased switching point to 15 cm³; extreme reduction in melt volume at transition, simulating major early closing of non-return valve, significantly impacting part quality and dimensions |
-| 24    | 407_switching_point_14        | 108    | Decreased switching point to 14 cm³; severe reduction in melt volume at transition, representing critical deviation in process control with pronounced effect on cavity pressure development |
-| 25    | 408_switching_point_13        | 96     | Decreased switching point to 13 cm³; minimal melt volume at transition, representing extreme deviation in process control with possible incomplete filling prior to packing phase initiation |
-| 26    | 409_switching_point_22_2      | 100    | Second reference condition with 22 cm³ switching point; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
-| 27    | 410_switching_point_24        | 98     | Increased switching point to 24 cm³; minor increase in melt volume at transition, simulating slight delay in non-return valve closing behavior, modifying filling-packing relationship |
-| 28    | 411_switching_point_26        | 95     | Increased switching point to 26 cm³; moderate increase in melt volume at transition, simulating noticeable delay in non-return valve closing, substantially altering packing phase initiation |
-| 29    | 412_switching_point_28        | 102    | Increased switching point to 28 cm³; significant increase in melt volume at transition, simulating substantial delay in non-return valve closing, considerably changing process dynamics |
-| 30    | 413_switching_point_30        | 100    | Increased switching point to 30 cm³; major increase in melt volume at transition, simulating considerable delay in non-return valve closing, dramatically altering pressure profile |
-| 31    | 414_switching_point_32        | 104    | Increased switching point to 32 cm³; extreme increase in melt volume at transition, simulating critical delay in non-return valve closing with potential risk of flash formation |
-| 32    | 501_injection_velocity_030_1  | 350    | First reference condition with 30 cm³/s primary injection velocity; standard setting recorded in first test series for baseline comparison of flow behavior and filling patterns |
-| 33    | 502_injection_velocity_050    | 100    | Increased primary injection velocity to 50 cm³/s; moderately accelerated melt flow during filling phase, simulating minor variation in velocity control of screw movement |
-| 34    | 503_injection_velocity_070    | 98     | Increased primary injection velocity to 70 cm³/s; substantially accelerated melt flow during filling phase, simulating moderate variation in velocity control with altered shear conditions |
-| 35    | 504_injection_velocity_090    | 110    | Increased primary injection velocity to 90 cm³/s; significantly accelerated melt flow during filling phase, simulating considerable variation in velocity control with pronounced shear effects |
-| 36    | 505_injection_velocity_110    | 98     | Increased primary injection velocity to 110 cm³/s; highly accelerated melt flow during filling phase, simulating major variation in velocity control with potential fiber orientation changes |
-| 37    | 506_injection_velocity_130    | 130    | Increased primary injection velocity to 130 cm³/s; dramatically accelerated melt flow during filling phase, simulating extreme variation in velocity control with altered pressure development |
-| 38    | 507_injection_velocity_150    | 98     | Increased primary injection velocity to 150 cm³/s; extremely accelerated melt flow during filling phase, creating severe shear conditions and potentially affecting material properties |
-| 39    | 508_injection_velocity_170    | 102    | Increased primary injection velocity to 170 cm³/s; maximum accelerated melt flow during filling phase, creating critical shear conditions with high potential for molded-in stress |
-| 40    | 509_injection_velocity_030_2  | 100    | Second reference condition with 30 cm³/s primary injection velocity; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
-| 41    | 510_injection_velocity_025    | 138    | Decreased primary injection velocity to 25 cm³/s; slightly slowed melt flow during filling phase, simulating minor reduction in screw movement control with reduced shear conditions |
-| 42    | 511_injection_velocity_020    | 106    | Decreased primary injection velocity to 20 cm³/s; moderately slowed melt flow during filling phase, simulating significant reduction in screw movement control with minimal shear |
-| 43    | 512_injection_velocity_015    | 98     | Decreased primary injection velocity to 15 cm³/s; dramatically slowed melt flow during filling phase, simulating extreme reduction in screw movement control with potential for premature freezing |
+| 0     | 001_control-group-01          | 240    | Standard reference material and process parameters; represents the baseline for all comparisons with optimal mechanical properties and flow characteristics |
+| 1     | 101_cooling-time-25-1         | 269    | Cooling time of 25 seconds; baseline cooling time setting providing optimal curing conditions for the workpiece and serving as the reference for the first test series |
+| 2     | 102_cooling-time-26           | 237    | Increased cooling time to 26 seconds; minor extension of curing phase, simulating slight variations in cooling efficiency due to normal process fluctuations |
+| 3     | 103_cooling-time-27           | 232    | Increased cooling time to 27 seconds; moderate extension of curing phase, simulating noticeable variations in cooling efficiency across production cycles |
+| 4     | 104_cooling-time-28           | 236    | Increased cooling time to 28 seconds; significant extension of curing phase, simulating substantial variations in cooling efficiency throughout the process |
+| 5     | 105_cooling-time-29           | 200    | Increased cooling time to 29 seconds; considerable extension of curing phase, simulating major variations in cooling efficiency impacting solidification dynamics |
+| 6     | 106_cooling-time-30           | 156    | Increased cooling time to 30 seconds; extensive extension of curing phase, simulating extreme variations in cooling efficiency with pronounced impact on cycle time |
+| 7     | 107_cooling-time-25-2         | 190    | Second reference condition with 25 seconds cooling time; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
+| 8     | 201_mold-temperature-30       | 252    | Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the injection mold cooling channels, representing optimal thermal conditions for part solidification |
+| 9     | 202_mold-temperature-35       | 160    | Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating minor fluctuation in the cooling circuit possibly caused by temperature control unit variation |
+| 10    | 203_mold-temperature-45       | 330    | Increased mold temperature to 45°C; substantially elevated cooling medium temperature, simulating significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels |
+| 11    | 204_mold-temperature-55       | 248    | Increased mold temperature to 55°C; highly elevated cooling medium temperature, simulating severe fluctuation in the cooling circuit, significantly altering part cooling and crystallization behavior |
+| 12    | 205_mold-temperature-65       | 166    | Increased mold temperature to 65°C; extremely elevated cooling medium temperature, simulating critical fluctuation in the cooling circuit, dramatically changing solidification dynamics and cycle time |
+| 13    | 301_glass-fiber-content-30    | 326    | Standard reference material with 30% glass fiber content in the plastic granulate; represents the baseline specification for the upper workpiece material composition with optimal mechanical properties and flow characteristics |
+| 14    | 302_glass-fiber-content-25    | 268    | Reduced glass fiber content to 25% by mixing base material with unreinforced granules of the same base polymer; simulates moderate material batch fluctuations with decreased reinforcement properties and altered flow behavior |
+| 15    | 303_glass-fiber-content-20    | 274    | Reduced glass fiber content to 20% by mixing base material with unreinforced granules of the same base polymer; simulates severe material batch fluctuations with compromised mechanical properties and altered thermal behavior |
+| 16    | 304_glass-fiber-content-15    | 254    | Reduced glass fiber content to 15% by mixing base material with unreinforced granules of the same base polymer; simulates major material batch fluctuations with substantially decreased reinforcement properties and pronounced changes in flow characteristics |
+| 17    | 305_glass-fiber-content-10    | 104    | Reduced glass fiber content to 10% by mixing base material with unreinforced granules of the same base polymer; simulates extreme material batch fluctuations with minimally reinforced polymer exhibiting dramatically altered viscosity and mechanical properties |
+| 18    | 401_switching-point-22-1      | 352    | First reference condition with 22 cm³ switching point; standard setting where system transitions from velocity-controlled injection to pressure-controlled packing; recorded in first test series for baseline comparison |
+| 19    | 402_switching-point-20        | 205    | Decreased switching point to 20 cm³; minor reduction in melt volume at transition, simulating slight early closing of non-return valve, altering the filling and packing phases relationship |
+| 20    | 403_switching-point-18        | 100    | Decreased switching point to 18 cm³; moderate reduction in melt volume at transition, simulating noticeable early closing of non-return valve, changing the filling-packing relationship |
+| 21    | 404_switching-point-17        | 100    | Decreased switching point to 17 cm³; significant reduction in melt volume at transition, simulating substantial early closing of non-return valve, considerably altering packing phase initiation |
+| 22    | 405_switching-point-16        | 154    | Decreased switching point to 16 cm³; major reduction in melt volume at transition, simulating considerable early closing of non-return valve, dramatically changing packing dynamics |
+| 23    | 406_switching-point-15        | 98     | Decreased switching point to 15 cm³; extreme reduction in melt volume at transition, simulating major early closing of non-return valve, significantly impacting part quality and dimensions |
+| 24    | 407_switching-point-14        | 108    | Decreased switching point to 14 cm³; severe reduction in melt volume at transition, representing critical deviation in process control with pronounced effect on cavity pressure development |
+| 25    | 408_switching-point-13        | 96     | Decreased switching point to 13 cm³; minimal melt volume at transition, representing extreme deviation in process control with possible incomplete filling prior to packing phase initiation |
+| 26    | 409_switching-point-22-2      | 100    | Second reference condition with 22 cm³ switching point; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
+| 27    | 410_switching-point-24        | 98     | Increased switching point to 24 cm³; minor increase in melt volume at transition, simulating slight delay in non-return valve closing behavior, modifying filling-packing relationship |
+| 28    | 411_switching-point-26        | 95     | Increased switching point to 26 cm³; moderate increase in melt volume at transition, simulating noticeable delay in non-return valve closing, substantially altering packing phase initiation |
+| 29    | 412_switching-point-28        | 102    | Increased switching point to 28 cm³; significant increase in melt volume at transition, simulating substantial delay in non-return valve closing, considerably changing process dynamics |
+| 30    | 413_switching-point-30        | 100    | Increased switching point to 30 cm³; major increase in melt volume at transition, simulating considerable delay in non-return valve closing, dramatically altering pressure profile |
+| 31    | 414_switching-point-32        | 104    | Increased switching point to 32 cm³; extreme increase in melt volume at transition, simulating critical delay in non-return valve closing with potential risk of flash formation |
+| 32    | 501_injection-velocity-030-1  | 350    | First reference condition with 30 cm³/s primary injection velocity; standard setting recorded in first test series for baseline comparison of flow behavior and filling patterns |
+| 33    | 502_injection-velocity-050    | 100    | Increased primary injection velocity to 50 cm³/s; moderately accelerated melt flow during filling phase, simulating minor variation in velocity control of screw movement |
+| 34    | 503_injection-velocity-070    | 98     | Increased primary injection velocity to 70 cm³/s; substantially accelerated melt flow during filling phase, simulating moderate variation in velocity control with altered shear conditions |
+| 35    | 504_injection-velocity-090    | 110    | Increased primary injection velocity to 90 cm³/s; significantly accelerated melt flow during filling phase, simulating considerable variation in velocity control with pronounced shear effects |
+| 36    | 505_injection-velocity-110    | 98     | Increased primary injection velocity to 110 cm³/s; highly accelerated melt flow during filling phase, simulating major variation in velocity control with potential fiber orientation changes |
+| 37    | 506_injection-velocity-130    | 130    | Increased primary injection velocity to 130 cm³/s; dramatically accelerated melt flow during filling phase, simulating extreme variation in velocity control with altered pressure development |
+| 38    | 507_injection-velocity-150    | 98     | Increased primary injection velocity to 150 cm³/s; extremely accelerated melt flow during filling phase, creating severe shear conditions and potentially affecting material properties |
+| 39    | 508_injection-velocity-170    | 102    | Increased primary injection velocity to 170 cm³/s; maximum accelerated melt flow during filling phase, creating critical shear conditions with high potential for molded-in stress |
+| 40    | 509_injection-velocity-030-2  | 100    | Second reference condition with 30 cm³/s primary injection velocity; repeat of standard setting recorded in second test series to verify reproducibility across testing periods |
+| 41    | 510_injection-velocity-025    | 138    | Decreased primary injection velocity to 25 cm³/s; slightly slowed melt flow during filling phase, simulating minor reduction in screw movement control with reduced shear conditions |
+| 42    | 511_injection-velocity-020    | 106    | Decreased primary injection velocity to 20 cm³/s; moderately slowed melt flow during filling phase, simulating significant reduction in screw movement control with minimal shear |
+| 43    | 512_injection-velocity-015    | 98     | Decreased primary injection velocity to 15 cm³/s; dramatically slowed melt flow during filling phase, simulating extreme reduction in screw movement control with potential for premature freezing |
 
 ### JSON File Structure
 Each JSON file represents a complete screw driving operation with the following structure:
@@ -208,50 +208,50 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 
 | NR    | Name                          | Samples | #OK  | #NOK | %OK   | %NOK  |
 |-------|-------------------------------|---------|------|------|-------|-------|
-| 0     | 001_reference_01              | 240     | 238  | 2    | 99.17 | 0.83  |
-| 1     | 101_cooling_time_25           | 269     | 264  | 5    | 98.14 | 1.86  |
-| 2     | 102_cooling_time_26           | 237     | 237  | 0    | 100.0 | 0.0   |
-| 3     | 103_cooling_time_27           | 232     | 232  | 0    | 100.0 | 0.0   |
-| 4     | 104_cooling_time_28           | 236     | 236  | 0    | 100.0 | 0.0   |
-| 5     | 105_cooling_time_29           | 200     | 200  | 0    | 100.0 | 0.0   |
-| 6     | 106_cooling_time_30           | 156     | 156  | 0    | 100.0 | 0.0   |
-| 7     | 107_cooling_time_25           | 190     | 189  | 1    | 99.47 | 0.53  |
-| 8     | 201_mold_temperature_30       | 252     | 251  | 1    | 99.6  | 0.4   |
-| 9     | 202_mold_temperature_35       | 160     | 160  | 0    | 100.0 | 0.0   |
-| 10    | 203_mold_temperature_45       | 330     | 330  | 0    | 100.0 | 0.0   |
-| 11    | 204_mold_temperature_55       | 248     | 248  | 0    | 100.0 | 0.0   |
-| 12    | 205_mold_temperature_65       | 166     | 166  | 0    | 100.0 | 0.0   |
-| 13    | 301_glass_fiber_content_30    | 326     | 325  | 1    | 99.69 | 0.31  |
-| 14    | 302_glass_fiber_content_25    | 268     | 268  | 0    | 100.0 | 0.0   |
-| 15    | 303_glass_fiber_content_20    | 274     | 244  | 30   | 89.05 | 10.95 |
-| 16    | 304_glass_fiber_content_15    | 254     | 168  | 86   | 66.14 | 33.86 |
-| 17    | 305_glass_fiber_content_10    | 104     | 59   | 45   | 56.73 | 43.27 |
-| 18    | 401_switching_point_22_1      | 352     | 348  | 4    | 98.86 | 1.14  |
-| 19    | 402_switching_point_20        | 205     | 202  | 3    | 98.54 | 1.46  |
-| 20    | 403_switching_point_18        | 100     | 99   | 1    | 99.0  | 1.0   |
-| 21    | 404_switching_point_17        | 100     | 99   | 1    | 99.0  | 1.0   |
-| 22    | 405_switching_point_16        | 154     | 152  | 2    | 98.7  | 1.3   |
-| 23    | 406_switching_point_15        | 98      | 98   | 0    | 100.0 | 0.0   |
-| 24    | 407_switching_point_14        | 108     | 108  | 0    | 100.0 | 0.0   |
-| 25    | 408_switching_point_13        | 96      | 95   | 1    | 98.96 | 1.04  |
-| 26    | 409_switching_point_22_2      | 100     | 100  | 0    | 100.0 | 0.0   |
-| 27    | 410_switching_point_24        | 98      | 98   | 0    | 100.0 | 0.0   |
-| 28    | 411_switching_point_26        | 95      | 90   | 5    | 94.74 | 5.26  |
-| 29    | 412_switching_point_28        | 102     | 101  | 1    | 99.02 | 0.98  |
-| 30    | 413_switching_point_30        | 100     | 96   | 4    | 96.0  | 4.0   |
-| 31    | 414_switching_point_32        | 104     | 101  | 3    | 97.12 | 2.88  |
-| 32    | 501_injection_velocity_030_1  | 350     | 346  | 4    | 98.86 | 1.14  |
-| 33    | 502_injection_velocity_050    | 100     | 99   | 1    | 99.0  | 1.0   |
-| 34    | 503_injection_velocity_070    | 98      | 97   | 1    | 98.98 | 1.02  |
-| 35    | 504_injection_velocity_090    | 110     | 110  | 0    | 100.0 | 0.0   |
-| 36    | 505_injection_velocity_110    | 98      | 98   | 0    | 100.0 | 0.0   |
-| 37    | 506_injection_velocity_130    | 130     | 130  | 0    | 100.0 | 0.0   |
-| 38    | 507_injection_velocity_150    | 98      | 98   | 0    | 100.0 | 0.0   |
-| 39    | 508_injection_velocity_170    | 102     | 102  | 0    | 100.0 | 0.0   |
-| 40    | 509_injection_velocity_030_2  | 100     | 100  | 0    | 100.0 | 0.0   |
-| 41    | 510_injection_velocity_025    | 138     | 135  | 3    | 97.83 | 2.17  |
-| 42    | 511_injection_velocity_020    | 106     | 105  | 1    | 99.06 | 0.94  |
-| 43    | 512_injection_velocity_015    | 98      | 96   | 2    | 97.96 | 2.04  |
+| 0     | 001_control-group-01          | 240     | 238  | 2    | 99.17 | 0.83  |
+| 1     | 101_cooling-time-25-1         | 269     | 264  | 5    | 98.14 | 1.86  |
+| 2     | 102_cooling-time-26           | 237     | 237  | 0    | 100.0 | 0.0   |
+| 3     | 103_cooling-time-27           | 232     | 232  | 0    | 100.0 | 0.0   |
+| 4     | 104_cooling-time-28           | 236     | 236  | 0    | 100.0 | 0.0   |
+| 5     | 105_cooling-time-29           | 200     | 200  | 0    | 100.0 | 0.0   |
+| 6     | 106_cooling-time-30           | 156     | 156  | 0    | 100.0 | 0.0   |
+| 7     | 107_cooling-time-25-2         | 190     | 189  | 1    | 99.47 | 0.53  |
+| 8     | 201_mold-temperature-30       | 252     | 251  | 1    | 99.6  | 0.4   |
+| 9     | 202_mold-temperature-35       | 160     | 160  | 0    | 100.0 | 0.0   |
+| 10    | 203_mold-temperature-45       | 330     | 330  | 0    | 100.0 | 0.0   |
+| 11    | 204_mold-temperature-55       | 248     | 248  | 0    | 100.0 | 0.0   |
+| 12    | 205_mold-temperature-65       | 166     | 166  | 0    | 100.0 | 0.0   |
+| 13    | 301_glass-fiber-content-30    | 326     | 325  | 1    | 99.69 | 0.31  |
+| 14    | 302_glass-fiber-content-25    | 268     | 268  | 0    | 100.0 | 0.0   |
+| 15    | 303_glass-fiber-content-20    | 274     | 244  | 30   | 89.05 | 10.95 |
+| 16    | 304_glass-fiber-content-15    | 254     | 168  | 86   | 66.14 | 33.86 |
+| 17    | 305_glass-fiber-content-10    | 104     | 59   | 45   | 56.73 | 43.27 |
+| 18    | 401_switching-point-22-1      | 352     | 348  | 4    | 98.86 | 1.14  |
+| 19    | 402_switching-point-20        | 205     | 202  | 3    | 98.54 | 1.46  |
+| 20    | 403_switching-point-18        | 100     | 99   | 1    | 99.0  | 1.0   |
+| 21    | 404_switching-point-17        | 100     | 99   | 1    | 99.0  | 1.0   |
+| 22    | 405_switching-point-16        | 154     | 152  | 2    | 98.7  | 1.3   |
+| 23    | 406_switching-point-15        | 98      | 98   | 0    | 100.0 | 0.0   |
+| 24    | 407_switching-point-14        | 108     | 108  | 0    | 100.0 | 0.0   |
+| 25    | 408_switching-point-13        | 96      | 95   | 1    | 98.96 | 1.04  |
+| 26    | 409_switching-point-22-2      | 100     | 100  | 0    | 100.0 | 0.0   |
+| 27    | 410_switching-point-24        | 98      | 98   | 0    | 100.0 | 0.0   |
+| 28    | 411_switching-point-26        | 95      | 90   | 5    | 94.74 | 5.26  |
+| 29    | 412_switching-point-28        | 102     | 101  | 1    | 99.02 | 0.98  |
+| 30    | 413_switching-point-30        | 100     | 96   | 4    | 96.0  | 4.0   |
+| 31    | 414_switching-point-32        | 104     | 101  | 3    | 97.12 | 2.88  |
+| 32    | 501_injection-velocity-030-1  | 350     | 346  | 4    | 98.86 | 1.14  |
+| 33    | 502_injection-velocity-050    | 100     | 99   | 1    | 99.0  | 1.0   |
+| 34    | 503_injection-velocity-070    | 98      | 97   | 1    | 98.98 | 1.02  |
+| 35    | 504_injection-velocity-090    | 110     | 110  | 0    | 100.0 | 0.0   |
+| 36    | 505_injection-velocity-110    | 98      | 98   | 0    | 100.0 | 0.0   |
+| 37    | 506_injection-velocity-130    | 130     | 130  | 0    | 100.0 | 0.0   |
+| 38    | 507_injection-velocity-150    | 98      | 98   | 0    | 100.0 | 0.0   |
+| 39    | 508_injection-velocity-170    | 102     | 102  | 0    | 100.0 | 0.0   |
+| 40    | 509_injection-velocity-030-2  | 100     | 100  | 0    | 100.0 | 0.0   |
+| 41    | 510_injection-velocity-025    | 138     | 135  | 3    | 97.83 | 2.17  |
+| 42    | 511_injection-velocity-020    | 106     | 105  | 1    | 99.06 | 0.94  |
+| 43    | 512_injection-velocity-015    | 98      | 96   | 2    | 97.96 | 2.04  |
 
 ### Collection Timeline
 
