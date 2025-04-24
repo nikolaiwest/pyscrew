@@ -2,11 +2,11 @@
 
 <!-- Dataset Information -->
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15123922.svg)](https://zenodo.org/uploads/15123922)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14729547.svg)](https://zenodo.org/uploads/14729547)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-12500_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
-[![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Version](https://img.shields.io/badge/Version-v1.2-blue)](https://github.com/nikolaiwest/pyscrew)
 [![Updated](https://img.shields.io/badge/Updated-2025/04/17-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
@@ -257,6 +257,8 @@ The full text of this license is available at: https://creativecommons.org/licen
 
 * For non-academic work, please include the following attribution:
 
-  > Screw Driving Dataset - s02_variations-in-surface-friction by Nikolai West @ RIF/IPS; Source: https://github.com/nikolaiwest/pyscrew; DOI: 10.5281/zenodo.15123922
+  > Screw Driving Dataset - s02_variations-in-surface-friction by Nikolai West @ RIF/IPS; 
+  Source: [github.com/nikolaiwest/pyscrew](https://github.com/nikolaiwest/pyscrew);
+  DOI: [10.5281/zenodo.14729547](https://doi.org/10.5281/zenodo.14729547)
 
 *Copyright (c) 2025 Nikolai West @ RIF/IPS*

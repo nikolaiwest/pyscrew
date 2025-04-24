@@ -2,11 +2,11 @@
 
 <!-- Dataset Information -->
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15123922.svg)](https://zenodo.org/uploads/15123922)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14729547.svg)](https://zenodo.org/uploads/14729547)
 [![Dataset Size](https://img.shields.io/badge/Dataset_Size-1800_samples-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Version Information -->
-[![Version](https://img.shields.io/badge/Version-v1.2.0-blue)](https://github.com/nikolaiwest/pyscrew)
+[![Version](https://img.shields.io/badge/Version-v1.2-blue)](https://github.com/nikolaiwest/pyscrew)
 [![Updated](https://img.shields.io/badge/Updated-2025/04/17-blue)](https://github.com/nikolaiwest/pyscrew)
 
 <!-- Publication Information -->
@@ -252,8 +252,7 @@ Recommended approaches:
 
 ## Citations
 If using this dataset, please cite:
-- West, N., & Deuse, J. (2025). Industrial screw driving dataset collection: Time series data for process monitoring and anomaly detection (v1.2.0) [Data set]. Nikolai West.
-
+- West, N., & Deuse, J. (2025). Industrial screw driving dataset collection: Time series data for process monitoring and anomaly detection [Data set]. https://doi.org/10.5281/zenodo.14729547
 *We are currently not planning to publish a paper focussing s03, so please simply cite the zenodo dataset when using the data.*
 
 ## Repository
@@ -297,10 +296,12 @@ The full text of this license is available at: https://creativecommons.org/licen
 
 * When using this dataset in academic or research work, please cite:
 
-  > West, N., & Deuse, J. (2025). Industrial screw driving dataset collection: Time series data for process monitoring and anomaly detection (v1.2.0) [Data set]. Nikolai West.
+  > West, N., & Deuse, J. (2025). Industrial screw driving dataset collection: Time series data for process monitoring and anomaly detection [Data set]. https://doi.org/10.5281/zenodo.14729547
 
 * For non-academic work, please include the following attribution:
 
-  > Screw Driving Dataset - s03_variations-in-assembly-conditions-1 by Nikolai West @ RIF/IPS; Source: https://github.com/nikolaiwest/pyscrew; DOI: 10.5281/zenodo.15123922
+  > Screw Driving Dataset - s03_variations-in-assembly-conditions-1 by Nikolai West @ RIF/IPS; 
+  Source: [github.com/nikolaiwest/pyscrew](https://github.com/nikolaiwest/pyscrew);
+  DOI: [10.5281/zenodo.14729547](https://doi.org/10.5281/zenodo.14729547)
 
 *Copyright (c) 2025 Nikolai West @ RIF/IPS*
