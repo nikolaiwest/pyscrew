@@ -10,29 +10,32 @@ a series of configurable transformations:
 3. Time point deduplication (optional)
 4. Measurement interpolation (optional)
 5. Length normalization (optional)
-6. Output validation and logging
+6. Dataset conversion for output
+7. Output validation and logging
 
-Each transformation is implemented as a scikit-learn transformer, allowing for:
+Each transformation is implemented as a scikit-learn transformer that accepts a
+PipelineConfig object, allowing for:
 - Consistent interface across transformations
-- Easy pipeline configuration
+- Centralized configuration management
 - Extensibility for new transformations
 """
 
-from pathlib import Path
-from typing import Dict, List, Union, cast
+from typing import Dict, List, cast
 
 from sklearn.pipeline import Pipeline
 
 from pyscrew.config import PipelineConfig
 from pyscrew.core import ScrewDataset
-from pyscrew.transformers import (
+from pyscrew.utils.logger import get_logger
+
+from .transformers import (
+    DatasetConversionTransformer,
     HandleDuplicatesTransformer,
     HandleLengthsTransformer,
     HandleMissingsTransformer,
     PipelineLoggingTransformer,
     UnpackStepsTransformer,
 )
-from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -71,16 +74,16 @@ def create_processing_pipeline(config: PipelineConfig) -> Pipeline:
        - Ensures all measurement sequences have equal length
        - Pads shorter sequences or truncates longer ones
 
-    6. Output State Logging:
+    6. Dataset Conversion:
+       - Converts the dataset to the final output format
+       - Applies any final transformations needed for output
+
+    7. Output State Logging:
        - Validates processed data
        - Logs transformation results
 
     Args:
-        config: Pipeline configuration including:
-            - handle_duplicates: Which duplicates to keep? ("first", "last" or "mean")
-            - handle_missings: How to handle missing values? ("mean", "zero", or float value)
-            - handle_lengths: Desired length for all sequences (int)
-            - output_format: Desired output format ("numpy", "dataframe", "list")
+        config: Complete pipeline configuration object
 
     Returns:
         Configured scikit-learn Pipeline ready for execution
@@ -91,48 +94,44 @@ def create_processing_pipeline(config: PipelineConfig) -> Pipeline:
     try:
         steps = []
 
-        # 1. Add input logging transformer
-        steps.append(("log_in", PipelineLoggingTransformer("Input")))
+        # 1. Add input logging transformer (initial step)
+        logger.info("Adding input_logging transformer to pipeline")
+        steps.append(("input_logging", PipelineLoggingTransformer(config)))
 
-        # 2. Add step unpacking transformer
-        steps.append(
-            ("unpack", UnpackStepsTransformer(include_steps=True, include_classes=True))
-        )
+        # 2. Add step unpacking transformer (required step)
+        logger.info("Adding step_unpacking transformer to pipeline")
+        steps.append(("step_unpacking", UnpackStepsTransformer(config)))
 
         # 3. Add duplicate value handler (if configured)
         if config.handle_duplicates:
-            logger.info(f"Adding duplicate handler with {config.handle_duplicates}")
-            steps.append(("dup", HandleDuplicatesTransformer(config.handle_duplicates)))
+            logger.info(f"Adding duplicate handling with {config.handle_duplicates}")
+            steps.append(("duplicate_handling", HandleDuplicatesTransformer(config)))
 
         # 4. Add missing value handler (if configured)
         if config.handle_missings:
-            logger.info(f"Adding missing value handler with {config.handle_missings}")
-            steps.append(("mis", HandleMissingsTransformer(config.handle_missings)))
+            logger.info(f"Adding handling of missings with {config.handle_missings}")
+            steps.append(("missing_value_handling", HandleMissingsTransformer(config)))
 
         # 5. Add length normalization handler (if configured)
         if config.target_length:
-            logger.info(
-                f"Adding length normalization handler with target length {config.target_length}"
-            )
-            steps.append(
-                (
-                    "lengths",
-                    HandleLengthsTransformer(
-                        target_length=config.target_length,
-                        padding_value=config.padding_value,
-                        padding_position=config.padding_position,
-                        cutoff_position=config.cutoff_position,
-                    ),
-                )
-            )
+            logger.info(f"Adding length normalization with {config.target_length}")
+            steps.append(("length_normalization", HandleLengthsTransformer(config)))
 
-        # 6. Add output logging transformer
-        steps.append(("log_out", PipelineLoggingTransformer("Output")))
+        # 6. Add dataset conversion transformer (if configured)
+        if config.output_format:
+            logger.info(f"Adding dataset conversion with {config.output_format}")
+            steps.append(("dataset_conversion", DatasetConversionTransformer(config)))
+
+        # 7. Add output logging transformer (final step)
+        logger.info("Adding output_logging transformer to pipeline")
+        steps.append(("output_logging", PipelineLoggingTransformer(config, "Output")))
 
         return Pipeline(steps)
 
     except Exception as e:
-        raise ProcessingError(f"Failed to create processing pipeline: {str(e)}") from e
+        error_msg = f"Failed to create processing pipeline: {str(e)}"
+        logger.error(error_msg)
+        raise ProcessingError(error_msg) from e
 
 
 def process_data(pipeline_config: PipelineConfig) -> Dict[str, List[float]]:
@@ -146,17 +145,16 @@ def process_data(pipeline_config: PipelineConfig) -> Dict[str, List[float]]:
     4. Returns processed results
 
     Args:
-        data_path: Path to directory containing JSON measurement files
-        config: Pipeline configuration from ConfigSchema
+        pipeline_config: Complete pipeline configuration with scenario and processing settings
 
     Returns:
         Dictionary containing processed measurements with keys:
-            - "time values": List of time measurements
-            - "torque values": List of torque measurements
-            - "angle values": List of angle measurements
-            - "gradient values": List of gradient measurements
-            - "step values": List of step indicators
-            - "class labels": List of class labels
+            - "time_values": List of time measurements
+            - "torque_values": List of torque measurements
+            - "angle_values": List of angle measurements
+            - "gradient_values": List of gradient measurements
+            - "step_values": List of step indicators
+            - "class_labels": List of class labels
 
     Raises:
         ProcessingError: If any stage of processing fails
@@ -164,20 +162,14 @@ def process_data(pipeline_config: PipelineConfig) -> Dict[str, List[float]]:
             - Pipeline configuration issues
             - Transformation failures
     """
-    try:
-        # Create dataset from configuration
-        dataset = ScrewDataset.from_config(pipeline_config)
+    # Create dataset from configuration
+    dataset = ScrewDataset.from_config(pipeline_config)
 
-        # Create and execute pipeline
-        pipeline = create_processing_pipeline(pipeline_config)
-        processed_dataset = cast(ScrewDataset, pipeline.fit_transform(dataset))
+    # Create and execute pipeline
+    pipeline = create_processing_pipeline(pipeline_config)
 
-        # Return the processed data dictionary
-        if not processed_dataset.processed_data:
-            raise ProcessingError("Pipeline did not produce any processed data")
+    # Apply cast to help type checker recognize that pipeline.fit_transform maintains ScrewDataset type
+    # This doesn't change the runtime behavior, just helps with static type checking
+    processed_dataset = cast(ScrewDataset, pipeline.fit_transform(dataset))
 
-        return processed_dataset.processed_data
-
-    except Exception as e:
-        logger.error(f"Processing failed: {str(e)}")
-        raise ProcessingError(f"Failed to process data: {str(e)}") from e
+    return processed_dataset.processed_data

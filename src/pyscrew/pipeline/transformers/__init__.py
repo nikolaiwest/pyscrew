@@ -15,6 +15,7 @@ from .handle_lengths import HandleLengthsTransformer
 from .handle_missings import HandleMissingsTransformer
 from .pipeline_logging import PipelineLoggingTransformer
 from .unpack_steps import UnpackStepsTransformer
+from .convert_dataset import DatasetConversionTransformer
 
 __all__ = [
     "PipelineLoggingTransformer",
@@ -22,4 +23,5 @@ __all__ = [
     "HandleDuplicatesTransformer",
     "HandleMissingsTransformer",
     "HandleLengthsTransformer",
+    "DatasetConversionTransformer",
 ]

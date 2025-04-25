@@ -2,7 +2,7 @@
 Transformer for organizing raw screw step data into measurement collections.
 
 This transformer restructures the hierarchical step-based data from ScrewDataset
-into measurement-oriented collections for easier analysis. It handles the 
+into measurement-oriented collections for easier analysis. It handles the
 transformation from:
 
     ScrewRun
@@ -22,7 +22,7 @@ to:
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from pyscrew.utils.data_model import JsonFields, ScrewDataset
+from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -53,7 +53,7 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
         >>> # Access measurements for first run
         >>> first_run_torque = processed.processed_data[measurements.TORQUE][0]
         >>> first_run_steps = processed.processed_data[measurements.STEP][0]
-        >>> first_run_class = processed.processed_data["class_labels"][0]
+        >>> first_run_class = processed.processed_data["class_value"][0]
         >>> print(f"Run has {len(first_run_torque)} measurements")
         >>> print(f"From steps: {set(first_run_steps)}")  # e.g., {0,1,2,3}
         >>> print(f"Class label: {first_run_class}")
@@ -139,6 +139,6 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
                     )
             # Add class indicators if requested (one per run)
             if self.include_classes:
-                dataset.processed_data[self.measurements.CLASS].append(run.class_label)
+                dataset.processed_data[self.measurements.CLASS].append(run.class_value)
 
         return dataset

@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from pyscrew.utils.data_model import JsonFields, ScrewDataset
+from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)

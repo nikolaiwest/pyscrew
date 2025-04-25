@@ -19,7 +19,7 @@ import numpy as np
 from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from pyscrew.utils.data_model import JsonFields, ScrewDataset
+from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -301,7 +301,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
         if JsonFields.Measurements.STEP in dataset.processed_data:
             processed_data[JsonFields.Measurements.STEP] = []
 
-        # Include class_labels if it exists in input
+        # Include class_value if it exists in input
         if JsonFields.Measurements.CLASS in dataset.processed_data:
             processed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
                 JsonFields.Measurements.CLASS

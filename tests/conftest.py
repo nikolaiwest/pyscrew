@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from pyscrew.utils.data_model import JsonFields, ScrewDataset
+from pyscrew.core import JsonFields, ScrewDataset
 
 
 @pytest.fixture(scope="session")
@@ -41,9 +41,9 @@ class MockStep:
 class MockRun:
     """Mock ScrewRun for testing."""
 
-    def __init__(self, steps, class_label):
+    def __init__(self, steps, class_value):
         self.steps = steps
-        self.class_label = class_label
+        self.class_value = class_value
 
 
 @pytest.fixture
@@ -99,7 +99,7 @@ def basic_screw_dataset():
         gradient=[3.1 + i * 0.1 for i in range(5)],
     )
 
-    run = MockRun(steps=[step1, step2, step3, step4], class_label=0)
+    run = MockRun(steps=[step1, step2, step3, step4], class_value=0)
     dataset.screw_runs = [run]
 
     return dataset
