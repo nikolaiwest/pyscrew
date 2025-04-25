@@ -1,3 +1,3 @@
-def validate_data() -> None:
+def validate_data(data, config) -> None:
     """Placeholder for data validation."""
     pass

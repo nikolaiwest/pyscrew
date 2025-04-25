@@ -13,12 +13,13 @@ Key Features:
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Literal
+from typing import Dict, List
 
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from pyscrew.config import PipelineConfig
 from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
@@ -45,14 +46,7 @@ class DuplicateStats:
 
 
 class DuplicateProcessingError(Exception):
-    """Raised when duplicate processing fails.
-
-    This can occur due to:
-        - Invalid measurement data format
-        - Inconsistent array lengths
-        - NaN or infinite values
-        - Memory errors during processing
-    """
+    """Raised when duplicate processing fails."""
 
     pass
 
@@ -66,18 +60,20 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
     types of duplicates found.
 
     Args:
-        handle_duplicates: How to handle duplicate values
+        config: PipelineConfig object containing processing settings
+            The config.handle_duplicates field determines how to handle duplicates:
             - 'mean': Use average of measurements (default)
             - 'first': Keep first occurrence
             - 'last': Keep last occurrence
+            - None: Do not handle duplicates
 
     Attributes:
-        handle_duplicates: Current duplicate handling method
+        config: Configuration settings for the pipeline
         _stats: Statistics about processed duplicates
 
     Example:
-        >>> # Initialize transformer with first occurrence method
-        >>> transformer = HandleDuplicatesTransformer(handle_duplicates='first')
+        >>> # Initialize transformer with pipeline config
+        >>> transformer = HandleDuplicatesTransformer(config)
         >>>
         >>> # Process dataset
         >>> processed = transformer.fit_transform(dataset)
@@ -95,10 +91,9 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
         ValueError: If an invalid method is specified
     """
 
-    VALID_METHODS = Literal["first", "last", "mean"]
-
-    def __init__(self, handle_duplicates: VALID_METHODS = "mean") -> None:
-        self.handle_duplicates = handle_duplicates
+    def __init__(self, config: PipelineConfig) -> None:
+        """Initialize transformer with pipeline configuration."""
+        self.config = config
         self._stats = DuplicateStats()
 
     def _validate_arrays(
@@ -167,10 +162,10 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
         try:
             self._validate_arrays(time, torque, angle, gradient, steps)
 
-            if self.handle_duplicates == "first":
+            if self.config.handle_duplicates == "first":
                 _, unique_indices = np.unique(time, return_index=True)
                 mask = np.isin(np.arange(len(time)), unique_indices)
-            elif self.handle_duplicates == "last":
+            elif self.config.handle_duplicates == "last":
                 _, unique_indices = np.unique(time[::-1], return_index=True)
                 mask = np.isin(np.arange(len(time)), len(time) - 1 - unique_indices)
             else:  # mean method
@@ -221,7 +216,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                 return {k: v.tolist() for k, v in mean_values.items()}
 
             # For first/last methods
-            if self.handle_duplicates in ["first", "last"]:
+            if self.config.handle_duplicates in ["first", "last"]:
                 duplicate_indices = np.where(~mask)[0]
                 series_true_duplicates = 0
                 series_value_differences = 0
@@ -230,7 +225,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                     # Find the kept index
                     kept_idx = (
                         np.where(mask[: dup_idx + 1])[0][-1]
-                        if self.handle_duplicates == "first"
+                        if self.config.handle_duplicates == "first"
                         else np.where(mask[dup_idx:])[0][0] + dup_idx
                     )
 
@@ -274,18 +269,27 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
         Raises:
             ValueError: If handling method is invalid
         """
-        if self.handle_duplicates not in ["mean", "first", "last"]:
+        if self.config.handle_duplicates not in ["mean", "first", "last"]:
             raise ValueError(
-                f"Invalid method: {self.handle_duplicates}. "
+                f"Invalid method: {self.config.handle_duplicates}. "
                 f"Must be one of: mean, first, last"
             )
         return self
 
     def transform(self, dataset: ScrewDataset) -> ScrewDataset:
         """Transform the dataset by removing duplicates.
+
+        If config.handle_duplicates is None, returns the dataset unchanged.
+        Otherwise, processes the dataset to remove duplicates using the specified method.
+
         Note: The returned dataset maintains the same type structure
         with processed_data: Dict[str, List[List[float]]]
         """
+        # If no duplicate handling is configured, return dataset unchanged
+        if self.config.handle_duplicates is None:
+            logger.info("Duplicate handling disabled (handle_duplicates=None)")
+            return dataset
+
         # Reset statistics
         self._stats = DuplicateStats()
 
@@ -334,7 +338,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                         dataset.processed_data[JsonFields.Measurements.STEP][idx]
                     )
                 else:
-                    steps = np.array([])  # Empty array if no steps
+                    steps = np.zeros_like(time)  # Use zeros if no steps
 
                 self._stats.total_points += len(time)
 
@@ -387,7 +391,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
         )
 
         logger.info(
-            f"Completed duplicate removal using '{self.handle_duplicates}' method"
+            f"Completed duplicate removal using '{self.config.handle_duplicates}' method"
         )
         logger.info(
             f"Processed {stats.total_series:,} series with {stats.total_points:,} total points"

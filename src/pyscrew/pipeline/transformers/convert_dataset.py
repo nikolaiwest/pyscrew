@@ -13,11 +13,12 @@ Key Features:
     - Detailed validation and logging
 """
 
-from typing import Dict, List, Literal, Optional, Union, Any
 import copy
+from typing import Any, Dict, List
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from pyscrew.config import PipelineConfig
 from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
@@ -38,54 +39,41 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
     requirements and preserves metadata across conversions.
 
     Args:
-        output_format: Target format for conversion
-            - 'list': Nested Python lists (default)
-            - 'numpy': NumPy arrays
-            - 'dataframe': Pandas DataFrame
-        measurements: List of measurements to include (None means all)
-        include_metadata: Whether to include metadata in output
+        config: PipelineConfig object containing processing settings
+            The relevant fields are:
+            - output_format: Target format for conversion ('list', 'numpy', 'dataframe')
+            - measurements: List of measurements to include (None means all)
 
     Attributes:
-        output_format: Current output format
-        measurements: Selected measurements
-        include_metadata: Metadata inclusion flag
-        _stats: Statistics about the conversion process
+        config: Configuration settings for the pipeline
+        include_metadata: Whether to include metadata in output
+        _conversion_stats: Statistics about the conversion process
 
     Example:
-        >>> # Initialize transformer for DataFrame output
-        >>> transformer = DatasetConversionTransformer(output_format='dataframe')
+        >>> # Initialize transformer with pipeline config
+        >>> transformer = DatasetConversionTransformer(config)
         >>>
         >>> # Convert dataset
         >>> converted = transformer.fit_transform(dataset)
         >>>
-        >>> # Access data (now a DataFrame)
-        >>> df = converted.processed_data
+        >>> # Access data in the specified format
+        >>> data = converted.processed_data
 
     Raises:
         ConversionError: If conversion fails due to missing dependencies or data issues
         ValueError: If an invalid format is specified
     """
 
-    VALID_FORMATS = Literal["list", "numpy", "dataframe"]
-
-    def __init__(
-        self,
-        output_format: VALID_FORMATS = "list",
-        measurements: Optional[List[str]] = None,
-        include_metadata: bool = True,
-    ) -> None:
+    def __init__(self, config: PipelineConfig) -> None:
         """Initialize the dataset conversion transformer.
 
         Args:
-            output_format: Target format for data conversion
-            measurements: List of measurements to include (None for all)
-            include_metadata: Whether to include metadata in output
+            config: PipelineConfig object containing processing settings
         """
-        self.output_format = output_format
-        self.measurements = measurements
-        self.include_metadata = include_metadata
+        self.config = config
+        self.include_metadata = True  # Could be moved to config if needed
         self._conversion_stats = {
-            "format": output_format,
+            "format": config.output_format,
             "measurements_included": 0,
             "data_points_processed": 0,
         }
@@ -104,29 +92,37 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
             ValueError: If format is invalid
             ConversionError: If required dependencies are missing
         """
-        if self.output_format not in ["list", "numpy", "dataframe"]:
+        if self.config.output_format not in ["list", "numpy", "dataframe", "tensor"]:
             raise ValueError(
-                f"Invalid output format: {self.output_format}. "
-                f"Must be one of: list, numpy, dataframe"
+                f"Invalid output format: {self.config.output_format}. "
+                f"Must be one of: list, numpy, dataframe, tensor"
             )
 
         # Check for required dependencies based on format
-        if self.output_format == "numpy":
+        if self.config.output_format == "numpy":
             try:
                 import numpy as np  # noqa
             except ImportError:
                 raise ConversionError(
                     "NumPy is required for 'numpy' output format but not installed"
                 )
-        elif self.output_format == "dataframe":
+        elif self.config.output_format == "dataframe":
             try:
-                import pandas as pd  # noqa
                 import numpy as np  # noqa
+                import pandas as pd  # noqa
             except ImportError:
                 raise ConversionError(
                     "Pandas and NumPy are required for 'dataframe' output format but not installed"
                 )
-
+            """ 
+            elif self.config.output_format == "tensor":
+                try:
+                    import torch  # noqa
+                except ImportError:
+                    raise ConversionError(
+                        "PyTorch is required for 'tensor' output format but not installed"
+                    )
+            """
         return self
 
     def transform(self, dataset: ScrewDataset) -> ScrewDataset:
@@ -141,24 +137,41 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
         Raises:
             ConversionError: If conversion fails
         """
+        # If using default list format, just return the dataset
+        if self.config.output_format == "list":
+            logger.info("Output format is 'list' - keeping the default format")
+            return dataset
+
         try:
             # Make a copy to avoid modifying the original
             processed_data = copy.deepcopy(dataset.processed_data)
 
             # Filter measurements if specified
-            if self.measurements:
+            if self.config.measurements:
+                measurements_map = {
+                    "time": JsonFields.Measurements.TIME,
+                    "torque": JsonFields.Measurements.TORQUE,
+                    "angle": JsonFields.Measurements.ANGLE,
+                    "gradient": JsonFields.Measurements.GRADIENT,
+                }
+
                 fields_to_keep = []
-                for field in self.measurements:
-                    if field in processed_data:
-                        fields_to_keep.append(field)
+                for field in self.config.measurements:
+                    mapped_field = measurements_map.get(field)
+                    if mapped_field in processed_data:
+                        fields_to_keep.append(mapped_field)
                     else:
                         logger.warning(
                             f"Requested measurement '{field}' not found in dataset"
                         )
 
-                # Always keep class labels if present
-                if JsonFields.Measurements.CLASS in processed_data:
-                    fields_to_keep.append(JsonFields.Measurements.CLASS)
+                # Always keep class labels and step values if present
+                for special_field in [
+                    JsonFields.Measurements.CLASS,
+                    JsonFields.Measurements.STEP,
+                ]:
+                    if special_field in processed_data:
+                        fields_to_keep.append(special_field)
 
                 # Filter to keep only requested measurements
                 processed_data = {
@@ -179,12 +192,12 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
 
             # Convert to requested format
             converted_data = self._convert_to_format(
-                processed_data, self.output_format, dataset
+                processed_data, self.config.output_format, dataset
             )
 
             # Add metadata back if requested
             if self.include_metadata and metadata:
-                if self.output_format == "dataframe":
+                if self.config.output_format == "dataframe":
                     # For DataFrame, add as attributes
                     converted_data.attrs = metadata
                 else:
@@ -241,8 +254,8 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
 
         elif format_name == "dataframe":
             try:
-                import pandas as pd
                 import numpy as np
+                import pandas as pd
 
                 # For DataFrame, we need to restructure the data
                 # First, check if all series have the same length
@@ -304,7 +317,7 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                 if dfs:
                     combined_df = pd.concat(dfs, ignore_index=True)
                     logger.info(
-                        f"Converted data to DataFrame with {len(combined_df)} rows"
+                        f"Converted data to DataFrame with {len(combined_df):,} rows"
                     )
                     return combined_df
                 else:
@@ -315,6 +328,33 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                 raise ConversionError(
                     f"Failed to convert to DataFrame format: {str(e)}"
                 ) from e
+
+            """
+            elif format_name == "tensor":
+                try:
+                    import numpy as np
+                    import torch
+
+                    # Convert all values to PyTorch tensors via numpy
+                    tensor_data = {}
+                    for key, value in data.items():
+                        if key == JsonFields.Measurements.CLASS:
+                            # Handle class labels specially
+                            tensor_data[key] = torch.tensor(value)
+                        else:
+                            # Convert nested lists to tensors
+                            tensor_data[key] = torch.tensor(
+                                np.array(value, dtype=np.float32)
+                            )
+
+                    logger.info(f"Converted data to PyTorch tensors")
+                    return tensor_data
+
+                except Exception as e:
+                    raise ConversionError(
+                        f"Failed to convert to Tensor format: {str(e)}"
+                    ) from e
+            """
 
         else:
             raise ConversionError(f"Unsupported format: {format_name}")

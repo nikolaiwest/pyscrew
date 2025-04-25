@@ -15,12 +15,14 @@ Key Features:
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Literal, Union
+from typing import Dict, List
 
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, TransformerMixin
+from tqdm import tqdm
 
+from pyscrew.config import PipelineConfig
 from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
@@ -63,22 +65,22 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
     for step indicators.
 
     Args:
-        handle_missings: Interpolation method for missing values
+        config: PipelineConfig object containing processing settings
+            The config.handle_missings field determines how to handle missing values:
             - 'mean': Use linear interpolation (default)
             - 'zero': Fill gaps with zeros
             - float value: Fill gaps with specified value
-        target_interval: Desired time interval in seconds (default: 0.0012)
-        decimal_places: Number of decimal places for rounding (default: 4)
+            - None: Skip interpolation entirely
 
     Attributes:
-        handle_missings: Current interpolation method
-        target_interval: Current target interval for interpolation
-        decimal_places: Current decimal places for rounding
+        config: Configuration settings for the pipeline
+        target_interval: Time interval for interpolation (0.0012s by default)
+        decimal_places: Number of decimal places for rounding (4 by default)
         _stats: Statistics about processed interpolations
 
     Example:
-        >>> # Initialize transformer with custom method
-        >>> transformer = HandleMissingsTransformer(handle_missings='zero')
+        >>> # Initialize transformer with pipeline config
+        >>> transformer = HandleMissingsTransformer(config)
         >>>
         >>> # Process dataset
         >>> processed = transformer.fit_transform(dataset)
@@ -92,15 +94,11 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         ValueError: If invalid parameters are specified
     """
 
-    def __init__(
-        self,
-        handle_missings: Union[Literal["mean", "zero"], float] = "mean",
-        target_interval: float = 0.0012,
-        decimal_places: int = 4,
-    ) -> None:
-        self.handle_missings = handle_missings
-        self.target_interval = target_interval
-        self.decimal_places = decimal_places
+    def __init__(self, config: PipelineConfig) -> None:
+        """Initialize transformer with pipeline configuration."""
+        self.config = config
+        self.target_interval = 0.0012  # Standard time interval in seconds
+        self.decimal_places = 4  # Ideal number of decimal places when rounding
         self._stats = InterpolationStats()
 
     def _validate_arrays(
@@ -157,12 +155,11 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         time_target_arr = np.array(time_target)
         values_arr = np.array(values)
 
-        if self.handle_missings == "mean":
-            if not np.isclose(time_original_arr[0], 0.0):
-                return np.zeros_like(time_target_arr)
+        if self.config.handle_missings == "mean":
+            # Simply perform linear interpolation for all cases
             return np.interp(time_target_arr, time_original_arr, values_arr)
 
-        elif self.handle_missings == "zero":
+        elif self.config.handle_missings == "zero":
             result = np.zeros_like(time_target_arr)
 
             # Use isclose() with appropriate tolerances
@@ -180,7 +177,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
 
         else:
             try:
-                fill_value = float(self.handle_missings)
+                fill_value = float(self.config.handle_missings)
                 result = np.full_like(time_target_arr, fill_value)
 
                 matches = np.isclose(
@@ -197,7 +194,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
 
             except (TypeError, ValueError) as e:
                 raise ProcessingError(
-                    f"Invalid handle_missings value: {self.handle_missings}"
+                    f"Invalid handle_missings value: {self.config.handle_missings}"
                 ) from e
 
     def _to_float_list(self, values: NDArray[np.float64]) -> List[float]:
@@ -230,17 +227,23 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             raise ValueError("decimal_places must be non-negative")
         if not dataset.get_values(JsonFields.Measurements.TIME):
             raise ValueError("Dataset must contain time values")
-        if not isinstance(self.handle_missings, (str, float)):
-            raise ValueError("handle_missings must be 'mean', 'zero', or a float value")
-        if isinstance(self.handle_missings, str) and self.handle_missings not in [
-            "mean",
-            "zero",
-        ]:
-            raise ValueError("handle_missings string must be 'mean' or 'zero'")
+
+        # Validate config.handle_missings
+        if self.config.handle_missings not in ["mean", "zero", None]:
+            try:
+                float(self.config.handle_missings)
+            except (TypeError, ValueError):
+                raise ValueError(
+                    "handle_missings must be 'mean', 'zero', a float value, or None"
+                )
+
         return self
 
     def transform(self, dataset: ScrewDataset) -> ScrewDataset:
         """Transform the dataset by interpolating to regular intervals.
+
+        If config.handle_missings is None, returns the dataset unchanged.
+        Otherwise, processes the dataset to interpolate missing values.
 
         Args:
             dataset: Input dataset to transform
@@ -251,6 +254,11 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         Raises:
             ProcessingError: If transformation fails
         """
+        # If no interpolation is configured, return dataset unchanged
+        if self.config.handle_missings is None:
+            logger.info("Missing value handling disabled (handle_missings=None)")
+            return dataset
+
         # Reset statistics
         self._stats = InterpolationStats()
 
@@ -277,7 +285,11 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             time_series = dataset.processed_data[JsonFields.Measurements.TIME]
             self._stats.total_series = len(time_series)
 
-            for idx in range(self._stats.total_series):
+            for idx in tqdm(
+                range(self._stats.total_series),
+                desc="Interpolating missing values",
+                leave=False,
+            ):
                 time_values = np.array(time_series[idx])
                 # Round end point to match our decimal places
                 end_time = time_values[-1]
@@ -359,7 +371,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         ) / stats.total_series
 
         logger.info(
-            f"Completed missing interpolation using '{self.handle_missings}' method (interval={self.target_interval:.4f})"
+            f"Completed missing interpolation using '{self.config.handle_missings}' method (interval={self.target_interval:.4f})"
         )
         logger.info(
             f"Processed {stats.total_series:,} series with {stats.total_original_points:,} total points"

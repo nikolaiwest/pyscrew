@@ -36,6 +36,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from pyscrew.config import PipelineConfig
 from pyscrew.core import JsonFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
@@ -71,23 +72,21 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
     require fixed-length inputs.
 
     Args:
-        target_length: Desired length for all sequences
-        padding_value: Value to use when padding shorter sequences
-        padding_position: Where to add padding ('pre' or 'post')
-        cutoff_position: Where to truncate longer sequences ('pre' or 'post')
+        config: PipelineConfig object containing processing settings
+            The relevant fields are:
+            - target_length: Desired length for all sequences
+            - padding_value: Value to use when padding shorter sequences
+            - padding_position: Where to add padding ('pre' or 'post')
+            - cutoff_position: Where to truncate longer sequences ('pre' or 'post')
+
+    Attributes:
+        config: Configuration settings for the pipeline
+        _stats: Statistics about length normalization
     """
 
-    def __init__(
-        self,
-        target_length: int,
-        padding_value: float = 0.0,
-        padding_position: str = "post",
-        cutoff_position: str = "post",
-    ):
-        self.target_length = target_length
-        self.padding_value = padding_value
-        self.padding_position = padding_position
-        self.cutoff_position = cutoff_position
+    def __init__(self, config: PipelineConfig):
+        """Initialize transformer with pipeline configuration."""
+        self.config = config
         self._stats = LengthNormalizationStats()
 
     def fit(self, X: ScrewDataset, y: Any = None) -> "HandleLengthsTransformer":
@@ -130,17 +129,17 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         for k, v in cycle_values.items():
             if k == JsonFields.Measurements.TIME:
                 truncated_sequences[k] = truncate_sequence(
-                    v, self.target_length, self.cutoff_position
+                    v, self.config.target_length, self.config.cutoff_position
                 )
             elif k == JsonFields.Measurements.STEP:
                 truncated_sequences[k] = truncate_sequence(
-                    v, self.target_length, self.cutoff_position
+                    v, self.config.target_length, self.config.cutoff_position
                 )
             elif k == JsonFields.Measurements.CLASS:
                 truncated_sequences[k] = v  # Do not change class values
             else:
                 truncated_sequences[k] = truncate_sequence(
-                    v, self.target_length, self.cutoff_position
+                    v, self.config.target_length, self.config.cutoff_position
                 )
 
         final_length = len(next(iter(truncated_sequences.values())))
@@ -183,20 +182,24 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         for k, v in cycle_values.items():
             if k == JsonFields.Measurements.TIME:
                 # Time gets padded with incrementing values
-                pad_len = self.target_length - len(v)
+                pad_len = self.config.target_length - len(v)
                 last_time = v[-1]
                 padding = [
                     round(last_time + (i + 1) * 0.0012, 4) for i in range(pad_len)
                 ]
                 padded_sequences[k] = (
-                    padding + v if self.padding_position == "pre" else v + padding
+                    padding + v
+                    if self.config.padding_position == "pre"
+                    else v + padding
                 )
             elif k == JsonFields.Measurements.STEP:
-                # Step padding simply adds a -1 to
-                pad_len = self.target_length - len(v)
+                # Step padding simply adds a -1
+                pad_len = self.config.target_length - len(v)
                 padding = [-1] * pad_len
                 padded_sequences[k] = (
-                    padding + v if self.padding_position == "pre" else v + padding
+                    padding + v
+                    if self.config.padding_position == "pre"
+                    else v + padding
                 )
             elif k == JsonFields.Measurements.CLASS:
                 # Class values remain unchanged
@@ -204,7 +207,10 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             else:
                 # Apply padding to other measurements
                 padded_sequences[k] = pad_sequence(
-                    v, self.target_length, self.padding_value, self.padding_position
+                    v,
+                    self.config.target_length,
+                    self.config.padding_value,
+                    self.config.padding_position,
                 )
 
         final_length = len(next(iter(padded_sequences.values())))
@@ -230,7 +236,7 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         """
         initial_length = len(next(iter(cycle_values.values())))
 
-        if initial_length > self.target_length:
+        if initial_length > self.config.target_length:
             equal_length_values, initial_length, final_length = self.apply_truncating(
                 cycle_values
             )
@@ -264,11 +270,16 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         Raises:
             ValueError: If measurement lists have inconsistent lengths
         """
+        # If target_length is None or 0, return dataset unchanged
+        if not self.config.target_length:
+            logger.info("Length normalization disabled (target_length=0)")
+            return dataset
+
         logger.info("Starting to apply equal lengths.")
-        logger.info(f"- 'target_length' : {self.target_length}")
-        logger.info(f"- 'padding_value' : {self.padding_value}")
-        logger.info(f"- 'padding_position' : {self.padding_position}")
-        logger.info(f"- 'cutoff_position' : {self.cutoff_position}")
+        logger.info(f"- 'target_length' : {self.config.target_length}")
+        logger.info(f"- 'padding_value' : {self.config.padding_value}")
+        logger.info(f"- 'padding_position' : {self.config.padding_position}")
+        logger.info(f"- 'cutoff_position' : {self.config.cutoff_position}")
 
         # Verify consistent lengths across measurements
         number_of_screw_runs = len(dataset.processed_data[JsonFields.Measurements.TIME])
@@ -304,25 +315,6 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             initial_lengths.append(initial_len)
             final_lengths.append(final_len)
 
-        # Handle step values separately to pad with -1
-        if JsonFields.Measurements.STEP in dataset.processed_data:
-            for i in range(number_of_screw_runs):
-                step_values = dataset.processed_data[JsonFields.Measurements.STEP][i]
-                if len(step_values) < self.target_length:
-                    pad_len = self.target_length - len(step_values)
-                    padding = [-1] * pad_len
-                    if self.padding_position == "pre":
-                        step_values = padding + step_values
-                    else:
-                        step_values = step_values + padding
-                transformed_data[JsonFields.Measurements.STEP].append(step_values)
-
-        # Ensure class values remain unchanged
-        if JsonFields.Measurements.CLASS in dataset.processed_data:
-            transformed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
-                JsonFields.Measurements.CLASS
-            ]
-
         # Update statistics
         self._stats.total_series = number_of_screw_runs
         self._stats.total_original_points = sum(initial_lengths)
@@ -346,8 +338,8 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             f"- Average change of length:\t{stats.avg_initial_length:.2f} -> {stats.avg_final_length:.2f}"
         )
         logger.info(
-            f"- Total points before normalization:\t{stats.total_original_points}"
+            f"- Total points before normalization:\t{stats.total_original_points:,}"
         )
         logger.info(
-            f"- Total points after normalization:\t{stats.total_normalized_points}"
+            f"- Total points after normalization:\t{stats.total_normalized_points:,}"
         )

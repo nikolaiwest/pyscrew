@@ -73,8 +73,8 @@ class PipelineConfig:
     def __init__(
         self,
         scenario_name: str,
-        measurements: Optional[List[str]] = None,
         scenario_classes: Optional[List[str]] = None,
+        measurements: Optional[List[str]] = None,
         screw_phases: Optional[List[int]] = None,
         screw_cycles: Optional[List[int]] = None,
         screw_positions: str = "both",
@@ -93,8 +93,8 @@ class PipelineConfig:
 
         Args:
             scenario_name: Scenario identifier (can be short code, long name, or full name)
-            measurements: Measurements to return (torque, angle, gradient, time)
             scenario_classes: List of scenario classes to include
+            measurements: Measurements to return (torque, angle, gradient, time)
             screw_phases: Screw phases to include (1-4)
             screw_cycles: Specific cycles to include
             screw_positions: Position to analyze (left, right, both)

@@ -16,8 +16,9 @@ The transformer is passive (does not modify data) and is primarily used for:
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from pyscrew.config import PipelineConfig
 from pyscrew.core import JsonFields, ScrewDataset
-from pyscrew.utils.logger import get_logger
+from pyscrew.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -32,18 +33,20 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
     dataset size and measurement completeness.
 
     Args:
-        name: Identifier for this logging point in the pipeline, used to
+        config: PipelineConfig object containing processing settings
+        name: Optional identifier for this logging point in the pipeline, used to
               distinguish between multiple logging transformers in the same pipeline
 
     Attributes:
+        config: Configuration settings for the pipeline
         name: String identifier for this transformer instance
 
     Example:
         >>> from sklearn.pipeline import Pipeline
         >>> pipeline = Pipeline([
-        ...     ("input_state", PipelineLoggingTransformer("Input")),
+        ...     ("input_state", PipelineLoggingTransformer(config, "Input")),
         ...     # ... processing transformers ...
-        ...     ("output_state", PipelineLoggingTransformer("Output"))
+        ...     ("output_state", PipelineLoggingTransformer(config, "Output"))
         ... ])
         >>> pipeline.fit_transform(dataset)
         Input - Fit: Dataset contains 100 runs
@@ -52,8 +55,15 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
         Output - Transform: Processing 100 runs
     """
 
-    def __init__(self, name: str = "Logger"):
-        """Initialize the transformer with a name for identification in logs."""
+    def __init__(self, config: PipelineConfig, name: str = "Pipeline logging"):
+        """
+        Initialize the transformer with config and a name for identification in logs.
+
+        Args:
+            config: PipelineConfig object containing processing settings
+            name: Optional identifier for logging clarity
+        """
+        self.config = config
         self.name = name
 
     def fit(self, dataset: ScrewDataset, y=None) -> "PipelineLoggingTransformer":
@@ -63,6 +73,7 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
         This method logs:
         - Total number of runs in the dataset
         - Number of runs containing each measurement type
+        - Selected configuration parameters relevant to this stage
 
         Args:
             dataset: ScrewDataset instance being processed
@@ -73,6 +84,7 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
         """
         logger.info(f"{self.name} - Fit: Dataset contains {len(dataset)} runs")
 
+        # Log measurements information
         measurements = JsonFields.Measurements()
         for measurement in [
             measurements.TIME,
@@ -82,6 +94,12 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
         ]:
             values = dataset.get_values(measurement)
             logger.info(f"{measurement}: {len(values)} runs")
+
+        # Log relevant configuration parameters
+        if self.config.measurements:
+            logger.info(f"Selected measurements: {self.config.measurements}")
+        if self.config.screw_phases:
+            logger.info(f"Selected screw phases: {self.config.screw_phases}")
 
         return self
 
@@ -96,4 +114,5 @@ class PipelineLoggingTransformer(BaseEstimator, TransformerMixin):
             Unmodified dataset, following scikit-learn transformer convention
         """
         logger.info(f"{self.name} - Transform: Processing {len(dataset)} runs")
+
         return dataset

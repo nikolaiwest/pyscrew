@@ -96,7 +96,7 @@ def create_processing_pipeline(config: PipelineConfig) -> Pipeline:
 
         # 1. Add input logging transformer (initial step)
         logger.info("Adding input_logging transformer to pipeline")
-        steps.append(("input_logging", PipelineLoggingTransformer(config)))
+        steps.append(("input_logging", PipelineLoggingTransformer(config, "Input")))
 
         # 2. Add step unpacking transformer (required step)
         logger.info("Adding step_unpacking transformer to pipeline")
