@@ -4,10 +4,10 @@ names:
   short: s01
   long: thread-degradation
   full: variations-in-thread-degradation
-data: # info to load from zenodo
-  record_id: 14887942
+data:
+  record_id: 15273503
   file_name: s01_variations-in-thread-degradation.zip
-  md5_checksum: 0c98e4f1cab8cbe88de0285b1a15aa56
+  md5_checksum: 5fb2ff35678544c7f17fcdadaa70d022
 metadata:
   author: RIF Institute for Research and Transfer e.V.
   description: > 

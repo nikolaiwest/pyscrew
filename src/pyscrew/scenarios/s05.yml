@@ -4,10 +4,10 @@ names:
   short: s05
   long: upper-workpiece
   full: variations-in-upper-workpiece-fabrication
-data: # TODO: Update after upload
-  record_id: 12345678
+data: 
+  record_id: 15273503
   file_name: s05_variations-in-upper-workpiece-fabrication.zip
-  md5_checksum: abcdefghij
+  md5_checksum: eab215fe08d38c30ca0366a0665c4bbd
 metadata:
   author: RIF Institute for Research and Transfer e.V.
   description: >
@@ -22,271 +22,271 @@ metadata:
     insights for quality control measures in plastic component production and assembly processes,
     as well as the detectability of material and process variations through fastening data analysis.
 classes:
-  101_glass_fiber_content_30:
+  101_glass-fiber-content-30:
     count: 80
     condition: normal
     description: >
       Standard reference material with 30% glass fiber content in the plastic granulate; 
       represents the baseline specification for the upper workpiece material composition with 
       optimal mechanical properties and flow characteristics
-  102_glass_fiber_content_28:
+  102_glass-fiber-content-28:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 28% by mixing base material with unreinforced granules of 
       the same base polymer; simulates minor material batch fluctuations with decreased 
       reinforcement properties
-  103_glass_fiber_content_26:
+  103_glass-fiber-content-26:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 26% by mixing base material with unreinforced granules of 
       the same base polymer; simulates moderate material batch fluctuations with noticeably 
       decreased reinforcement properties and altered flow behavior
-  104_glass_fiber_content_24:
+  104_glass-fiber-content-24:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 24% by mixing base material with unreinforced granules of 
       the same base polymer; simulates significant material batch fluctuations with substantially 
       decreased reinforcement properties and modified viscosity
-  105_glass_fiber_content_22:
+  105_glass-fiber-content-22:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 22% by mixing base material with unreinforced granules of 
       the same base polymer; simulates major material batch fluctuations with considerably 
       decreased reinforcement properties and pronounced changes in flow characteristics
-  106_glass_fiber_content_20:
+  106_glass-fiber-content-20:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 20% by mixing base material with unreinforced granules of 
       the same base polymer; simulates severe material batch fluctuations with compromised 
       mechanical properties and altered thermal behavior
-  107_glass_fiber_content_18:
+  107_glass-fiber-content-18:
     count: 80
     condition: faulty
     description: >
       Reduced glass fiber content to 18% by mixing base material with unreinforced granules of 
       the same base polymer; simulates extreme material batch fluctuations with substantially 
       reinforcement properties
-  201_recyclate_content_000:
+  201_recyclate-content-000:
     count: 80
     condition: normal
     description: >
       Standard reference material with 0% recyclate content; represents the baseline specification 
       using only virgin material with optimal and consistent mechanical properties
-  202_recyclate_content_010:
+  202_recyclate-content-010:
     count: 80
     condition: faulty
     description: >
       Addition of 10% regrind material to simulate minimal recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, introducing minor variations in 
       material properties and fiber length distribution
-  203_recyclate_content_020:
+  203_recyclate-content-020:
     count: 80
     condition: faulty
     description: >
       Addition of 20% regrind material to simulate moderate recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, introducing noticeable variations in 
       viscosity and mechanical properties
-  204_recyclate_content_030:
+  204_recyclate-content-030:
     count: 80
     condition: faulty
     description: >
       Addition of 30% regrind material to simulate significant recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, introducing substantial variations in 
       fiber length distribution and flow characteristics
-  205_recyclate_content_040:
+  205_recyclate-content-040:
     count: 80
     condition: faulty
     description: >
       Addition of 40% regrind material to simulate high recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, introducing considerable variations in 
       material homogeneity and mechanical performance
-  206_recyclate_content_050:
+  206_recyclate-content-050:
     count: 80
     condition: faulty
     description: >
       Addition of 50% regrind material to simulate very high recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, creating equal parts virgin and recycled 
       material with significantly altered viscosity profiles
-  207_recyclate_content_060:
+  207_recyclate-content-060:
     count: 80
     condition: faulty
     description: >
       Addition of 60% regrind material to simulate predominantly recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, creating a majority recyclate mixture with 
       pronounced changes in fiber orientation and length
-  208_recyclate_content_070:
+  208_recyclate-content-070:
     count: 80
     condition: faulty
     description: >
       Addition of 70% regrind material to simulate heavily recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, introducing major variations in flow 
       behavior and molecular weight distribution
-  209_recyclate_content_080:
+  209_recyclate-content-080:
     count: 80
     condition: faulty
     description: >
       Addition of 80% regrind material to simulate extensively recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, with only 20% virgin material remaining, 
       substantially affecting material consistency
-  210_recyclate_content_090:
+  210_recyclate-content-090:
     count: 80
     condition: faulty
     description: >
       Addition of 90% regrind material to simulate nearly complete recycled material use; regrind produced 
       from laboratory-milled workpieces of the same plastic, with minimal virgin material addition, 
       resulting in significantly degraded fiber reinforcement
-  211_recyclate_content_100:
+  211_recyclate-content-100:
     count: 80
     condition: faulty
     description: >
       Complete 100% regrind material to simulate full recyclate use; regrind produced from 
       laboratory-milled workpieces of the same plastic, using no virgin material, representing 
       extreme case with max variation in fiber length distribution and orientation
-  301_switching_point_15_1:
+  301_switching-point-15-1:
     count: 40
     condition: normal
     description: >
       First reference condition with 15 cm³ switching point; standard setting where system transitions 
       from velocity-controlled injection to pressure-controlled packing; recorded in first test series 
       for baseline comparison
-  302_switching_point_16:
+  302_switching-point-16:
     count: 40
     condition: faulty
     description: >
       Increased switching point to 16 cm³; minor change in transition from velocity-controlled injection 
       to pressure-controlled packing, simulating slight variance in non-return valve closing behavior
-  303_switching_point_17:
+  303_switching-point-17:
     count: 40
     condition: faulty
     description: >
       Increased switching point to 17 cm³; moderate change in transition from velocity-controlled injection 
       to pressure-controlled packing, simulating noticeable variance in non-return valve closing behavior
-  304_switching_point_18:
+  304_switching-point-18:
     count: 40
     condition: faulty
     description: >
       Increased switching point to 18 cm³; significant change in transition from velocity-controlled injection 
       to pressure-controlled packing, simulating substantial variance in non-return valve closing behavior
-  305_switching_point_19:
+  305_switching-point-19:
     count: 40
     condition: faulty
     description: >
       Increased switching point to 19 cm³; major change in transition from velocity-controlled injection 
       to pressure-controlled packing, simulating considerable variance in non-return valve closing behavior
-  306_switching_point_15_2:
+  306_switching-point-15-2:
     count: 40
     condition: normal
     description: >
       Second reference condition with 15 cm³ switching point; repeat of standard setting recorded in 
       second test series to verify reproducibility across testing periods
-  307_switching_point_14:
+  307_switching-point-14:
     count: 40
     condition: faulty
     description: >
       Decreased switching point to 14 cm³; minor reduction in melt volume at transition, simulating slight 
       early closing of non-return valve, altering the filling and packing phases relationship
-  308_switching_point_13:
+  308_switching-point-13:
     count: 40
     condition: faulty
     description: >
       Decreased switching point to 13 cm³; moderate reduction in melt volume at transition, simulating 
       noticeable early closing of non-return valve, substantially changing the filling-packing relationship
-  309_switching_point_12:
+  309_switching-point-12:
     count: 40
     condition: faulty
     description: >
       Decreased switching point to 12 cm³; significant reduction in melt volume at transition, simulating 
       substantial early closing of non-return valve, considerably altering packing phase initiation
-  310_switching_point_11:
+  310_switching-point-11:
     count: 40
     condition: faulty
     description: >
       Decreased switching point to 11 cm³; extreme reduction in melt volume at transition, simulating major 
       early closing of non-return valve, dramatically changing the process dynamics during molding
-  401_injection_velocity_60_1:
+  401_injection-velocity-60-1:
     count: 40
     condition: normal
     description: >
       First reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); 
       standard setting recorded in first test series for baseline comparison of flow behavior
-  402_injection_velocity_70:
+  402_injection-velocity-70:
     count: 40
     condition: faulty
     description: >
       Increased primary injection velocity to 70 cm³/s (secondary velocity at 100 cm³/s); accelerated melt 
       flow during filling phase, simulating minor variation in velocity control of screw movement
-  403_injection_velocity_80:
+  403_injection-velocity-80:
     count: 40
     condition: faulty
     description: >
       Increased primary injection velocity to 80 cm³/s (secondary velocity at 110 cm³/s); substantially 
       accelerated melt flow during filling phase, simulating moderate variation in velocity control
-  404_injection_velocity_90:
+  404_injection-velocity-90:
     count: 40
     condition: faulty
     description: >
       Increased primary injection velocity to 90 cm³/s (secondary velocity at 120 cm³/s); significantly 
       accelerated melt flow during filling phase, simulating considerable variation in velocity control
-  405_injection_velocity_100:
+  405_injection-velocity-100:
     count: 40
     condition: faulty
     description: >
       Increased primary injection velocity to 100 cm³/s (secondary velocity at 130 cm³/s); dramatically 
       accelerated melt flow during filling phase, simulating major variation in velocity control
-  406_injection_velocity_60_2:
+  406_injection-velocity-60-2:
     count: 40
     condition: normal
     description: >
       Second reference condition with 60 cm³/s primary injection velocity (secondary velocity at 90 cm³/s); 
       repeat of standard setting recorded in second test series to verify reproducibility
-  407_injection_velocity_50:
+  407_injection-velocity-50:
     count: 40
     condition: faulty
     description: >
       Decreased primary injection velocity to 50 cm³/s (secondary velocity at 80 cm³/s); slowed melt 
       flow during filling phase, simulating minor reduction in screw movement control
-  408_injection_velocity_40:
+  408_injection-velocity-40:
     count: 40
     condition: faulty
     description: >
       Decreased primary injection velocity to 40 cm³/s (secondary velocity at 70 cm³/s); substantially 
       slowed melt flow during filling phase, simulating moderate reduction in screw movement control
-  409_injection_velocity_30:
+  409_injection-velocity-30:
     count: 40
     condition: faulty
     description: >
       Decreased primary injection velocity to 30 cm³/s (secondary velocity at 60 cm³/s); significantly 
       slowed melt flow during filling phase, simulating considerable reduction in screw movement control
-  410_injection_velocity_20:
+  410_injection-velocity-20:
     count: 40
     condition: faulty
     description: >
       Decreased primary injection velocity to 20 cm³/s (secondary velocity at 50 cm³/s); dramatically 
       slowed melt flow during filling phase, simulating extreme reduction in screw movement control
-  501_mold_temperature_30:
+  501_mold-temperature-30:
     count: 40
     condition: normal
     description: >
       Standard mold temperature of 30°C; baseline cooling medium temperature flowing through the 
       injection mold cooling channels, representing optimal thermal conditions for part solidification
-  502_mold_temperature_35:
+  502_mold-temperature-35:
     count: 40
     condition: faulty
     description: >
       Increased mold temperature to 35°C; moderately elevated cooling medium temperature, simulating 
       minor fluctuation in the cooling circuit possibly caused by temperature control unit variation
-  503_mold_temperature_40:
+  503_mold-temperature-40:
     count: 40
     condition: faulty
     description: >
       Increased mold temperature to 40°C; substantially elevated cooling medium temperature, simulating 
       significant fluctuation in the cooling circuit possibly caused by deposits in cooling channels
-  504_mold_temperature_45:
+  504_mold-temperature-45:
     count: 40
     condition: faulty
     description: >

@@ -4,10 +4,10 @@ names:
   short: s03
   long: assembly-conditions-1
   full: variations-in-assembly-conditions-1
-data: # TODO: Update after upload
-  record_id: 12345678
+data:
+  record_id: 15273503
   file_name: s03_variations-in-assembly-conditions-1.zip
-  md5_checksum: abcdefghij
+  md5_checksum: 0bb93ffa3f3d0d1c66d9eae8f712b14f
 metadata:
   author: RIF Institute for Research and Transfer e.V.
   description: >
