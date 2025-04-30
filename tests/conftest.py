@@ -49,6 +49,7 @@ class MockRun:
 @pytest.fixture
 def basic_screw_dataset():
     """Basic dataset with single run, four steps of varying lengths."""
+    # Initialize empty processed data structure
     processed_data = {
         JsonFields.Measurements.TIME: [],
         JsonFields.Measurements.TORQUE: [],
@@ -102,26 +103,11 @@ def basic_screw_dataset():
     run = MockRun(steps=[step1, step2, step3, step4], class_value=0)
     dataset.screw_runs = [run]
 
+    # Initialize processed_data with the step data
+    for step in [step1, step2, step3, step4]:
+        processed_data[JsonFields.Measurements.TIME].append(step.time)
+        processed_data[JsonFields.Measurements.TORQUE].append(step.torque)
+        processed_data[JsonFields.Measurements.ANGLE].append(step.angle)
+        processed_data[JsonFields.Measurements.GRADIENT].append(step.gradient)
+
     return dataset
-
-
-# TODO: Add a parameterizable dataset generator
-# This would allow creating multiple screw runs for testing scaling behavior
-# Example structure:
-#   @pytest.fixture
-#   def multi_run_dataset(num_runs):
-#       """Generate a dataset with multiple screw runs.
-#
-#       Would allow testing:
-#       - Pipeline performance with large datasets
-#       - Memory usage patterns
-#       - Handling of varying step counts between runs
-#       - Different class labels across runs
-#       - Edge cases like missing steps in some runs
-#
-#       Each run would be generated with slightly different characteristics
-#       but maintain realistic time sequences and measurement patterns.
-#       """
-#       dataset = ScrewDataset.__new__(ScrewDataset)
-#       dataset.screw_runs = [generate_run() for _ in range(num_runs)]
-#       return dataset
