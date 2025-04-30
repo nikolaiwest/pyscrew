@@ -15,6 +15,9 @@ More information on the data is available here: https://zenodo.org/records/14769
 - Handling duplicates and missing values
 - Length normalization through padding and truncation
 - Configurable data processing pipeline
+- Comprehensive data validation and integrity checks
+- Detailed logging and statistics tracking
+- Support for multiple measurement types (torque, angle, time, gradient, step)
 
 ## Installation
 
@@ -26,34 +29,69 @@ pip install pyscrew
 
 ## Usage
 
-You can load and process data from a specific scenario using the `get_data` function. The function allows you to configure various processing options, including handling duplicates, missing values, and length normalization.
-
+### Basic Usage
+You can load data from a specific scenario using the `get_data` function with default settings:
 
 ```python 
 import pyscrew
 
-# List available scenarios with their descriptions
-scenarios = pyscrew.list_scenarios()
-print("Available scenarios:", scenarios)
+# Load data from the thread degradation scenario (s01)
+data = pyscrew.get_data(scenario="s01")
 
-# Load and process data from a specific scenario
+# Access the measurements and labels
+x_values = data["torque values"]
+y_values = data["class values"]
+```
+
+### Advanced Usage
+<details>
+<summary>Click to expand for detailed configuration options</summary>
+
+```python 
+import pyscrew
+
+# Load and process data with custom settings
 data = pyscrew.get_data(
-    "surface-friction", # or "thread-degradation"
-    handle_duplicates="first",
-    handle_missings="mean",
-    target_length=800,
-) 
+    scenario="assembly-conditions-2",  # or "s04" or "s04_assembly-conditions-2"
+    cache_dir="~/.cache/pyscrew", # Specify custom directory (default: src/pyscrew/downloads)
+    force_download=True,  # Force re-download even if cached
+    handle_duplicates="first",  # How to handle duplicate time points
+    handle_missings="mean",  # How to handle missing values
+    target_length=1000,  # Target length for normalization
+)
 
 # Describe the data
 print("Available measurements:", data.keys())
 print("Number of torque measurements:", len(data["torque values"]))
 
-# Access the data 
+# Access the data
 x_values = data["torque values"]
 y_values = data["class values"]
-```
 
-In a future release, we will add the option to get the ScrewDataset through a dedicated `get_dataset` method with a few QOL functions. 
+```
+### Scenario Specification
+The scenario parameter can be specified in three different ways:
+
+1. **Short ID**: Use the scenario identifier (e.g., `"s01"`, `"s02"`, etc.)
+2. **Full Name**: Use the descriptive name (e.g., `"thread-degradation"`, `"surface-friction"`)
+3. **Full ID**: Use the complete identifier (e.g., `"s01_thread-degradation"`, `"s02_surface-friction"`)
+
+All three formats are equivalent and will load the same dataset. For example, these all refer to the same scenario:
+```python
+data = pyscrew.get_data(scenario="s02")  # Short ID
+data = pyscrew.get_data(scenario="surface-friction")  # Full name
+data = pyscrew.get_data(scenario="s02_surface-friction")  # Full ID
+```
+</details>
+
+--- 
+
+You can find more info regarding the scenarios on [github](https://github.com/nikolaiwest/pyscrew/tree/main/docs/scenarios) and on [zenodo](https://doi.org/10.5281/zenodo.14729547), or you can simply list available scenarios with their descriptions like this: 
+
+```python
+scenarios = pyscrew.list_scenarios()
+print("Available scenarios:", scenarios)
+```
 
 ## Available Scenarios
 
@@ -63,27 +101,58 @@ Our datasets examine various aspects of screw driving operations in industrial s
 |----|------|-------------|---------|---------|---------------|
 | s01 | Thread Degradation | Examines thread degradation in plastic materials through repeated fastening operations | 5,000 | 1 | [Details](docs/scenarios/s01_thread-degradation.md) |
 | s02 | Surface Friction | Investigates the impact of different surface conditions (water, lubricant, adhesive, etc.) on screw driving operations | 12,500 | 8 | [Details](docs/scenarios/s02_surface-friction.md) |
-| s03 | Error Collection 1 | Current place holder doc for the upcoming scenario 3 with multiple error classes | TBD | TBD | [Details](docs/scenarios/s03_error-collection-1.md) |
+| s03 | Assembly Conditions 1 | Examines various screw and component faults including washer modifications, thread deformations, and alignment issues | 1,800 | 27 | [Details](docs/scenarios/s03_assembly-conditions-1.md) |
+| s04 | Assembly Conditions 2 | Investigates thread modifications, surface conditions, component modifications, and process parameter changes | 5,000 | 25 | [Details](docs/scenarios/s04_assembly-conditions-2.md) |
+| s05 | Upper Workpiece Fabrication | Analyzes variations in injection molding parameters for upper workpieces | 2,400 | 42 | [Details](docs/scenarios/s05_upper-workpiece.md) |
+| s06 | Lower Workpiece Fabrication | Studies variations in injection molding parameters for lower workpieces | 7,482 | 44 | [Details](docs/scenarios/s06_lower-workpiece.md) |
 
-## Package structure
+## Package Structure
 
 ```bash
 PyScrew/
 ├── docs/
-│   └── scenarios/           # Detailed scenario documentation
+│   └── scenarios/          
 │       ├── s01_thread-degradation.md
 │       ├── s02_surface-friction.md
-│       └── s03_error-collection-1.md
+│       ├── s03_assembly-conditions-1.md
+│       ├── s04_assembly-conditions-2.md
+│       ├── s05_upper-workpiece.md
+│       └── s06_lower-workpiece.md
 ├── src/
 │   └── pyscrew/
-│       ├── __init__.py      # Package initialization and version
-│       ├── main.py          # Main interface and high-level functions
-│       ├── loading.py       # Data loading from Zenodo
-│       ├── processing.py    # Data processing functionality
-│       ├── tools/           # Utility scripts and tools
-│       │   ├── create_label_csv.py    # Label file generation
+│       ├── __init__.py       # Package initialization and version
+│       ├── main.py           # Main interface and high-level functions
+│       ├── core/             # Core data model and structures
+│       │   ├── __init__.py
+│       │   ├── dataset.py    # ScrewDataset class
+│       │   ├── run.py        # ScrewRun class
+│       │   ├── step.py       # ScrewStep class
+│       │   └── fields.py     # Field definitions
+│       ├── config/           # Configuration management
+│       │   ├── __init__.py
+│       │   ├── pipeline.py   # Pipeline configuration
+│       │   └── scenarios.py  # Scenario configuration
+│       ├── pipeline/         # Data processing pipeline components
+│       │   ├── __init__.py
+│       │   ├── loading.py    # Data loading from Zenodo
+│       │   ├── processing.py # Data processing functionality
+│       │   ├── validating.py # Data validation after loading
+│       │   └── transformers/ # Data transformation modules
+│       ├── scenarios/        # Scenario-specific configurations
+│       │   ├── __init__.py
+│       │   ├── s01.yml      # Thread degradation scenario
+│       │   ├── s02.yml      # Surface friction scenario
+│       │   ├── s03.yml      # Assembly conditions 1
+│       │   ├── s04.yml      # Assembly conditions 2
+│       │   ├── s05.yml      # Upper workpiece
+│       │   └── s06.yml      # Lower workpiece
+│       ├── downloads/        # Default location for downloaded data
+│       │   ├── archives/    # Compressed dataset archives
+│       │   └── extracted/   # Extracted dataset files  
+│       ├── tools/                      # Utility scripts and tools
+│       │   ├── create_label_csv.py     # Label file generation
 │       │   └── get_dataset_metrics.py  # Documentation metrics calculation
-│       └── utils/           # Utility functions and helpers
+│       └── utils/                      # Utility functions and helpers
 │           ├── data_model.py
 │           └── logger.py
 └── tests/                   # Test suite
@@ -118,7 +187,10 @@ Downloaded data is stored in:
 └── extracted/    # Extracted dataset files
     ├── s01_thread-degradation/
     ├── s02_surface-friction/
-    ├── s03_error-collection-1/
+    ├── s03_assembly-conditions-1/
+    ├── s04_assembly-conditions-2/
+    ├── s05_upper-workpiece/
+    ├── s06_lower-workpiece/
     └── ...
 ```
 
