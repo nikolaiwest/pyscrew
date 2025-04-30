@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar, Dict, List
 
 import yaml
 
@@ -57,6 +57,7 @@ class ScenarioConfig:
 
         # Set config directory for YAML files
         if base_dir is None:
+            # Use the same path resolution as main.py
             self.config_dir = Path(__file__).parent.parent / "scenarios"
         else:
             self.config_dir = Path(base_dir)

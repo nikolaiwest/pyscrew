@@ -1,3 +1,3 @@
-recursive-include src/scenarios *.yml
+graft src/pyscrew/scenarios
 include README.md
 include LICENSE

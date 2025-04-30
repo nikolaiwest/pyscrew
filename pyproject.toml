@@ -3,6 +3,9 @@
 requires = ["setuptools", "wheel"]    # Basic build requirements
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.package-data]
+"pyscrew" = ["scenarios/*.yml"]
+
 # Core project metadata
 [project]
 name = "pyscrew"
