@@ -8,7 +8,7 @@ from pyscrew.utils import get_logger, resolve_scenario_name
 logger = get_logger(__name__)
 
 
-def list_scenarios() -> Dict[str, str]:
+def list_scenarios() -> None:
     """
     List all available scenarios and their descriptions.
 
@@ -176,7 +176,9 @@ def get_data(
 
 
 if __name__ == "__main__":
+
     list_scenarios()
 
-    # data = get_data(scenario="s01")
-    # print(f"Data retrieved successfully: n={len(data.get('torque_values', []))}")
+    data = get_data(scenario="s01")
+
+    print(f"Data retrieved successfully: n={len(data['torque values'])}")
