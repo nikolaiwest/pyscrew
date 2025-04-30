@@ -9,9 +9,57 @@ logger = get_logger(__name__)
 
 
 def list_scenarios() -> Dict[str, str]:
-    """List all available scenarios and their descriptions."""
-    # Implementation to be added
-    pass
+    """
+    List all available scenarios and their descriptions.
+
+    Returns:
+        Dictionary mapping scenario IDs to their descriptions.
+    """
+
+    # Get the directory where scenario YAML files are stored
+    scenarios_dir = Path(__file__).parent / "scenarios"
+
+    # Print header
+    print("\n" + "=" * 135)
+    print(
+        f"{'ID':<6} {'NAME':<25} {'CLASSES':<10} {'OBSERVATIONS':<15} {'DESCRIPTION'}"
+    )
+    print("-" * 135)
+
+    # Loop through the six scenario files (s01.yml to s06.yml)
+    for scenario_id in ["s01", "s02", "s03", "s04", "s05", "s06"]:
+        config_path = scenarios_dir / f"{scenario_id}.yml"
+
+        if config_path.exists():
+            try:
+                # Load the scenario config
+                scenario_config = ScenarioConfig(scenario_id)
+
+                # Get scenario details
+                long_name = scenario_config.get_name("long")
+                class_count = len(scenario_config.classes)
+                total_observations = scenario_config.get_total_observations()
+
+                # Get first sentence of description (truncated if needed)
+                full_desc = scenario_config.metadata.get("description", "")
+                desc_first_sentence = full_desc.split(".")[0]
+                if len(desc_first_sentence) > 50:
+                    description = desc_first_sentence[:83] + "..."
+                else:
+                    description = desc_first_sentence
+
+                # Print row with formatted columns
+                print(
+                    f"{scenario_id:<6} {long_name:<25} {class_count:<10} {total_observations:<15} {description[13:]}"
+                )
+
+            except Exception as e:
+                print(f"{scenario_id:<6} {'ERROR: Could not load configuration':<80}")
+
+    print("=" * 135)
+    print(
+        f"Learn more about the data here: {'https://github.com/nikolaiwest/screw_data'} \n"
+    )
 
 
 def get_data(
@@ -128,5 +176,7 @@ def get_data(
 
 
 if __name__ == "__main__":
-    data = get_data(scenario="s01")
-    print(f"Data retrieved successfully: n={len(data.get('torque_values', []))}")
+    list_scenarios()
+
+    # data = get_data(scenario="s01")
+    # print(f"Data retrieved successfully: n={len(data.get('torque_values', []))}")
