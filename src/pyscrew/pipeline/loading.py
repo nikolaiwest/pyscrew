@@ -95,27 +95,28 @@ class DataLoader:
     def __init__(
         self,
         scenario_config: ScenarioConfig,
-        cache_dir: Optional[Union[str, Path]] = None,
     ):
         """
         Initialize the data loader for a specific scenario.
 
         Args:
-            scenario_name: Name of the scenario to load
-            cache_dir: Optional directory for storing downloaded and extracted files.
-                      Defaults to ~/.cache/pyscrew
+            scenario_config: Configuration object for the scenario to load
+                            (contains cache_dir and force_download settings)
         """
         self.scenario_config = scenario_config
         self.download_url = self.scenario_config.get_download_url()
         self.file_name = self.scenario_config.get_dataset_filename()
 
-        # Set up cache directory structure
-        if cache_dir is None:
-            # Path relative to the current file (src/pyscrew/pipeline/loading.py)
-            package_root = Path(__file__).parent.parent  # This reaches src/pyscrew/
-            cache_dir = package_root / "downloads"
+        # Get the already-resolved cache_dir from scenario_config
+        self.cache_dir = self.scenario_config.cache_dir
+        
+        # Ensure the cache_dir is absolute
+        self.cache_dir = self.cache_dir.absolute()
 
-        self.cache_dir = Path(cache_dir)
+        # Log the actual path being used
+        logger.info(f"Using cache directory (absolute): {self.cache_dir}")
+
+        # Set up cache subdirectories
         self.archive_cache = self.cache_dir / "archives"
         self.data_cache = self.cache_dir / "extracted"
 
@@ -522,7 +523,8 @@ def load_data(scenario_config: ScenarioConfig) -> None:
     3. Validates measurement data integrity
 
     Args:
-        config: Pipeline configuration object containing scenario and filter settings
+        scenario_config: Scenario configuration object containing
+                        cache_dir and force_download settings
 
     Raises:
         ValueError: If configuration is invalid
@@ -532,5 +534,5 @@ def load_data(scenario_config: ScenarioConfig) -> None:
     # Initialize loader for the configured scenario
     loader = DataLoader(scenario_config)
 
-    # Extract data
-    loader.extract_data()
+    # Extract data with force flag from scenario_config
+    loader.extract_data(force=scenario_config.get_force_download())

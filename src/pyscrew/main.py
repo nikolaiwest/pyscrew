@@ -104,37 +104,41 @@ def get_data(
         cutoff_position: Position to truncate longer sequences ('pre' or 'post', default: 'post')
         output_format: Format of the output data. Current option is only "list".
             "numpy" and "dataframe" will be added in a future release, but require equal time series lengths.
-        cache_dir: Directory for caching downloaded data
+        cache_dir: Directory for caching downloaded data. If None, uses "src/pyscrew/downloads". The `cache_dir`
+            parameter supports tilde expansion (e.g., "~/my_cache") which will be automatically expanded to the
+            user's home directory.
         force_download: Force re-download even if cached
 
     Returns:
         Processed data in the requested format
-
-    Examples:
-        >>> # Get all data for a scenario using short code
-        >>> data = get_data("s01")
-
-        >>> # Get all data for a scenario using long name
-        >>> data = get_data("thread-degradation")
-
-        >>> # Get all data for a scenario using full name
-        >>> data = get_data("variations-in-thread-degradation")
-
-        >>> # Get specific measurements for certain phases
-        >>> data = get_data(
-        ...     "s01",
-        ...     return_measurements=["torque", "angle"],
-        ...     screw_phase=[1, 2],
-        ...     output_format="dataframe"
-        ... )
     """
     # Resolve scenario name to standardized identifiers
     short_name, long_name, full_name = resolve_scenario_name(scenario)
 
     logger.info(f"Starting data retrieval for scenario: {short_name} ({long_name})")
 
-    # Initialize scenario config with short name (for YAML file lookup in scenarios/)
-    scenario_config = ScenarioConfig(short_name)
+    # Process cache_dir - we handle tilde expansion ONCE here at the entry point
+    if cache_dir is not None:
+        cache_dir_str = str(cache_dir)
+        if cache_dir_str.startswith("~"):
+            # Replace the tilde with the actual home directory
+            expanded_path = str(Path.home()) + cache_dir_str[1:]
+            cache_path = Path(expanded_path)
+        else:
+            cache_path = Path(cache_dir)
+    else:
+        # Use the default path
+        package_root = Path(__file__).parent.parent  # This reaches src/pyscrew/
+        cache_path = package_root / "pyscrew" / "downloads"
+
+    logger.debug(f"Using cache directory: {cache_path}")
+
+    # Initialize scenario config with short name and pass the resolved cache_path
+    scenario_config = ScenarioConfig(
+        short_name,
+        cache_dir=cache_path,
+        force_download=force_download,
+    )
 
     # Initialize pipeline config
     pipeline_config = PipelineConfig(
@@ -151,7 +155,7 @@ def get_data(
         padding_position=padding_position,
         cutoff_position=cutoff_position,
         output_format=output_format,
-        cache_dir=Path(cache_dir) if cache_dir else None,
+        cache_dir=cache_path,
         force_download=force_download,
     )
 

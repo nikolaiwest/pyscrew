@@ -239,15 +239,22 @@ class PipelineConfig:
         }
 
     def get_data_path(self) -> Path:
-        """Get the standardized path to the extracted scenario data."""
-        # Use custom cache dir if provided in pipeline config
-        if self.cache_dir:
-            base_dir = self.cache_dir
-        else:
-            package_root = Path(__file__).parent.parent  # This reaches src/pyscrew/
-            base_dir = package_root / "downloads"
-        scenario_name = f"{self.scenario_name}_{self.scenario_full_name}"
-        data_path = base_dir / "extracted" / scenario_name
+        """
+        Get the standardized path to the extracted scenario data.
+
+        Returns:
+            Path to the extracted data directory
+        """
+        # Use the cache_dir passed to the pipeline config
+        base_dir = self.cache_dir
+
+        # Use the format scenario_id_full_name to match how DataLoader extracts it
+        scenario_dir_name = f"{self.scenario_name}_{self.scenario_full_name}"
+        data_path = base_dir / "extracted" / scenario_dir_name
+
+        # Log the constructed path for debugging
+        logger.debug(f"Constructed data path: {data_path}")
+
         return data_path
 
     def __str__(self) -> str:

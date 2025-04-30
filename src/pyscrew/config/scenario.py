@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, List
+from typing import ClassVar, Dict, List, Optional
 
 import yaml
 
@@ -37,17 +37,36 @@ class ScenarioConfig:
     # Class-level access to keys
     Keys = ScenarioKeys
 
-    def __init__(self, scenario_id: str, base_dir: Path = Path("../scenarios")):
+    def __init__(
+        self,
+        scenario_id: str,
+        base_dir: Path = None,
+        cache_dir: Path = None,
+        force_download: bool = False,
+    ):
         """
         Initialize a scenario configuration.
 
         Args:
             scenario_id: Identifier for the scenario (e.g., 's01', 's02')
             base_dir: Base directory where scenario YAML files are stored
+            cache_dir: Directory for caching downloaded and extracted files
+            force_download: Whether to force re-download even if cached
         """
         self.scenario_id = scenario_id
-        self.config_dir = Path(__file__).parent.parent / "scenarios"
+
+        # Set config directory for YAML files
+        if base_dir is None:
+            self.config_dir = Path(__file__).parent.parent / "scenarios"
+        else:
+            self.config_dir = Path(base_dir)
+
         self.config_path = self.config_dir / f"{scenario_id}.yml"
+
+        # Store cache directory and force_download flag
+        self.cache_dir = cache_dir
+        self.force_download = force_download
+
         self.names = {}
         self.classes = {}
         self.data = {}
@@ -138,6 +157,14 @@ class ScenarioConfig:
         record_id = self.data[self.Keys.RECORD_ID]
         file_name = self.data[self.Keys.FILE_NAME]
         return f"{ZENODO_BASE_URL}/{record_id}/files/{file_name}?download=1"
+
+    def get_cache_dir(self) -> Path:
+        """Get the cache directory for downloaded files."""
+        return self.cache_dir
+
+    def get_force_download(self) -> bool:
+        """Get whether to force re-download even if cached."""
+        return self.force_download if hasattr(self, "force_download") else False
 
     def __str__(self) -> str:
         """String representation of the scenario configuration."""
