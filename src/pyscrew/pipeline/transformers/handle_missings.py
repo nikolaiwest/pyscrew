@@ -1,15 +1,14 @@
 """
 Transformer for creating equidistant time series through interpolation.
 
-This module provides transformer implementations for converting irregular time series
-into equidistant measurements through interpolation. It handles multiple measurement
-types and maintains data integrity throughout the process.
+This transformer processes the standardized measurement data to create equidistant
+time series through interpolation. It handles multiple measurement types while
+preserving metadata fields.
 
 Key Features:
     - Linear interpolation to create regular time intervals
     - Multiple interpolation methods (mean, zero, custom value)
-    - Handles multiple measurement types (torque, angle, gradient)
-    - Special handling for step indicators
+    - Preservation of all metadata fields
     - Detailed statistics tracking
     - Comprehensive input validation
 """
@@ -23,7 +22,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
 from pyscrew.config import PipelineConfig
-from pyscrew.core import JsonFields, ScrewDataset
+from pyscrew.core import OutputFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -62,7 +61,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
     This transformer ensures that measurements are available at regular time
     intervals by performing interpolation between existing points.
     It handles all measurement types appropriately, including special handling
-    for step indicators.
+    for step indicators, while preserving metadata fields.
 
     Args:
         config: PipelineConfig object containing processing settings
@@ -74,6 +73,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
 
     Attributes:
         config: Configuration settings for the pipeline
+        outputs: OutputFields instance for accessing standardized field names
         target_interval: Time interval for interpolation (0.0012s by default)
         decimal_places: Number of decimal places for rounding (4 by default)
         _stats: Statistics about processed interpolations
@@ -97,6 +97,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, config: PipelineConfig) -> None:
         """Initialize transformer with pipeline configuration."""
         self.config = config
+        self.outputs = OutputFields()
         self.target_interval = 0.0012  # Standard time interval in seconds
         self.decimal_places = 4  # Ideal number of decimal places when rounding
         self._stats = InterpolationStats()
@@ -225,7 +226,7 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
             raise ValueError("target_interval must be positive")
         if self.decimal_places < 0:
             raise ValueError("decimal_places must be non-negative")
-        if not dataset.get_values(JsonFields.Measurements.TIME):
+        if not dataset.processed_data.get(self.outputs.TIME_VALUES):
             raise ValueError("Dataset must contain time values")
 
         # Validate config.handle_missings
@@ -243,7 +244,8 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         """Transform the dataset by interpolating to regular intervals.
 
         If config.handle_missings is None, returns the dataset unchanged.
-        Otherwise, processes the dataset to interpolate missing values.
+        Otherwise, processes the dataset to interpolate missing values
+        while preserving all metadata fields.
 
         Args:
             dataset: Input dataset to transform
@@ -262,27 +264,34 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
         # Reset statistics
         self._stats = InterpolationStats()
 
-        # Initialize processed data structure
+        # Initialize processed data structure with measurement fields
         processed_data = {
-            JsonFields.Measurements.TIME: [],
-            JsonFields.Measurements.TORQUE: [],
-            JsonFields.Measurements.ANGLE: [],
-            JsonFields.Measurements.GRADIENT: [],
+            self.outputs.TIME_VALUES: [],
+            self.outputs.TORQUE_VALUES: [],
+            self.outputs.ANGLE_VALUES: [],
+            self.outputs.GRADIENT_VALUES: [],
+            self.outputs.STEP_VALUES: [],
         }
 
-        # Include step field if it exists in input
-        if JsonFields.Measurements.STEP in dataset.processed_data:
-            processed_data[JsonFields.Measurements.STEP] = []
+        # Preserve all metadata fields
+        metadata_fields = [
+            self.outputs.CLASS_VALUES,
+            self.outputs.WORKPIECE_LOCATION,
+            self.outputs.WORKPIECE_USAGE,
+            self.outputs.WORKPIECE_RESULT,
+            self.outputs.SCENARIO_CONDITION,
+            self.outputs.SCENARIO_EXCEPTION,
+        ]
 
-        # Include class_value if it exists in input
-        if JsonFields.Measurements.CLASS in dataset.processed_data:
-            processed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
-                JsonFields.Measurements.CLASS
-            ]
+        # Copy metadata fields from the input dataset if they exist
+        for field in metadata_fields:
+            if field in dataset.processed_data:
+                processed_data[field] = dataset.processed_data[field]
+                logger.debug(f"Preserved metadata field: {field}")
 
         try:
             # Process each run
-            time_series = dataset.processed_data[JsonFields.Measurements.TIME]
+            time_series = dataset.processed_data[self.outputs.TIME_VALUES]
             self._stats.total_series = len(time_series)
 
             for idx in tqdm(
@@ -301,16 +310,17 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
                 time_values_ideal = [
                     round(x, self.decimal_places) for x in time_values_ideal
                 ]
+
                 # Prepare measurement arrays
                 measurements = {
-                    JsonFields.Measurements.TORQUE: np.array(
-                        dataset.processed_data[JsonFields.Measurements.TORQUE][idx]
+                    self.outputs.TORQUE_VALUES: np.array(
+                        dataset.processed_data[self.outputs.TORQUE_VALUES][idx]
                     ),
-                    JsonFields.Measurements.ANGLE: np.array(
-                        dataset.processed_data[JsonFields.Measurements.ANGLE][idx]
+                    self.outputs.ANGLE_VALUES: np.array(
+                        dataset.processed_data[self.outputs.ANGLE_VALUES][idx]
                     ),
-                    JsonFields.Measurements.GRADIENT: np.array(
-                        dataset.processed_data[JsonFields.Measurements.GRADIENT][idx]
+                    self.outputs.GRADIENT_VALUES: np.array(
+                        dataset.processed_data[self.outputs.GRADIENT_VALUES][idx]
                     ),
                 }
 
@@ -323,28 +333,26 @@ class HandleMissingsTransformer(BaseEstimator, TransformerMixin):
                 self._compute_time_stats(time_values)
 
                 # Store interpolated time values
-                processed_data[JsonFields.Measurements.TIME].append(
+                processed_data[self.outputs.TIME_VALUES].append(
                     self._to_float_list(time_values_ideal)
                 )
 
                 # Interpolate each measurement
-                for measurement, values in measurements.items():
+                for field, values in measurements.items():
                     interpolated = self._interpolate_values(
                         time_values, time_values_ideal, values
                     )
-                    processed_data[measurement].append(
-                        self._to_float_list(interpolated)
-                    )
+                    processed_data[field].append(self._to_float_list(interpolated))
 
                 # Handle step values if they exist (always use 'first' method)
-                if JsonFields.Measurements.STEP in dataset.processed_data:
+                if self.outputs.STEP_VALUES in dataset.processed_data:
                     step_values = np.array(
-                        dataset.processed_data[JsonFields.Measurements.STEP][idx]
+                        dataset.processed_data[self.outputs.STEP_VALUES][idx]
                     )
                     interpolated = np.interp(
                         time_values_ideal, time_values, step_values
                     )
-                    processed_data[JsonFields.Measurements.STEP].append(
+                    processed_data[self.outputs.STEP_VALUES].append(
                         [int(x) for x in np.round(interpolated)]
                     )
 

@@ -19,7 +19,7 @@ from typing import Any, Dict, List
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from pyscrew.config import PipelineConfig
-from pyscrew.core import JsonFields, ScrewDataset
+from pyscrew.core import OutputFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -46,6 +46,7 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
 
     Attributes:
         config: Configuration settings for the pipeline
+        outputs: OutputFields instance for accessing standardized field names
         include_metadata: Whether to include metadata in output
         _conversion_stats: Statistics about the conversion process
 
@@ -71,6 +72,7 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
             config: PipelineConfig object containing processing settings
         """
         self.config = config
+        self.outputs = OutputFields()
         self.include_metadata = True  # Could be moved to config if needed
         self._conversion_stats = {
             "format": config.output_format,
@@ -148,11 +150,12 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
 
             # Filter measurements if specified
             if self.config.measurements:
+                # Map from user input names to output field names
                 measurements_map = {
-                    "time": JsonFields.Measurements.TIME,
-                    "torque": JsonFields.Measurements.TORQUE,
-                    "angle": JsonFields.Measurements.ANGLE,
-                    "gradient": JsonFields.Measurements.GRADIENT,
+                    "time": self.outputs.TIME_VALUES,
+                    "torque": self.outputs.TORQUE_VALUES,
+                    "angle": self.outputs.ANGLE_VALUES,
+                    "gradient": self.outputs.GRADIENT_VALUES,
                 }
 
                 fields_to_keep = []
@@ -165,15 +168,22 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                             f"Requested measurement '{field}' not found in dataset"
                         )
 
-                # Always keep class labels and step values if present
-                for special_field in [
-                    JsonFields.Measurements.CLASS,
-                    JsonFields.Measurements.STEP,
-                ]:
-                    if special_field in processed_data:
-                        fields_to_keep.append(special_field)
+                # Always preserve metadata fields
+                metadata_fields = [
+                    self.outputs.CLASS_VALUES,
+                    self.outputs.STEP_VALUES,
+                    self.outputs.WORKPIECE_LOCATION,
+                    self.outputs.WORKPIECE_USAGE,
+                    self.outputs.WORKPIECE_RESULT,
+                    self.outputs.SCENARIO_CONDITION,
+                    self.outputs.SCENARIO_EXCEPTION,
+                ]
 
-                # Filter to keep only requested measurements
+                for field in metadata_fields:
+                    if field in processed_data:
+                        fields_to_keep.append(field)
+
+                # Filter to keep only requested measurements and metadata
                 processed_data = {
                     k: v for k, v in processed_data.items() if k in fields_to_keep
                 }
@@ -181,8 +191,8 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
             self._conversion_stats["measurements_included"] = len(processed_data)
 
             # Count total data points
-            if JsonFields.Measurements.TIME in processed_data:
-                for time_series in processed_data[JsonFields.Measurements.TIME]:
+            if self.outputs.TIME_VALUES in processed_data:
+                for time_series in processed_data[self.outputs.TIME_VALUES]:
                     self._conversion_stats["data_points_processed"] += len(time_series)
 
             # Extract metadata if present
@@ -260,13 +270,21 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                 # For DataFrame, we need to restructure the data
                 # First, check if all series have the same length
                 series_lengths = {}
+                non_metadata_fields = [
+                    self.outputs.TIME_VALUES,
+                    self.outputs.TORQUE_VALUES,
+                    self.outputs.ANGLE_VALUES,
+                    self.outputs.GRADIENT_VALUES,
+                    self.outputs.STEP_VALUES,
+                ]
+
                 for key, series_list in data.items():
-                    if key != JsonFields.Measurements.CLASS:  # Skip class labels
+                    if key in non_metadata_fields:  # Skip metadata fields
                         series_lengths[key] = [len(series) for series in series_list]
 
                 # Check if all measurements have the same structure
                 keys = list(series_lengths.keys())
-                if not all(
+                if keys and not all(
                     series_lengths[keys[0]] == series_lengths[key] for key in keys[1:]
                 ):
                     logger.warning(
@@ -278,40 +296,55 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                 dfs = []
 
                 # Get number of series
-                if JsonFields.Measurements.TIME in data:
-                    num_series = len(data[JsonFields.Measurements.TIME])
+                if self.outputs.TIME_VALUES in data:
+                    num_series = len(data[self.outputs.TIME_VALUES])
                 else:
                     # Fallback to first available measurement
-                    num_series = len(next(iter(data.values())))
+                    for field in non_metadata_fields:
+                        if field in data and data[field]:
+                            num_series = len(data[field])
+                            break
+                    else:
+                        # No measurement fields found
+                        logger.warning(
+                            "No measurement data found for DataFrame conversion"
+                        )
+                        return pd.DataFrame()
 
                 # Process each series
                 for i in range(num_series):
                     series_data = {}
-                    for key, series_list in data.items():
-                        if (
-                            key != JsonFields.Measurements.CLASS
-                        ):  # Process class separately
-                            if i < len(series_list):
-                                series_data[key] = series_list[i]
-                            else:
-                                logger.warning(
-                                    f"Series {i} missing for measurement {key}"
-                                )
-                                series_data[key] = []
+
+                    # Add measurement data
+                    for key in non_metadata_fields:
+                        if key in data and i < len(data[key]):
+                            series_data[key] = data[key][i]
+                        else:
+                            # Skip fields not present or series indices out of range
+                            pass
 
                     # Create DataFrame for this series
-                    df = pd.DataFrame(series_data)
+                    if series_data:
+                        df = pd.DataFrame(series_data)
 
-                    # Add class label if available
-                    if JsonFields.Measurements.CLASS in data and i < len(
-                        data[JsonFields.Measurements.CLASS]
-                    ):
-                        class_value = data[JsonFields.Measurements.CLASS][i]
-                        df["class"] = class_value
+                        # Add metadata fields if available
+                        metadata_fields = [
+                            self.outputs.CLASS_VALUES,
+                            self.outputs.WORKPIECE_LOCATION,
+                            self.outputs.WORKPIECE_USAGE,
+                            self.outputs.WORKPIECE_RESULT,
+                            self.outputs.SCENARIO_CONDITION,
+                            self.outputs.SCENARIO_EXCEPTION,
+                        ]
 
-                    # Add series index
-                    df["series"] = i
-                    dfs.append(df)
+                        for field in metadata_fields:
+                            if field in data and i < len(data[field]):
+                                field_name = field.split("_")[0]  # Extract base name
+                                df[field_name] = data[field][i]
+
+                        # Add series index
+                        df["series"] = i
+                        dfs.append(df)
 
                 # Combine all series
                 if dfs:
@@ -338,7 +371,7 @@ class DatasetConversionTransformer(BaseEstimator, TransformerMixin):
                     # Convert all values to PyTorch tensors via numpy
                     tensor_data = {}
                     for key, value in data.items():
-                        if key == JsonFields.Measurements.CLASS:
+                        if key == self.outputs.CLASS_VALUES:
                             # Handle class labels specially
                             tensor_data[key] = torch.tensor(value)
                         else:

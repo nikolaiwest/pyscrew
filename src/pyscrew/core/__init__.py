@@ -14,9 +14,9 @@ The data comes from two sources:
 """
 
 from .dataset import ScrewDataset
+from .fields import CsvFields, JsonFields, OutputFields
 from .run import ScrewRun
 from .step import ScrewStep
-from .fields import JsonFields, CsvFields
 
 __all__ = [
     "ScrewDataset",
@@ -24,4 +24,5 @@ __all__ = [
     "ScrewStep",
     "JsonFields",
     "CsvFields",
+    "OutputFields",
 ]

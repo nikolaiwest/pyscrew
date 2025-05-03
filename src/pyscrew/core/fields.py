@@ -1,12 +1,14 @@
 """
 Field definitions for screw operation data.
 
-This module contains dataclasses that define the field names used in:
-1. JSON files containing measurement data
-2. CSV file containing metadata and classification information
+This module contains dataclasses that define the field names used throughout the PyScrew package:
+1. JSON fields: Raw data as found in the JSON measurement files
+2. CSV fields: Metadata and classification information from labels.csv
+3. Output fields: Standardized field names used in the processing pipeline output
 
 These constants provide a centralized reference for accessing data consistently
-throughout the codebase.
+throughout the codebase and help maintain a clear separation between raw input data
+and processed output data.
 """
 
 from dataclasses import dataclass
@@ -16,8 +18,10 @@ from dataclasses import dataclass
 class JsonFields:
     """
     Constants for field names in the JSON files containing screw operation data.
+
     These classes define the naming conventions used in the raw JSON data files
-    from the screw driving control.
+    from the screw driving control system. The field names preserve the original
+    structure and naming conventions from the source data.
 
     Note: The string values (e.g. "id code", "time values") are pre-defined by
     the screw driving control and cannot be changed. Our constant names use a
@@ -29,12 +33,15 @@ class JsonFields:
     class Run:
         """
         Run-level metadata fields in the JSON.
-        These fields describe the overall properties of a complete screw operation run.
+
+        These fields describe the overall properties of a complete screw operation run
+        and are found at the top level of each JSON file.
 
         Attributes:
-            DATE: Date when the run was performed
-            RESULT: Overall result from the screw driving control ("OK"/"NOK")
-            DMC: Machine-defined identification code for each workpiece
+            ID: Unique cycle number as recorded by the screw station
+            DATE: Timestamp when the run was performed
+            WORKPIECE_RESULT: Overall result from the screw driving control ("OK"/"NOK")
+            WORKPIECE_ID: Data matrix code identifying the workpiece (14-digit)
             STEPS: Collection of tightening steps in the run
         """
 
@@ -48,13 +55,16 @@ class JsonFields:
     class Step:
         """
         Step-level metadata fields in the JSON.
+
         These fields describe individual steps within a screw operation run.
+        A typical operation consists of four steps: finding, thread forming,
+        pre-tightening, and final tightening.
 
         Attributes:
-            NAME: Name identifier as set in screw driving control
-            STEP_TYPE: Type classification (simply "standard")
-            WORKPIECE_RESULT: Result status ("OK"/"NOK") for this step
-            QUALITY_CODE: Quality assessment code
+            NAME: Step identifier (e.g., "Finding", "Thread Forming")
+            STEP_TYPE: Type classification (typically "standard")
+            WORKPIECE_RESULT: Result status ("OK"/"NOK") for this specific step
+            QUALITY_CODE: Quality assessment code from the control system
             GRAPH: Measurement data dictionary containing time, torque, angle, and gradient values
         """
 
@@ -68,56 +78,67 @@ class JsonFields:
     class Measurements:
         """
         Measurement field names in the JSON graph data.
+
         These are the keys used in the GRAPH dictionary for each measurement type.
+        These field names preserve the space-based naming convention from the
+        raw JSON data.
 
         Attributes:
-            TIME: Time measurements (0.0012s increments)
-            TORQUE: Torque measurements
-            ANGLE: Angle measurements (0.25° amplitude)
-            GRADIENT: Gradient measurements
-            STEP: Step values added during processing pipeline (not in raw data)
-            CLASS: Class values added during processing pipeline (not in raw data)
+            TIME: Time measurements (0.0012s increments) recording when each measurement was taken
+            TORQUE: Torque measurements (Nm) representing the rotational force applied
+            ANGLE: Angle measurements (0.25° amplitude) representing the rotational position
+            GRADIENT: Gradient measurements tracking the rate of change in torque vs. angle
 
         Note:
-            "angleRed values" and "torqueRed values" exist but are always [0,...,0]
-            and are not used in processing.
+            The raw data also includes "angleRed values" and "torqueRed values" which are
+            always [0,...,0] and are not used in processing.
+
             STEP and CLASS fields are added during later processing and are not
             present in the raw JSON data.
+
+            We need to keep the spaces in these names to match the raw data structure.
         """
 
         TIME: str = "time values"
         TORQUE: str = "torque values"
         ANGLE: str = "angle values"
         GRADIENT: str = "gradient values"
-        STEP: str = "step values"
-        CLASS: str = "class values"
 
 
 @dataclass
 class CsvFields:
     """
     Constants for field names in the labels CSV file.
+
     These fields connect the JSON measurement data with metadata about runs
-    and provide classification information.
+    and provide classification information. The CSV file serves as the primary
+    source of metadata and experimental context for each screw operation.
 
     Attributes:
-        RUN_ID: Unique identifier for each run
-        FILE_NAME: Links to corresponding JSON file
-        CLASS_VALUE: Scenario-specific classification label
-        WORKPIECE_ID: Data matrix code identifying the workpiece
-        WORKPIECE_DATE: Date of recording in the screw run
-        WORKPIECE_USAGE: Number of times this workpiece has been used
+        # Identifier fields
+        RUN_ID: Unique identifier for each screw operation
+        FILE_NAME: Name of the corresponding JSON file containing measurements
+
+        # Classification field
+        CLASS_VALUE: Scenario-specific classification label (e.g., "001_control-group")
+
+        # Workpiece-related fields
+        WORKPIECE_ID: Data matrix code identifying the workpiece (14-digit)
+        WORKPIECE_DATE: Timestamp when the operation was recorded
+        WORKPIECE_USAGE: Count of previous operations on this workpiece (0-24)
         WORKPIECE_RESULT: Result from screw program ("OK"/"NOK")
         WORKPIECE_LOCATION: Screw position in workpiece ("left" or "right")
-        SCENARIO_CONDITION: Condition of the experiment ("normal" or "faulty")
-        SCENARIO_EXCEPTION: Flag indicating if there were issues during the experiment (0 for "no issues", 1 otherwise)
+
+        # Experiment-related fields
+        SCENARIO_CONDITION: Experimental condition ("normal" or "faulty")
+        SCENARIO_EXCEPTION: Flag for experimental issues (0: none, 1: exception)
     """
 
     # Identifier fields
     RUN_ID: str = "run_id"
     FILE_NAME: str = "file_name"
 
-    # Value fields
+    # Classification field
     CLASS_VALUE: str = "class_value"
 
     # Workpiece-related fields
@@ -131,19 +152,57 @@ class CsvFields:
     SCENARIO_CONDITION: str = "scenario_condition"
     SCENARIO_EXCEPTION: str = "scenario_exception"
 
-    @dataclass
-    class DatasetFields:
-        """
-        Constants for field names in the dataset.
-        These fields are used to access the processed data from the ScrewDataset.
 
-        TODO: While currently not in use, this class finally moves away from the
-        space-based naming convention of the json files to a more consistent
-        underscore-based style. Will be added to the pipeline in the future.
-        """
+@dataclass
+class OutputFields:
+    """
+    Field names for the processed output data structure.
 
-        TIME_VALUES: str = "time_values"
-        TORQUE_VALUES: str = "torque_values"
-        ANGLE_VALUES: str = "angle_values"
-        GRADIENT_VALUES: str = "gradient_values"
-        CLASS_VALUES: str = "class_values"
+    This class defines standardized field names for the output data structure
+    that is produced by the processing pipeline. It represents the transformation
+    from raw space-based JSON field names to more standard underscore-based
+    Python naming conventions.
+
+    The output fields encompass three types of data:
+    1. Transformed measurement data from the raw JSON
+    2. Derived fields calculated during processing
+    3. Metadata fields from the CSV labels file
+
+    This provides a unified and consistent interface for accessing all
+    data fields in the pipeline output, regardless of their source.
+
+    Attributes:
+        # Transformed measurement fields (from JSON)
+        TIME_VALUES: Time measurements (0.0012s increments)
+        TORQUE_VALUES: Torque measurements (Nm)
+        ANGLE_VALUES: Angle measurements (0.25° amplitude)
+        GRADIENT_VALUES: Gradient measurements (rate of change)
+
+        # Derived fields (calculated during processing)
+        STEP_VALUES: Integer indicators tracking which step each measurement originated from
+
+        # Metadata fields (from CSV labels)
+        CLASS_VALUES: Classification labels identifying the experimental condition
+        WORKPIECE_LOCATION: Screw position in workpiece ("left" or "right")
+        WORKPIECE_USAGE: Count of previous operations on this workpiece (0-24)
+        WORKPIECE_RESULT: Result from screw program ("OK"/"NOK")
+        SCENARIO_CONDITION: Experimental condition ("normal" or "faulty")
+        SCENARIO_EXCEPTION: Flag for experimental issues (0 for "no issues")
+    """
+
+    # Transformed measurement fields (from JSON)
+    TIME_VALUES: str = "time_values"
+    TORQUE_VALUES: str = "torque_values"
+    ANGLE_VALUES: str = "angle_values"
+    GRADIENT_VALUES: str = "gradient_values"
+
+    # Derived fields (determined during processing)
+    STEP_VALUES: str = "step_values"
+
+    # Metadata fields (from CSV labels)
+    CLASS_VALUES: str = "class_values"
+    WORKPIECE_LOCATION: str = "workpiece_location"
+    WORKPIECE_USAGE: str = "workpiece_usage"
+    WORKPIECE_RESULT: str = "workpiece_result"
+    SCENARIO_CONDITION: str = "scenario_condition"
+    SCENARIO_EXCEPTION: str = "scenario_exception"

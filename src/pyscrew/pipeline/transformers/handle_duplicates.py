@@ -1,14 +1,15 @@
 """
 Duplicate detection and handling for measurement time series.
 
-This module provides transformer implementations for detecting and resolving
-duplicate time points in measurement data. It handles cases where multiple
-measurements exist for the same time point using configurable strategies.
+This transformer processes the standardized measurement data to detect and resolve
+duplicate time points. It handles cases where multiple measurements exist at the
+same time point using various configurable strategies.
 
 Key Features:
     - Detection of exact duplicates vs value differences
     - Multiple handling methods (mean, first, last)
     - Detailed statistics tracking
+    - Preservation of all metadata fields
     - Input validation and error handling
 """
 
@@ -20,7 +21,7 @@ from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from pyscrew.config import PipelineConfig
-from pyscrew.core import JsonFields, ScrewDataset
+from pyscrew.core import OutputFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -69,6 +70,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
     Attributes:
         config: Configuration settings for the pipeline
+        outputs: OutputFields instance for accessing standardized field names
         _stats: Statistics about processed duplicates
 
     Example:
@@ -94,6 +96,7 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, config: PipelineConfig) -> None:
         """Initialize transformer with pipeline configuration."""
         self.config = config
+        self.outputs = OutputFields()
         self._stats = DuplicateStats()
 
     def _validate_arrays(
@@ -194,24 +197,22 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
                 # Calculate means for each unique time
                 mean_values = {
-                    JsonFields.Measurements.TIME: unique_times,
-                    JsonFields.Measurements.TORQUE: np.zeros_like(unique_times),
-                    JsonFields.Measurements.ANGLE: np.zeros_like(unique_times),
-                    JsonFields.Measurements.GRADIENT: np.zeros_like(unique_times),
-                    JsonFields.Measurements.STEP: np.zeros_like(unique_times),
+                    self.outputs.TIME_VALUES: unique_times,
+                    self.outputs.TORQUE_VALUES: np.zeros_like(unique_times),
+                    self.outputs.ANGLE_VALUES: np.zeros_like(unique_times),
+                    self.outputs.GRADIENT_VALUES: np.zeros_like(unique_times),
+                    self.outputs.STEP_VALUES: np.zeros_like(unique_times),
                 }
 
                 # Calculate means for each measurement type
                 for i in range(len(unique_times)):
                     idx = inverse_indices == i
-                    mean_values[JsonFields.Measurements.TORQUE][i] = np.mean(
-                        torque[idx]
-                    )
-                    mean_values[JsonFields.Measurements.ANGLE][i] = np.mean(angle[idx])
-                    mean_values[JsonFields.Measurements.GRADIENT][i] = np.mean(
+                    mean_values[self.outputs.TORQUE_VALUES][i] = np.mean(torque[idx])
+                    mean_values[self.outputs.ANGLE_VALUES][i] = np.mean(angle[idx])
+                    mean_values[self.outputs.GRADIENT_VALUES][i] = np.mean(
                         gradient[idx]
                     )
-                    mean_values[JsonFields.Measurements.STEP][i] = np.mean(steps[idx])
+                    mean_values[self.outputs.STEP_VALUES][i] = np.mean(steps[idx])
 
                 return {k: v.tolist() for k, v in mean_values.items()}
 
@@ -246,11 +247,11 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                 self._stats.total_removed += len(duplicate_indices)
 
                 return {
-                    JsonFields.Measurements.TIME: time[mask].tolist(),
-                    JsonFields.Measurements.TORQUE: torque[mask].tolist(),
-                    JsonFields.Measurements.ANGLE: angle[mask].tolist(),
-                    JsonFields.Measurements.GRADIENT: gradient[mask].tolist(),
-                    JsonFields.Measurements.STEP: steps[mask].tolist(),
+                    self.outputs.TIME_VALUES: time[mask].tolist(),
+                    self.outputs.TORQUE_VALUES: torque[mask].tolist(),
+                    self.outputs.ANGLE_VALUES: angle[mask].tolist(),
+                    self.outputs.GRADIENT_VALUES: gradient[mask].tolist(),
+                    self.outputs.STEP_VALUES: steps[mask].tolist(),
                 }
 
         except Exception as e:
@@ -295,47 +296,50 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
 
         # Initialize processed data structure
         processed_data = {
-            JsonFields.Measurements.TIME: [],
-            JsonFields.Measurements.TORQUE: [],
-            JsonFields.Measurements.ANGLE: [],
-            JsonFields.Measurements.GRADIENT: [],
+            self.outputs.TIME_VALUES: [],
+            self.outputs.TORQUE_VALUES: [],
+            self.outputs.ANGLE_VALUES: [],
+            self.outputs.GRADIENT_VALUES: [],
+            self.outputs.STEP_VALUES: [],
         }
 
-        # Only include step field if it exists in input
-        if JsonFields.Measurements.STEP in dataset.processed_data:
-            processed_data[JsonFields.Measurements.STEP] = []
+        # Preserve all metadata fields
+        metadata_fields = [
+            self.outputs.CLASS_VALUES,
+            self.outputs.WORKPIECE_LOCATION,
+            self.outputs.WORKPIECE_USAGE,
+            self.outputs.WORKPIECE_RESULT,
+            self.outputs.SCENARIO_CONDITION,
+            self.outputs.SCENARIO_EXCEPTION,
+        ]
 
-        # Include class_value if it exists in input
-        if JsonFields.Measurements.CLASS in dataset.processed_data:
-            processed_data[JsonFields.Measurements.CLASS] = dataset.processed_data[
-                JsonFields.Measurements.CLASS
-            ]
+        # Copy metadata fields from the input dataset if they exist
+        for field in metadata_fields:
+            if field in dataset.processed_data:
+                processed_data[field] = dataset.processed_data[field]
+                logger.debug(f"Preserved metadata field: {field}")
 
         try:
             # Process each run
             self._stats.total_series = len(
-                dataset.processed_data[JsonFields.Measurements.TIME]
+                dataset.processed_data[self.outputs.TIME_VALUES]
             )
 
             for idx in range(self._stats.total_series):
                 # Get measurements from processed_data as numpy arrays
-                time = np.array(
-                    dataset.processed_data[JsonFields.Measurements.TIME][idx]
-                )
+                time = np.array(dataset.processed_data[self.outputs.TIME_VALUES][idx])
                 torque = np.array(
-                    dataset.processed_data[JsonFields.Measurements.TORQUE][idx]
+                    dataset.processed_data[self.outputs.TORQUE_VALUES][idx]
                 )
-                angle = np.array(
-                    dataset.processed_data[JsonFields.Measurements.ANGLE][idx]
-                )
+                angle = np.array(dataset.processed_data[self.outputs.ANGLE_VALUES][idx])
                 gradient = np.array(
-                    dataset.processed_data[JsonFields.Measurements.GRADIENT][idx]
+                    dataset.processed_data[self.outputs.GRADIENT_VALUES][idx]
                 )
 
                 # Handle steps if they exist in processed_data
-                if JsonFields.Measurements.STEP in dataset.processed_data:
+                if self.outputs.STEP_VALUES in dataset.processed_data:
                     steps = np.array(
-                        dataset.processed_data[JsonFields.Measurements.STEP][idx]
+                        dataset.processed_data[self.outputs.STEP_VALUES][idx]
                     )
                 else:
                     steps = np.zeros_like(time)  # Use zeros if no steps
@@ -346,8 +350,16 @@ class HandleDuplicatesTransformer(BaseEstimator, TransformerMixin):
                 result = self._process_series(time, torque, angle, gradient, steps)
 
                 # Store processed results
-                for field in processed_data:
-                    if field != JsonFields.Measurements.CLASS:  # Skip class labels
+                measurement_fields = [
+                    self.outputs.TIME_VALUES,
+                    self.outputs.TORQUE_VALUES,
+                    self.outputs.ANGLE_VALUES,
+                    self.outputs.GRADIENT_VALUES,
+                    self.outputs.STEP_VALUES,
+                ]
+
+                for field in measurement_fields:
+                    if field in result:
                         processed_data[field].append(result[field])
 
             # Log summary statistics
