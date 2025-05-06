@@ -76,7 +76,5 @@ if __name__ == "__main__":
     if project_root not in sys.path:
         sys.path.insert(0, project_root)
 
-    # Now we can import pyscrew modules
-
     # Run the test
     test_process_data()

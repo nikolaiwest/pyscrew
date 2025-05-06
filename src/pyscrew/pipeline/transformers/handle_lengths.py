@@ -446,9 +446,6 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         self._log_summary()
 
         dataset.processed_data = transformed_data
-
-        logger.info(f"\n---> {dataset.processed_data.keys()}\n")
-
         return dataset
 
     def _log_summary(self) -> None:
