@@ -80,6 +80,8 @@ class ScrewRun:
             self.class_value = str(label_data[CsvFields.CLASS_VALUE])
             self.workpiece_usage = int(label_data[CsvFields.WORKPIECE_USAGE])
             self.workpiece_location = str(label_data[CsvFields.WORKPIECE_LOCATION])
+            self.scenario_condition = str(label_data[CsvFields.SCENARIO_CONDITION])
+            self.scenario_exception = int(label_data[CsvFields.SCENARIO_EXCEPTION])
 
             # Cross-validate data from both sources
             if self.workpiece_id != label_data[CsvFields.WORKPIECE_ID]:

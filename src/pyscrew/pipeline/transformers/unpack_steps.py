@@ -221,28 +221,11 @@ class UnpackStepsTransformer(BaseEstimator, TransformerMixin):
                 dataset.processed_data[self.outputs.WORKPIECE_RESULT].append(
                     run.workpiece_result
                 )
-
-                # Add scenario fields with safety checks
-                scenario_condition = getattr(run, "scenario_condition", None)
-                if (
-                    scenario_condition is None
-                    and hasattr(run, "__dict__")
-                    and "scenario_condition" in run.__dict__
-                ):
-                    scenario_condition = run.__dict__["scenario_condition"]
                 dataset.processed_data[self.outputs.SCENARIO_CONDITION].append(
-                    scenario_condition
+                    run.scenario_condition
                 )
-
-                scenario_exception = getattr(run, "scenario_exception", None)
-                if (
-                    scenario_exception is None
-                    and hasattr(run, "__dict__")
-                    and "scenario_exception" in run.__dict__
-                ):
-                    scenario_exception = run.__dict__["scenario_exception"]
                 dataset.processed_data[self.outputs.SCENARIO_EXCEPTION].append(
-                    scenario_exception
+                    run.scenario_exception
                 )
 
         # Log the results
