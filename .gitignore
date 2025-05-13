@@ -30,6 +30,7 @@ src/pyscrew/downloads/extracted/*
 
 # Testing and coverage
 test_temp.py
+tests/integration_cache/*
 .coverage*
 htmlcov/
 .tox/

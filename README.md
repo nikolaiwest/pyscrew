@@ -39,8 +39,8 @@ import pyscrew
 data = pyscrew.get_data(scenario="s01")
 
 # Access the measurements and labels
-x_values = data["torque values"]
-y_values = data["class values"]
+x_values = data["torque_values"]
+y_values = data["class_values"]
 ```
 
 ### Advanced Usage
@@ -57,16 +57,16 @@ data = pyscrew.get_data(
     force_download=True,  # Force re-download even if cached
     handle_duplicates="first",  # How to handle duplicate time points
     handle_missings="mean",  # How to handle missing values
-    target_length=1000,  # Target length for normalization
+    target_length=2000,  # Target length for normalization
 )
 
 # Describe the data
 print("Available measurements:", data.keys())
-print("Number of torque measurements:", len(data["torque values"]))
+print("Number of torque measurements:", len(data["torque_values"]))
 
 # Access the data
-x_values = data["torque values"]
-y_values = data["class values"]
+x_values = data["torque_values"]
+y_values = data["class_values"]
 
 ```
 ### Scenario Specification
@@ -101,7 +101,7 @@ Our datasets examine various aspects of screw driving operations in industrial s
 |----|------|-------------|---------|---------|---------------|
 | s01 | Thread Degradation | Examines thread degradation in plastic materials through repeated fastening operations | 5,000 | 1 | [Details](docs/scenarios/s01_thread-degradation.md) |
 | s02 | Surface Friction | Investigates the impact of different surface conditions (water, lubricant, adhesive, etc.) on screw driving operations | 12,500 | 8 | [Details](docs/scenarios/s02_surface-friction.md) |
-| s03 | Assembly Conditions 1 | Examines various screw and component faults including washer modifications, thread deformations, and alignment issues | 1,800 | 27 | [Details](docs/scenarios/s03_assembly-conditions-1.md) |
+| s03 | Assembly Conditions 1 | Examines various screw and component faults including washer modifications, thread deformations, and alignment issues | 1,700 | 26 | [Details](docs/scenarios/s03_assembly-conditions-1.md) |
 | s04 | Assembly Conditions 2 | Investigates thread modifications, surface conditions, component modifications, and process parameter changes | 5,000 | 25 | [Details](docs/scenarios/s04_assembly-conditions-2.md) |
 | s05 | Upper Workpiece Fabrication | Analyzes variations in injection molding parameters for upper workpieces | 2,400 | 42 | [Details](docs/scenarios/s05_upper-workpiece.md) |
 | s06 | Lower Workpiece Fabrication | Studies variations in injection molding parameters for lower workpieces | 7,482 | 44 | [Details](docs/scenarios/s06_lower-workpiece.md) |

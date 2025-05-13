@@ -5,9 +5,9 @@ names:
   long: assembly-conditions-1
   full: variations-in-assembly-conditions-1
 data:
-  record_id: 15273503
+  record_id: 15393134
   file_name: s03_variations-in-assembly-conditions-1.zip
-  md5_checksum: 0bb93ffa3f3d0d1c66d9eae8f712b14f
+  md5_checksum: 91b7113d1130f4d06d63c681c1897fef
 metadata:
   author: RIF Institute for Research and Transfer e.V.
   description: >
@@ -15,7 +15,7 @@ metadata:
     performance. We tested various fault conditions including washer modifications, 
     thread deformations, interface interferences, structural modifications, and 
     alignment issues to create realistic fault scenarios encountered in manufacturing 
-    environments. The dataset includes 1800 total observations across 27 distinct 
+    environments. The dataset includes 1800 total observations across 26 distinct 
     experimental conditions.
   purpose: >
     To analyze how different fault conditions impact screw driving metrics, providing insights 
@@ -34,19 +34,13 @@ classes:
     description: >
       No manipulations, standard reference data for comparison with other experiment groups; 
       recorded for s03 in February 2024
-  003_control-group-3:
-    count: 100
-    condition: normal
-    description: >
-      No manipulations, standard reference data for comparison with other experiment groups; 
-      recorded for s03 during multiple sessions between February and June 2023
-  004_control-group-from-s01:
+  003_control-group-from-s01:
     count: 200
     condition: normal
     description: >
       No manipulations like 001; the observations were taken from s01-001 control group, 
       using first cycles only to maintain comparability with other experiments
-  005_control-group-from-s02:
+  004_control-group-from-s02:
     count: 100
     condition: normal
     description: >

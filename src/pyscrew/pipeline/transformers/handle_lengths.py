@@ -1,33 +1,16 @@
 """
 Transformer for ensuring all measurement sequences have equal length.
 
-This transformer handles variable-length measurement sequences by either
-padding shorter sequences or truncating longer ones to reach a target length.
-It's particularly useful for preparing data for machine learning models that
-require fixed-length inputs.
+This transformer processes the standardized measurement data to ensure all
+sequences have the same length, using padding and truncation as needed.
+It preserves all metadata fields while normalizing measurement data.
 
 Key Features:
-- Supports both padding and truncation operations
-- Configurable padding value and position
-- Configurable truncation position
-- Maintains synchronization across different measurement types
-
-Attributes:
-    target_length (int): Desired length for all sequences
-    padding_value (float): Value to use for padding shorter sequences (default: 0.0)
-    padding_position (str): Position to add padding ('pre' or 'post', default: 'post')
-    cutoff_position (str): Position to truncate ('pre' or 'post', default: 'post')
-
-Example:
-    ```python
-    transformer = HandleLengthsTransformer(
-        target_length=1000,
-        padding_value=0.0,
-        padding_position='post',
-        cutoff_position='post'
-    )
-    normalized_data = transformer.transform(screw_data)
-    ```
+    - Supports both padding and truncation operations
+    - Configurable padding value and position
+    - Configurable truncation position
+    - Preservation of all metadata fields
+    - Maintains synchronization across different measurement types
 """
 
 from dataclasses import dataclass
@@ -37,7 +20,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from pyscrew.config import PipelineConfig
-from pyscrew.core import JsonFields, ScrewDataset
+from pyscrew.core import OutputFields, ScrewDataset
 from pyscrew.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -68,8 +51,7 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
 
     This transformer handles variable-length measurement sequences by either
     padding shorter sequences or truncating longer ones to reach a target length.
-    It's particularly useful for preparing data for machine learning models that
-    require fixed-length inputs.
+    It preserves all metadata fields during the transformation process.
 
     Args:
         config: PipelineConfig object containing processing settings
@@ -81,12 +63,14 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
 
     Attributes:
         config: Configuration settings for the pipeline
+        outputs: OutputFields instance for accessing standardized field names
         _stats: Statistics about length normalization
     """
 
     def __init__(self, config: PipelineConfig):
         """Initialize transformer with pipeline configuration."""
         self.config = config
+        self.outputs = OutputFields()
         self._stats = LengthNormalizationStats()
 
     def fit(self, X: ScrewDataset, y: Any = None) -> "HandleLengthsTransformer":
@@ -125,24 +109,43 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
                 return seq[:target_length]  # Keep first target_length elements
 
         truncated_sequences = {}
+        measurement_fields = [
+            self.outputs.TIME_VALUES,
+            self.outputs.TORQUE_VALUES,
+            self.outputs.ANGLE_VALUES,
+            self.outputs.GRADIENT_VALUES,
+            self.outputs.STEP_VALUES,
+        ]
+
+        metadata_fields = [
+            self.outputs.CLASS_VALUES,
+            self.outputs.WORKPIECE_LOCATION,
+            self.outputs.WORKPIECE_USAGE,
+            self.outputs.WORKPIECE_RESULT,
+            self.outputs.SCENARIO_CONDITION,
+            self.outputs.SCENARIO_EXCEPTION,
+        ]
 
         for k, v in cycle_values.items():
-            if k == JsonFields.Measurements.TIME:
+            if k in measurement_fields and k != self.outputs.CLASS_VALUES:
                 truncated_sequences[k] = truncate_sequence(
                     v, self.config.target_length, self.config.cutoff_position
                 )
-            elif k == JsonFields.Measurements.STEP:
-                truncated_sequences[k] = truncate_sequence(
-                    v, self.config.target_length, self.config.cutoff_position
-                )
-            elif k == JsonFields.Measurements.CLASS:
-                truncated_sequences[k] = v  # Do not change class values
+            elif k in metadata_fields:
+                # Do not modify metadata fields
+                truncated_sequences[k] = v
             else:
-                truncated_sequences[k] = truncate_sequence(
-                    v, self.config.target_length, self.config.cutoff_position
-                )
+                # For any other fields, preserve them unchanged
+                truncated_sequences[k] = v
 
-        final_length = len(next(iter(truncated_sequences.values())))
+        # Determine final length from a measurement field
+        for field in measurement_fields:
+            if field in truncated_sequences:
+                final_length = len(truncated_sequences[field])
+                break
+        else:
+            final_length = initial_length  # No changes if no measurement fields found
+
         return truncated_sequences, initial_length, final_length
 
     def apply_padding(
@@ -165,7 +168,21 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             - Original length
             - New length
         """
-        initial_length = len(next(iter(cycle_values.values())))
+        # Find length from first measurement field
+        measurement_fields = [
+            self.outputs.TIME_VALUES,
+            self.outputs.TORQUE_VALUES,
+            self.outputs.ANGLE_VALUES,
+            self.outputs.GRADIENT_VALUES,
+        ]
+
+        for field in measurement_fields:
+            if field in cycle_values:
+                initial_length = len(cycle_values[field])
+                break
+        else:
+            # No measurement fields found, return unchanged
+            return cycle_values, 0, 0
 
         def pad_sequence(
             seq: List[Any],
@@ -179,32 +196,47 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             return padding + seq if padding_position == "pre" else seq + padding
 
         padded_sequences = {}
+        metadata_fields = [
+            self.outputs.CLASS_VALUES,
+            self.outputs.WORKPIECE_LOCATION,
+            self.outputs.WORKPIECE_USAGE,
+            self.outputs.WORKPIECE_RESULT,
+            self.outputs.SCENARIO_CONDITION,
+            self.outputs.SCENARIO_EXCEPTION,
+        ]
+
         for k, v in cycle_values.items():
-            if k == JsonFields.Measurements.TIME:
+            if k == self.outputs.TIME_VALUES:
                 # Time gets padded with incrementing values
                 pad_len = self.config.target_length - len(v)
-                last_time = v[-1]
-                padding = [
-                    round(last_time + (i + 1) * 0.0012, 4) for i in range(pad_len)
-                ]
-                padded_sequences[k] = (
-                    padding + v
-                    if self.config.padding_position == "pre"
-                    else v + padding
-                )
-            elif k == JsonFields.Measurements.STEP:
+                if pad_len > 0:
+                    last_time = v[-1]
+                    padding = [
+                        round(last_time + (i + 1) * 0.0012, 4) for i in range(pad_len)
+                    ]
+                    padded_sequences[k] = (
+                        padding + v
+                        if self.config.padding_position == "pre"
+                        else v + padding
+                    )
+                else:
+                    padded_sequences[k] = v
+            elif k == self.outputs.STEP_VALUES:
                 # Step padding simply adds a -1
                 pad_len = self.config.target_length - len(v)
-                padding = [-1] * pad_len
-                padded_sequences[k] = (
-                    padding + v
-                    if self.config.padding_position == "pre"
-                    else v + padding
-                )
-            elif k == JsonFields.Measurements.CLASS:
-                # Class values remain unchanged
+                if pad_len > 0:
+                    padding = [-1] * pad_len
+                    padded_sequences[k] = (
+                        padding + v
+                        if self.config.padding_position == "pre"
+                        else v + padding
+                    )
+                else:
+                    padded_sequences[k] = v
+            elif k in metadata_fields:
+                # Do not modify metadata fields
                 padded_sequences[k] = v
-            else:
+            elif k in measurement_fields:
                 # Apply padding to other measurements
                 padded_sequences[k] = pad_sequence(
                     v,
@@ -212,8 +244,18 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
                     self.config.padding_value,
                     self.config.padding_position,
                 )
+            else:
+                # For any other fields, preserve them unchanged
+                padded_sequences[k] = v
 
-        final_length = len(next(iter(padded_sequences.values())))
+        # Get the final length from a measurement field
+        for field in measurement_fields:
+            if field in padded_sequences:
+                final_length = len(padded_sequences[field])
+                break
+        else:
+            final_length = initial_length  # No changes if no measurement fields found
+
         return padded_sequences, initial_length, final_length
 
     def apply_equal_length(
@@ -234,7 +276,21 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
             - Original length
             - New length
         """
-        initial_length = len(next(iter(cycle_values.values())))
+        # Find length from first measurement field
+        measurement_fields = [
+            self.outputs.TIME_VALUES,
+            self.outputs.TORQUE_VALUES,
+            self.outputs.ANGLE_VALUES,
+            self.outputs.GRADIENT_VALUES,
+        ]
+
+        for field in measurement_fields:
+            if field in cycle_values:
+                initial_length = len(cycle_values[field])
+                break
+        else:
+            # No measurement fields found, return unchanged
+            return cycle_values, 0, 0
 
         if initial_length > self.config.target_length:
             equal_length_values, initial_length, final_length = self.apply_truncating(
@@ -252,7 +308,8 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         Transform variable-length sequences to have equal length.
 
         This method processes multiple screw cycles to ensure all measurement
-        sequences have the same length through padding or truncation.
+        sequences have the same length through padding or truncation,
+        while preserving all metadata fields.
 
         Process:
         1. Verify data consistency
@@ -281,27 +338,86 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
         logger.info(f"- 'padding_position' : {self.config.padding_position}")
         logger.info(f"- 'cutoff_position' : {self.config.cutoff_position}")
 
-        # Verify consistent lengths across measurements
-        number_of_screw_runs = len(dataset.processed_data[JsonFields.Measurements.TIME])
-        if not all(
-            len(lst) == number_of_screw_runs
-            for lst in dataset.processed_data.values()
-            if isinstance(lst, list)
-        ):
-            raise ValueError(
-                "All recordings for one screw run must have the same length"
-            )
+        # Verify consistent lengths within each run
+        for field, data_list in dataset.processed_data.items():
+            if not isinstance(data_list, list) or not data_list:
+                continue
+
+            # Skip metadata fields that have one value per run
+            if field in [
+                self.outputs.CLASS_VALUES,
+                self.outputs.WORKPIECE_LOCATION,
+                self.outputs.WORKPIECE_USAGE,
+                self.outputs.WORKPIECE_RESULT,
+                self.outputs.SCENARIO_CONDITION,
+                self.outputs.SCENARIO_EXCEPTION,
+            ]:
+                continue
+
+            # For measurement fields, check consistency within each run
+            for i, run_data in enumerate(data_list):
+                if not isinstance(run_data, list):
+                    continue
+
+                # Find a measurement field to compare against
+                length_reference = None
+                for ref_field in [
+                    self.outputs.TIME_VALUES,
+                    self.outputs.TORQUE_VALUES,
+                    self.outputs.ANGLE_VALUES,
+                    self.outputs.GRADIENT_VALUES,
+                ]:
+                    if (
+                        ref_field in dataset.processed_data
+                        and dataset.processed_data[ref_field]
+                    ):
+                        length_reference = len(dataset.processed_data[ref_field][i])
+                        break
+
+                if length_reference is not None and len(run_data) != length_reference:
+                    raise ValueError(
+                        f"Inconsistent lengths in run {i}: {field}={len(run_data)}, "
+                        f"reference={length_reference}"
+                    )
 
         # Initialize result storage
-        transformed_data = {key: [] for key in dataset.processed_data.keys()}
+        transformed_data = {}
+
+        # Copy all fields from the original dataset to preserve structure
+        for key in dataset.processed_data.keys():
+            transformed_data[key] = []
+
         initial_lengths = []
         final_lengths = []
+
+        # Determine number of runs from a metadata field
+        if self.outputs.CLASS_VALUES in dataset.processed_data:
+            number_of_screw_runs = len(
+                dataset.processed_data[self.outputs.CLASS_VALUES]
+            )
+        else:
+            # Fall back to a measurement field
+            for field in [
+                self.outputs.TIME_VALUES,
+                self.outputs.TORQUE_VALUES,
+                self.outputs.ANGLE_VALUES,
+                self.outputs.GRADIENT_VALUES,
+            ]:
+                if field in dataset.processed_data and dataset.processed_data[field]:
+                    number_of_screw_runs = len(dataset.processed_data[field])
+                    break
+            else:
+                # No valid fields found
+                logger.warning("No valid data found for length normalization")
+                return dataset
 
         # Process each screw cycle
         for i in range(number_of_screw_runs):
             # Extract single cycle data
             screw_run_at_index = {
-                key: lst[i] for key, lst in dataset.processed_data.items()
+                key: lst[i] if i < len(lst) else []
+                for key, lst in dataset.processed_data.items()
+                if isinstance(lst, list) and lst
             }
 
             # Apply length normalization
@@ -311,7 +427,11 @@ class HandleLengthsTransformer(BaseEstimator, TransformerMixin):
 
             # Store results
             for k, v in equal_length_values.items():
-                transformed_data[k].append(v)
+                if k in transformed_data:
+                    transformed_data[k].append(v)
+                else:
+                    transformed_data[k] = [v]
+
             initial_lengths.append(initial_len)
             final_lengths.append(final_len)
 

@@ -181,8 +181,10 @@ def get_data(
 
 if __name__ == "__main__":
 
-    list_scenarios()
+    for s in ["s01", "s02", "s03", "s04", "s05", "s06"]:
 
-    data = get_data(scenario="s01")
+        list_scenarios()
 
-    print(f"Data retrieved successfully: n={len(data['torque values'])}")
+        data = get_data(scenario=s)
+
+        print(f"Data retrieved successfully: n={len(data['torque_values'])}")
