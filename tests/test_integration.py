@@ -19,7 +19,7 @@ def test_all_scenarios_integration():
         scenario_expectations = {
             "s01": {"samples": 5000, "classes": 1, "name": "Thread Degradation"},
             "s02": {"samples": 12500, "classes": 8, "name": "Surface Friction"},
-            # "s03": {"samples": 1800, "classes": 27, "name": "Assembly Conditions 1"},
+            "s03": {"samples": 1700, "classes": 26, "name": "Assembly Conditions 1"},
             "s04": {"samples": 5000, "classes": 25, "name": "Assembly Conditions 2"},
             "s05": {"samples": 2400, "classes": 42, "name": "Upper Workpiece"},
             "s06": {"samples": 7482, "classes": 44, "name": "Lower Workpiece"},

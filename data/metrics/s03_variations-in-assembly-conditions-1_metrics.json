@@ -1,12 +1,12 @@
 {
   "sample_distribution": {
-    "total_operations": 1800,
-    "unique_workpieces": 878,
-    "operations_per_workpiece": 2.05,
-    "ok_count": 1167,
+    "total_operations": 1700,
+    "unique_workpieces": 869,
+    "operations_per_workpiece": 1.96,
+    "ok_count": 1067,
     "nok_count": 633,
-    "ok_percentage": 64.83,
-    "nok_percentage": 35.17
+    "ok_percentage": 62.76,
+    "nok_percentage": 37.24
   },
   "class_distribution": {
     "class_001_control-group-1": {
@@ -23,21 +23,14 @@
       "ok_ratio": 96.0,
       "nok_ratio": 4.0
     },
-    "class_003_control-group-3": {
-      "total_samples": 100,
-      "ok_count": 100,
-      "nok_count": 0,
-      "ok_ratio": 100.0,
-      "nok_ratio": 0.0
-    },
-    "class_004_control-group-from-s01": {
+    "class_003_control-group-from-s01": {
       "total_samples": 200,
       "ok_count": 200,
       "nok_count": 0,
       "ok_ratio": 100.0,
       "nok_ratio": 0.0
     },
-    "class_005_control-group-from-s02": {
+    "class_004_control-group-from-s02": {
       "total_samples": 100,
       "ok_count": 100,
       "nok_count": 0,
@@ -206,7 +199,7 @@
   },
   "key_characteristics": {
     "initial_anomaly_rate": 0,
-    "peak_anomaly_rate": 35.17,
+    "peak_anomaly_rate": 37.24,
     "peak_anomaly_cycle": 0
   },
   "collection_timeline": {
@@ -218,15 +211,7 @@
       "2024-02-16": 24,
       "2024-02-19": 36
     },
-    "003_control-group-3": {
-      "2023-02-06": 12,
-      "2023-02-08": 24,
-      "2023-02-20": 17,
-      "2023-02-27": 15,
-      "2023-03-06": 23,
-      "2023-06-01": 9
-    },
-    "004_control-group-from-s01": {
+    "003_control-group-from-s01": {
       "2022-09-05": 12,
       "2022-09-06": 24,
       "2022-09-07": 12,
@@ -237,7 +222,7 @@
       "2022-09-14": 26,
       "2022-09-16": 50
     },
-    "005_control-group-from-s02": {
+    "004_control-group-from-s02": {
       "2023-07-12": 14,
       "2023-07-13": 42,
       "2023-07-14": 20,
