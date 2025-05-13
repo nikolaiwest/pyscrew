@@ -181,7 +181,7 @@ def get_data(
 
 if __name__ == "__main__":
 
-    for s in ["s04", "s05", "s06"]:
+    for s in ["s01", "s02", "s03", "s04", "s05", "s06"]:
 
         list_scenarios()
 
