@@ -66,7 +66,7 @@ def position_usage_generator() -> Generator[tuple[int, int], None, None]:
     usage = 0
     for position in cycle(["left", "right"]):
         yield position, usage
-        if position == 1:  # After right position
+        if position == "right":  # After right position (use the string here...)
             usage += 1
 
 
