@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 # Core project metadata
 [project]
 name = "pyscrew"
-version = "1.2.1"
+version = "1.2.2"
 description = "A Python package for accessing industrial research data from a screw driving system"
 authors = [
     { name = "Nikolai West", email = "nikolai.west@tu-dortmund.de" }
