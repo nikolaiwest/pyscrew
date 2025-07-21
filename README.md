@@ -1,3 +1,8 @@
+## Reminder 
+- Update hd5 check sums for all data archives (check 04-06)
+- Update the library to 1.2.2 
+- Update the dataset readmes with the new zenodo version (v1.2.3)
+
 [![PyPI version](https://badge.fury.io/py/pyscrew.svg)](https://badge.fury.io/py/pyscrew)
 [![Python](https://img.shields.io/pypi/pyversions/pyscrew.svg)](https://pypi.org/project/pyscrew/)
 [![License](https://img.shields.io/github/license/nikolaiwest/pyscrew.svg)](https://github.com/nikolaiwest/pyscrew/blob/main/LICENSE)
@@ -146,7 +151,7 @@ PyScrew/
 │       │   ├── s04.yml      # Assembly conditions 2
 │       │   ├── s05.yml      # Upper workpiece
 │       │   └── s06.yml      # Lower workpiece
-│       ├── downloads/        # Default location for downloaded data
+│       ├── downloads/       # Default location for downloaded data
 │       │   ├── archives/    # Compressed dataset archives
 │       │   └── extracted/   # Extracted dataset files  
 │       ├── tools/                      # Utility scripts and tools
@@ -214,8 +219,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Citation
-If you use this package in your research, please cite either one of the following publications:
+If you use this package in your research, please cite our arXiv publication:
+* West, N., & Deuse, J. (2025). PyScrew: A Comprehensive Dataset Collection from Industrial Screw Driving Experiments. arXiv (Computer Science > Machine Learning), 1-18. https://doi.org/10.48550/arXiv.2505.11925 
+
+The PyScrew data was used in other papers that might be interesting to you as well: 
 * West, N., & Deuse, J. (2024). A Comparative Study of Machine Learning Approaches for Anomaly Detection in Industrial Screw Driving Data. Proceedings of the 57th Hawaii International Conference on System Sciences (HICSS), 1050-1059. https://hdl.handle.net/10125/106504
 * West, N., Trianni, A. & Deuse, J. (2024). Data-driven analysis of bolted joints in plastic housings with surface-based anomalies using supervised and unsupervised machine learning. CIE51 Proceedings. _(DOI will follow after publication of the proceedings)_
-
-*A dedicated paper for this library is currently in progress.*
+* West, N. & Deuse, J. (2025). Multi-class Error Detection in Industrial Screw Driving 2 Operations Using Machine Learning. Proceedings of the 11th International conference on Time Series and Forecasting (ITISE). _(DOI will follow after publication of the proceedings)_
