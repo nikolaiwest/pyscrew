@@ -1,8 +1,3 @@
-## Reminder 
-- Update hd5 check sums for all data archives (check 04-06)
-- Update the library to 1.2.2 
-- Update the dataset readmes with the new zenodo version (v1.2.3)
-
 [![PyPI version](https://badge.fury.io/py/pyscrew.svg)](https://badge.fury.io/py/pyscrew)
 [![Python](https://img.shields.io/pypi/pyversions/pyscrew.svg)](https://pypi.org/project/pyscrew/)
 [![License](https://img.shields.io/github/license/nikolaiwest/pyscrew.svg)](https://github.com/nikolaiwest/pyscrew/blob/main/LICENSE)
