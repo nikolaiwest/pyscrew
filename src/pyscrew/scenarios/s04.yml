@@ -5,9 +5,9 @@ names:
   long: assembly-conditions-2
   full: variations-in-assembly-conditions-2
 data:
-  record_id: 16031381
+  record_id: 23853641
   file_name: s04_variations-in-assembly-conditions-2.zip
-  md5_checksum: 7f580205863743c2b083cbeebfa61117
+  md5_checksum: d9fd687febf93ecba7f9bbea0069e676
 metadata:
   author: RIF Institute for Research and Transfer e.V.
   description: >
@@ -183,14 +183,14 @@ classes:
       modified dynamics create "hard" screwing case; changing heat generation and affecting 
       thread formation dynamics
   502_decreased-ang-velocity:
-    count: 200
+    count: 249
     condition: mixed
     description: >
       Slowed installation process by reducing angular velocity 10% in all process phases; 
       decreased speed creates "softer" screwing case with extended process time; altering thread 
       formation characteristics and thermal conditions
   503_increased-torque:
-    count: 200
+    count: 151
     condition: mixed
     description: >
       Heightened connection preload by increasing target tightening torque 0.1 Nm to 1.5 Nm; 

@@ -1,3 +1,4 @@
 graft src/pyscrew/scenarios
 include README.md
+include CHANGELOG.md
 include LICENSE

@@ -164,18 +164,18 @@
       "nok_ratio": 0.0
     },
     "class_502_decreased-ang-velocity": {
-      "total_samples": 200,
-      "ok_count": 196,
+      "total_samples": 249,
+      "ok_count": 245,
       "nok_count": 4,
-      "ok_ratio": 98.0,
-      "nok_ratio": 2.0
+      "ok_ratio": 98.39,
+      "nok_ratio": 1.61
     },
     "class_503_increased-torque": {
-      "total_samples": 200,
-      "ok_count": 190,
+      "total_samples": 151,
+      "ok_count": 141,
       "nok_count": 10,
-      "ok_ratio": 95.0,
-      "nok_ratio": 5.0
+      "ok_ratio": 93.38,
+      "nok_ratio": 6.62
     },
     "class_504_decreased-torque": {
       "total_samples": 200,
