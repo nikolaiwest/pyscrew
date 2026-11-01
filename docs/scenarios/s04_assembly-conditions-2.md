@@ -100,8 +100,8 @@ The `labels.csv` contains nine columns:
 | 19    | 404_increased-temperature     | 200    | Altered material properties through thermal conditioning of components for ten minutes in oven; elevated temperature changes plastic stiffness and flow characteristics; affecting thread formation and torque-angle relationship |
 | 20    | 405_decreased-temperature     | 200    | Modified component properties by cooling parts in insulated box with ice (10kg), protected by foil packaging; lowered temperature increases material brittleness; changing deformation behavior and thread formation characteristics |
 | 21    | 501_increased-ang-velocity    | 200    | Accelerated installation process by increasing angular velocity 10% across all phases; modified dynamics create "hard" screwing case; changing heat generation and affecting thread formation dynamics |
-| 22    | 502_decreased-ang-velocity    | 200    | Slowed installation process by reducing angular velocity 10% in all process phases; decreased speed creates "softer" screwing case with extended process time; altering thread formation characteristics and thermal conditions |
-| 23    | 503_increased-torque          | 200    | Heightened connection preload by increasing target tightening torque 0.1 Nm to 1.5 Nm; adjusted process window to 1.3-1.7 Nm; creating higher mechanical load and different stress distribution in connection |
+| 22    | 502_decreased-ang-velocity    | 249    | Slowed installation process by reducing angular velocity 10% in all process phases; decreased speed creates "softer" screwing case with extended process time; altering thread formation characteristics and thermal conditions |
+| 23    | 503_increased-torque          | 151    | Heightened connection preload by increasing target tightening torque 0.1 Nm to 1.5 Nm; adjusted process window to 1.3-1.7 Nm; creating higher mechanical load and different stress distribution in connection |
 | 24    | 504_decreased-torque          | 200    | Reduced connection preload by decreasing target tightening torque 0.1 Nm to 1.3 Nm; adjusted process window to 1.1-1.5 Nm; producing lower clamping force and affecting overall connection stability |
 
 ### JSON File Structure
@@ -216,11 +216,11 @@ The dataset is provided raw and underwent no additional preprocessing steps.
 | 19    | 404_increased-temperature     | 200     | 164  | 36   | 82.00 | 18.00 |
 | 20    | 405_decreased-temperature     | 200     | 199  | 1    | 99.50 | 0.50  |
 | 21    | 501_increased-ang-velocity    | 200     | 200  | 0    | 100.00| 0.00  |
-| 22    | 502_decreased-ang-velocity    | 200     | 196  | 4    | 98.00 | 2.00  |
-| 23    | 503_increased-torque          | 200     | 190  | 10   | 95.00 | 5.00  |
+| 22    | 502_decreased-ang-velocity    | 249     | 245  | 4    | 98.39 | 1.61  |
+| 23    | 503_increased-torque          | 151     | 141  | 10   | 93.38 | 6.62  |
 | 24    | 504_decreased-torque          | 200     | 198  | 2    | 99.00 | 1.00  |
 
-**Note:** *Each class (001 to 504) contains `100` normal and `100` faulty/anormal observations. Information on the class label can be found in the respective `CSV` file.* 
+**Note:** *The `scenario_condition` counts are not balanced across all classes. See `labels.csv` for each run's class and condition.*
 
 ### Collection Timeline
 
